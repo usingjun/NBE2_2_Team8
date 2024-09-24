@@ -26,6 +26,9 @@ Programmers DevCourse BE 2기 8팀 2차 팀 프로젝트
 | H2 Database | 2.3.232 (Test 용도) |
 | JUnit | JUnit Platform Launcher: 1.9.2 |
 
+## 3️⃣ 프로젝트 협업 규칙 
+- [커밋 컨벤션](docs/Define%20a%20commit%20message%20convention.md)
+
 ### 참가 인원
 
 |<a href="https://github.com/Si-rauis"><img src="https://avatars.githubusercontent.com/u/176664628?v=4" width="100px"></a>|<a href="https://github.com/rlaqudwn1"><img src="https://avatars.githubusercontent.com/u/162764129?v=4" width="100px"></a>|<a href="https://github.com/namhyeonh0"><img src="https://avatars.githubusercontent.com/u/143480257?v=4" width="100px"></a>|<a href="https://github.com/EGHyeon"><img src="https://avatars.githubusercontent.com/u/114374088?v=4" width="100px"></a>|<a href="https://github.com/chanspar"><img src="https://avatars.githubusercontent.com/u/87303538?v=4" width="100px"></a>|<a href="https://github.com/asklas"><img src="https://avatars.githubusercontent.com/u/121223022?v=4" width="100px"></a>|
