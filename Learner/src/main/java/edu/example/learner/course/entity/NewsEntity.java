@@ -31,6 +31,9 @@ public class NewsEntity {
 
     private String newsDescription;
 
+    @Builder.Default
+    private Long viewCount = 0L;
+
     @CreatedDate
     private LocalDateTime newsDate;
 
