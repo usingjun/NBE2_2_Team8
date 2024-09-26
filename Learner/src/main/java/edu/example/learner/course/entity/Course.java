@@ -2,10 +2,7 @@ package edu.example.learner.course.entity;
 
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -18,14 +15,21 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@ToString
 @Table(name = "course")
 @EntityListeners(AuditingEntityListener.class)
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long courseId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "order_id")
+    private Order order;
+
     private String courseName;
     private String courseDescription;
+    @Enumerated(EnumType.STRING)
     private CourseAttribute courseAttribute;
 
     private String instructorName;
@@ -55,6 +59,9 @@ public class Course {
 
     public void changeSale(boolean sale) {
         this.sale = sale;
+    }
+    public void changeOrder(Order order) {
+        this.order = order;
     }
 
     public void changeCourseCreatedDate(LocalDateTime courseCreatedDate) {
