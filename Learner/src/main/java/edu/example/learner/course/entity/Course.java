@@ -1,4 +1,4 @@
-package edu.example.learner.entity;
+package edu.example.learner.course.entity;
 
 
 import jakarta.persistence.*;

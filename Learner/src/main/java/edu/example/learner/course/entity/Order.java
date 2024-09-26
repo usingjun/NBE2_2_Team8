@@ -1,8 +1,7 @@
-package edu.example.learner.entity;
+package edu.example.learner.course.entity;
 
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
