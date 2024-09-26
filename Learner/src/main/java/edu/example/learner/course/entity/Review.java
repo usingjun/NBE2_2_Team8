@@ -39,6 +39,10 @@ public class Review {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id")
+    private Course course;
+
     public void changeReviewName(String reviewName) {
         this.reviewName = reviewName;
     }
