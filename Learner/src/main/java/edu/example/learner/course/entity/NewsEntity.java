@@ -32,14 +32,30 @@ public class NewsEntity {
     private String newsDescription;
 
     @CreatedDate
-    private LocalDateTime newDate;
+    private LocalDateTime newsDate;
 
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "class_id")
-//    private CourseEntity course;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id")
+    private Course courseNews;
 
+    public void changeNewsName(String newsName) {
+        this.newsName = newsName;
+    }
 
+    public void changeNewsDescription(String newsDescription) {
+        this.newsDescription = newsDescription;
+    }
+
+    public void changeCourse(Course course) {
+        this.courseNews = course;
+        course.getNewsEntities().add(this);
+    }
+
+    public NewsEntity(String newsName, String newsDescription) {
+        this.newsName = newsName;
+        this.newsDescription = newsDescription;
+    }
 }

@@ -11,6 +11,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Embeddable
 @Builder
@@ -23,6 +25,7 @@ import java.time.LocalDateTime;
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "course_id")
     private Long courseId;
     private String courseName;
     private String courseDescription;
@@ -49,6 +52,10 @@ public class Course {
         this.instructorName = instructorName;
     }
 
+    public void changePrice(Long coursePrice) {
+        this.coursePrice = coursePrice;
+    }
+
     public void changeCourseLevel(Integer courseLevel) {
         this.courseLevel = courseLevel;
     }
@@ -69,5 +76,11 @@ public class Course {
     private LocalDateTime courseCreatedDate;
     @LastModifiedDate
     private LocalDateTime courseModifiedDate;
+
+    @OneToMany(mappedBy = "courseNews")
+    @Builder.Default
+    private List<NewsEntity> newsEntities = new ArrayList<>();
+
+
 
 }
