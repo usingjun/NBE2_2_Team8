@@ -4,23 +4,24 @@ import edu.example.learner.entity.Inquiry;
 import edu.example.learner.entity.InquiryStatus;
 import edu.example.learner.entity.Member;
 import lombok.extern.log4j.Log4j2;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
-import org.springframework.transaction.annotation.Propagation;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Transactional(propagation = Propagation.NOT_SUPPORTED)
+@DataJpaTest
 @Log4j2
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class InquiryRepositoryTests {
     @Autowired
     private InquiryRepository inquiryRepository;
@@ -28,6 +29,8 @@ public class InquiryRepositoryTests {
     private MemberRepository memberRepository;
 
     @Test
+    @Order(1)
+    @Rollback(false)
     void testInsert() {
         //GIVEN
         memberRepository.save(Member.builder().build());
@@ -43,15 +46,15 @@ public class InquiryRepositoryTests {
 
         //THEN
         assertNotNull(savedInquiry);
-        assertEquals(1, savedInquiry.getInquiryId());
+        assertEquals(1L, savedInquiry.getInquiryId());
         assertEquals("inquiry test title", savedInquiry.getInquiryTitle());
         assertEquals("inquiry test content", savedInquiry.getInquiryContent());
 
-        log.info(savedInquiry);
+        log.info("--- savedInquiry : " + savedInquiry);
     }
 
     @Test
-    @Transactional
+    @Order(2)
     void testRead() {
         //GIVEN
         Long inquiryId = 1L;
@@ -63,12 +66,11 @@ public class InquiryRepositoryTests {
         assertNotNull(foundInquiry);
         assertEquals(inquiryId, foundInquiry.get().getInquiryId());
 
-        log.info(foundInquiry);
+        log.info("--- foundInquiry : " + foundInquiry);
     }
 
     @Test
-    @Transactional
-    @Commit
+    @Order(3)
     void testUpdate() {
         //GIVEN
         Long inquiryId = 1L;
@@ -78,10 +80,27 @@ public class InquiryRepositoryTests {
         inquiry.changeInquiryTitle("new inquiry title");
         inquiry.changeInquiryContent("new inquiry content");
         inquiry.changeInquiryStatus(InquiryStatus.RESOLVED);
+        Inquiry updatedInquiry = inquiryRepository.findById(inquiryId).get();
 
         //THEN
         assertEquals("new inquiry title", inquiry.getInquiryTitle());
         assertEquals("new inquiry content", inquiry.getInquiryContent());
         assertEquals(InquiryStatus.RESOLVED.name(), inquiry.getInquiryStatus());
+
+        log.info("--- updatedInquiry : " + updatedInquiry);
+    }
+
+    @Test
+    @Order(4)
+    void testDelete() {
+        //GIVEN
+        Long inquiryId = 1L;
+        assertTrue(inquiryRepository.existsById(inquiryId));
+
+        //WHEN
+        inquiryRepository.deleteById(inquiryId);
+
+        //THEN
+        assertFalse(inquiryRepository.findById(inquiryId).isPresent());
     }
 }
