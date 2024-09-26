@@ -1,7 +1,11 @@
 package edu.example.learner.course.repository;
 
 import edu.example.learner.course.entity.Course;
-import org.springframework.data.repository.CrudRepository;
+import edu.example.learner.course.entity.CourseAttribute;
+import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface CourseRepository extends CrudRepository<Course, Long> {
+import java.util.List;
+
+public interface CourseRepository extends JpaRepository<Course, Long> {
+    List<Course> readByCourseAttribute(CourseAttribute courseAttribute);
 }
