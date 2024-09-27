@@ -2,12 +2,14 @@ package edu.example.learner.course.service;
 
 import edu.example.learner.course.dto.OrderDTO;
 import edu.example.learner.course.dto.OrderItemDTO;
+
 import edu.example.learner.course.dto.OrderUpdateDTO;
 import edu.example.learner.course.entity.Course;
 import edu.example.learner.course.entity.Order;
 import edu.example.learner.course.entity.OrderItem;
 import edu.example.learner.course.entity.OrderStatus;
 import edu.example.learner.course.exception.OrderException;
+
 import edu.example.learner.course.repository.CourseRepository;
 import edu.example.learner.course.repository.OrderItemRepository;
 import edu.example.learner.course.repository.OrderRepository;
@@ -30,6 +32,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDTO add(OrderDTO orderDTO) {
+
         Order order = orderDTO.toEntity(orderDTO); // Order DTO를 Order로 변환
         order = orderRepository.save(order); // Order 저장
 
@@ -43,11 +46,13 @@ public class OrderServiceImpl implements OrderService {
             order.getOrderItems().add(orderItem);
         }
 
+
         return orderDTO;
     }
 
     @Override
     public OrderDTO read(Long orderId) {
+
         Order order = orderRepository.findById(orderId).orElseThrow(OrderException.ORDER_NOT_FOUND::get);
 
         List<OrderItemDTO> orderItemDTOS=new ArrayList<>();
@@ -58,6 +63,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         OrderDTO orderDTO = new OrderDTO(order);
+
         orderDTO.setOrderItemDTOList(orderItemDTOS);
         return orderDTO;
     }

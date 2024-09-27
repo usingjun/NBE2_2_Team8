@@ -18,6 +18,7 @@ public class OrderDTO {
 
     private List<OrderItemDTO> orderItemDTOList;
 
+
     private String orderStatus;
 
     public OrderDTO(Order order) {

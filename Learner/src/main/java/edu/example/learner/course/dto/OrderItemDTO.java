@@ -16,16 +16,22 @@ import lombok.*;
 @Embeddable
 @Data
 public class OrderItemDTO {
+
     private Long orderId;
     private Long courseId;
+
     private String courseName;
     private String courseAttribute;
     private Long price;
 
 
+
+
+
     public OrderItemDTO(OrderItem orderItem) {
         this.courseId = orderItem.getCourse().getCourseId();
         this.courseAttribute = String.valueOf(orderItem.getCourse().getCourseAttribute());
+
         this.price = orderItem.getCourse().getCoursePrice();
         this.orderId = orderItem.getOrder().getOrderId();
         this.courseName = orderItem.getCourse().getCourseName();
@@ -40,5 +46,5 @@ public class OrderItemDTO {
                 .courseAttribute(CourseAttribute.valueOf(orderItemDTO.getCourseAttribute()))
                 .build();
     }
-
+  
 }

@@ -17,7 +17,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@ToString
 @Table(name = "course")
 @EntityListeners(AuditingEntityListener.class)
 public class Course {

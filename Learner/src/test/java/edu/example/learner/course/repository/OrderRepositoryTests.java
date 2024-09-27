@@ -4,9 +4,11 @@ import edu.example.learner.course.dto.CourseDTO;
 import edu.example.learner.course.dto.OrderDTO;
 import edu.example.learner.course.dto.OrderItemDTO;
 import edu.example.learner.course.entity.*;
+
 import edu.example.learner.course.exception.CourseException;
 import edu.example.learner.course.exception.OrderException;
 import edu.example.learner.course.exception.OrderTaskException;
+
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -36,6 +38,7 @@ public class OrderRepositoryTests {
     private OrderItemRepository orderItemRepository;
 
 
+
     @BeforeEach
     @Transactional
     public void registerOrderData(){
@@ -56,6 +59,7 @@ public class OrderRepositoryTests {
         Order order = new Order();
         order.changeOrderStatus(OrderStatus.PROCESSING);
         orderRepository.save(order);
+
 
         //OrderItem 등록
         OrderItem orderItem = OrderItem.builder().order(order)
@@ -79,18 +83,23 @@ public class OrderRepositoryTests {
         Order order = orderRepository.save(orderDTO.toEntity(orderDTO));
         List<OrderItemDTO> orderItemDTOS = new ArrayList<>();
         OrderItemDTO orderItemDTO = OrderItemDTO.builder()
+
                 .courseId(1L)
                 .orderId(order.getOrderId())
                 .price(10000L)
                 .courseAttribute(String.valueOf(CourseAttribute.C))
                 .build();
+
         orderItemDTOS.add(orderItemDTO);
         orderItemDTOS.add(orderItemDTO);
+
 
         for (OrderItemDTO dto : orderItemDTOS) {
             Course course = courseRepository.save(courseRepository.findById(dto.getCourseId()).orElseThrow());
             log.info("course -----" + course);
+
             OrderItem orderItem = orderItemRepository.save(dto.toEntity(dto,order));
+
             order.getOrderItems().add(orderItem);
         }
 
@@ -103,6 +112,7 @@ public class OrderRepositoryTests {
     @Test
     @Transactional
     public void read() {
+
         //given
         Long orderId = 1L;
         Order order = orderRepository.findById(orderId).orElseThrow(OrderException.ORDER_NOT_FOUND::get);
@@ -123,6 +133,7 @@ public class OrderRepositoryTests {
             }
         }
 
+
     }
 
     @Test
@@ -137,6 +148,7 @@ public class OrderRepositoryTests {
 
         OrderDTO orderDTO =new OrderDTO();
         orderDTO.setOrderStatus(String.valueOf(OrderStatus.FAILED));
+
         orderDTO.setOId(orderId);
         orderDTO.getOrderItemDTOList().clear();
 
@@ -147,6 +159,7 @@ public class OrderRepositoryTests {
 
         orderDTO.getOrderItemDTOList().add(orderItemDTO);
         orderDTO.getOrderItemDTOList().add(orderItemDTO);
+
 
         Order order = orderRepository.findById(orderDTO.getOId()).orElseThrow();
         order.changeOrderStatus(OrderStatus.valueOf(orderDTO.getOrderStatus()));
