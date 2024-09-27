@@ -6,8 +6,14 @@ import edu.example.learner.course.entity.Course;
 import edu.example.learner.course.entity.NewsEntity;
 import edu.example.learner.course.repository.CourseRepository;
 import edu.example.learner.course.repository.NewsRepository;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -64,15 +70,14 @@ public class NewsService {
     }
 
     @Transactional(readOnly = true)
-    public List<NewsResDTO> getAllNews(Long courseId) {
+    public Page<NewsResDTO> getAllNews(Long courseId, Pageable pageable) {
         log.info("전체 새소식 조회: 강의 ID {}", courseId);
 
         // 해당 강의에 속하는 모든 새소식 조회
-        List<NewsEntity> newsEntities = newsRepository.findAllNewsByCourse(courseId);
+        Page<NewsEntity> newsEntities = newsRepository.findAllNewsByCourse(courseId, pageable);
 
-        return newsEntities.stream()
-                .map(NewsResDTO::fromEntity)
-                .collect(Collectors.toList());
+        return newsEntities.map(NewsResDTO::fromEntity);
+
     }
 
     private NewsEntity validateNewsInCourse(Long courseId, Long newsId) {
@@ -84,5 +89,34 @@ public class NewsService {
         }
 
         return newsEntity;
+    }
+
+    public void addViewCount(HttpServletRequest request, HttpServletResponse response, Long newsId) {
+
+        Cookie oldCookie = null;
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("postView")) {
+                    oldCookie = cookie;
+                }
+            }
+        }
+
+        if (oldCookie != null) {
+            if (!oldCookie.getValue().contains("[" + newsId.toString() + "]")) {
+                newsRepository.updateView(newsId);
+                oldCookie.setValue(oldCookie.getValue() + "_[" + newsId + "]");
+                oldCookie.setPath("/");
+                oldCookie.setMaxAge(60 * 60 * 24); // 쿠키 시간
+                response.addCookie(oldCookie);
+            }
+        } else {
+            newsRepository.updateView(newsId);
+            Cookie newCookie = new Cookie("postView", "[" + newsId + "]");
+            newCookie.setPath("/");
+            newCookie.setMaxAge(60 * 60 * 24); // 쿠키시간
+            response.addCookie(newCookie);
+        }
     }
 }

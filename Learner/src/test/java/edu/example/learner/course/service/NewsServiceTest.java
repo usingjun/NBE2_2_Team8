@@ -11,6 +11,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -119,35 +122,46 @@ public class NewsServiceTest {
         // Then
         assertThat(foundNews).isNotNull();
         assertThat(foundNews.getNewsName()).isEqualTo("초기 소식 제목");
+        assertThat(foundNews.getViewCount()).isEqualTo(0);
     }
 
     @Test
     public void getAllNews() {
         // Given
+        Course course = new Course();
+        course.changeCourseName("테스트 강의");
+        course.changeCourseDescription("테스트 강의 설명");
+        course.changeInstructorName("테스트 강사");
+        course.changePrice(10000L);
+        course.changeCourseLevel(1);
+        course.changeSale(true);
+
+        Course savedCourse = courseRepository.save(course);
+
         NewsRqDTO newsRqDTO1 = new NewsRqDTO();
         newsRqDTO1.setNewsName("새소식 1");
         newsRqDTO1.setNewsDescription("내용 1");
-
-        NewsEntity news1 = newsRepository.save(newsRqDTO1.toEntity());
+        NewsEntity news1 = newsRqDTO1.toEntity();
         news1.changeCourse(savedCourse); // 강의와 연결
+        newsRepository.save(news1);
 
         NewsRqDTO newsRqDTO2 = new NewsRqDTO();
         newsRqDTO2.setNewsName("새소식 2");
         newsRqDTO2.setNewsDescription("내용 2");
-
-        NewsEntity news2 = newsRepository.save(newsRqDTO2.toEntity());
+        NewsEntity news2 = newsRqDTO2.toEntity();
         news2.changeCourse(savedCourse); // 강의와 연결
+        newsRepository.save(news2);
+
+        // Pageable 설정
+        Pageable pageable = PageRequest.of(0, 10); // 0 페이지, 10개 항목
 
         // When
-        List<NewsResDTO> allNews = newsService.getAllNews(savedCourse.getCourseId());
-
-//        for (NewsResDTO allNew : allNews) {
-//            log.info("출력: {}", allNew);
-//        }
+        Page<NewsResDTO> allNewsPage = newsService.getAllNews(savedCourse.getCourseId(), pageable);
 
         // Then
-        assertThat(allNews).isNotEmpty();
-        assertThat(allNews.size()).isGreaterThan(1); // 초기 소식 포함
+        assertThat(allNewsPage).isNotEmpty();
+        assertThat(allNewsPage.getTotalElements()).isGreaterThan(1); // 초기 소식 포함
+        assertThat(allNewsPage.getContent().size()).isLessThanOrEqualTo(10); // 페이지당 최대 10개 항목
     }
 
 }

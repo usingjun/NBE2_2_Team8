@@ -18,6 +18,7 @@ public class NewsResDTO {
     private String newsDescription;
     private LocalDateTime newsDate;
     private LocalDateTime lastModifiedDate;
+    private int viewCount;
 
     public static NewsResDTO fromEntity(NewsEntity entity) {
         return NewsResDTO.builder()
@@ -26,6 +27,7 @@ public class NewsResDTO {
                 .newsDescription(entity.getNewsDescription())
                 .newsDate(entity.getNewsDate())
                 .lastModifiedDate(entity.getLastModifiedDate())
+                .viewCount(entity.getViewCount())
                 .build();
     }
 }
