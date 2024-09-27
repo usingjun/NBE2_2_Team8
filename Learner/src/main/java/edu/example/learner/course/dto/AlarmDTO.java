@@ -19,7 +19,6 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-
 public class AlarmDTO {
 
     private Long alarmId;

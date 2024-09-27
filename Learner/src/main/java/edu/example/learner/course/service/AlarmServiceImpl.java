@@ -2,7 +2,6 @@ package edu.example.learner.course.service;
 
 import edu.example.learner.course.dto.AlarmDTO;
 import edu.example.learner.course.repository.AlarmRepository;
-import edu.example.learner.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -17,11 +16,10 @@ import java.util.List;
 public class AlarmServiceImpl implements AlarmService {
     private final AlarmRepository alarmRepository;
 
-    private final MemberRepository memberRepository;
+    private final TemporaryMemberRepository temporaryMemberRepository;
 
     @Override
     public AlarmDTO findByAlarmTitle(String alarmTitle) {
-        alarmRepository.findByAlarmTitle(alarmTitle);
         return null;
     }
 
