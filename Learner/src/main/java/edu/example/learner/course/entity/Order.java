@@ -38,15 +38,17 @@ public class Order {
 
     @JsonIgnore
     @Builder.Default
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL , fetch = FetchType.LAZY)
-    private List<Course> courses = new ArrayList<>();
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL ,orphanRemoval = true , fetch = FetchType.LAZY)
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     public void changeOrderStatus(OrderStatus status) {
         this.orderStatus = status;
     }
-    public void add(Course course) {
-        course.changeOrder(this);
-        courses.add(course);
+    public void add(OrderItem orderItem) {
+        orderItems.add(orderItem);
+    }
+    public void changeOrderItems(List<OrderItem> orderItems) {
+        this.orderItems = orderItems;
     }
 
 }

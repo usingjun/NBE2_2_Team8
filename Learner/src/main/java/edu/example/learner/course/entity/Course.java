@@ -17,7 +17,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@ToString
 @Table(name = "course")
 @EntityListeners(AuditingEntityListener.class)
 public class Course {
@@ -26,9 +25,6 @@ public class Course {
     @Column(name = "course_id")
     private Long courseId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
-    private Order order;
 
     private String courseName;
     private String courseDescription;
@@ -66,9 +62,6 @@ public class Course {
 
     public void changeSale(boolean sale) {
         this.sale = sale;
-    }
-    public void changeOrder(Order order) {
-        this.order = order;
     }
 
     public void changeCourseCreatedDate(LocalDateTime courseCreatedDate) {

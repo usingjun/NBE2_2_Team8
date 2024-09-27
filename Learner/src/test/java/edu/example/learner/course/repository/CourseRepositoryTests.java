@@ -34,13 +34,13 @@ public class CourseRepositoryTests {
     @Test
     void add(){
         Course course = courseRepository.save(Course.builder().courseAttribute(CourseAttribute.C)
-                .courseDescription("testDB2")
-                .courseName("test강의2")
+                .courseDescription("testDB3")
+                .courseName("test강의3")
                 .courseLevel(2)
                 .coursePrice(5000L)
                 .sale(false)
                 .courseAttribute(CourseAttribute.C)
-                .instructorName("test강사2")
+                .instructorName("test강사3")
                 .build());
         Assertions.assertThat(course).isNotNull();
     }
@@ -73,7 +73,7 @@ public class CourseRepositoryTests {
         assertEquals("변경", coursefound.getCourseDescription());
     }
     @Test
-    void deleteCourse() throws Exception {
+    void deleteCourse() {
         courseRepository.deleteById(2L);
         courseRepository.findById(2L).orElseThrow();
     }
