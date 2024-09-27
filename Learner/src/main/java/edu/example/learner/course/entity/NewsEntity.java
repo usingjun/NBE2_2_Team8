@@ -39,6 +39,9 @@ public class NewsEntity {
     @Column(columnDefinition = "integer default 0", nullable = false)
     private int likeCount;
 
+    @Column(columnDefinition = "bigint default 0", nullable = false)
+    private Long CommentCnt;
+
     @CreatedDate
     private LocalDateTime newsDate;
 

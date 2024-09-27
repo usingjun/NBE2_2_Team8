@@ -91,6 +91,7 @@ public class NewsService {
         return newsEntity;
     }
 
+    // 쿠키 버전
     public void addViewCount(HttpServletRequest request, HttpServletResponse response, Long newsId) {
 
         Cookie oldCookie = null;
@@ -119,4 +120,11 @@ public class NewsService {
             response.addCookie(newCookie);
         }
     }
+
+    // 레디스 버전
+    public void addViewCountV2() {
+
+    }
+
+
 }
