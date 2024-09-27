@@ -25,21 +25,40 @@ import static lombok.AccessLevel.PROTECTED;
 public class NewsEntity {
 
     @Id @GeneratedValue(strategy = IDENTITY)
+    @Column(name = "news_id")
     private Long newsId;
 
+    @Column(nullable = false)
     private String newsName;
 
     private String newsDescription;
 
+    @Column(columnDefinition = "integer default 0", nullable = false)	// 조회수의 기본 값을 0으로 지정, null 불가 처리
+    private int viewCount;
+
+    @Column(columnDefinition = "integer default 0", nullable = false)
+    private int likeCount;
+
     @CreatedDate
-    private LocalDateTime newDate;
+    private LocalDateTime newsDate;
 
     @LastModifiedDate
     private LocalDateTime lastModifiedDate;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "class_id")
-//    private CourseEntity course;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id")
+    private Course courseNews;
 
+    public void changeNewsName(String newsName) {
+        this.newsName = newsName;
+    }
 
+    public void changeNewsDescription(String newsDescription) {
+        this.newsDescription = newsDescription;
+    }
+
+    public void changeCourse(Course course) {
+        this.courseNews = course;
+        course.getNewsEntities().add(this);
+    }
 }

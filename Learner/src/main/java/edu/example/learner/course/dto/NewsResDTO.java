@@ -1,5 +1,6 @@
 package edu.example.learner.course.dto;
 
+import edu.example.learner.course.entity.NewsEntity;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -7,6 +8,7 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
+@ToString
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,4 +18,16 @@ public class NewsResDTO {
     private String newsDescription;
     private LocalDateTime newsDate;
     private LocalDateTime lastModifiedDate;
+    private int viewCount;
+
+    public static NewsResDTO fromEntity(NewsEntity entity) {
+        return NewsResDTO.builder()
+                .newsId(entity.getNewsId())
+                .newsName(entity.getNewsName())
+                .newsDescription(entity.getNewsDescription())
+                .newsDate(entity.getNewsDate())
+                .lastModifiedDate(entity.getLastModifiedDate())
+                .viewCount(entity.getViewCount())
+                .build();
+    }
 }
