@@ -34,7 +34,7 @@ public class Inquiry {
     
     private String inquiryStatus;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
 
