@@ -2,8 +2,6 @@ package edu.example.learner.course.dto;
 
 import edu.example.learner.course.entity.Course;
 import edu.example.learner.course.entity.CourseAttribute;
-import edu.example.learner.course.entity.Order;
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.*;
 
 @Getter

@@ -2,9 +2,8 @@ package edu.example.learner.course.repository;
 
 import edu.example.learner.course.dto.CourseDTO;
 import edu.example.learner.course.dto.OrderDTO;
-import edu.example.learner.course.entity.Course;
-import edu.example.learner.course.entity.Order;
-import edu.example.learner.course.entity.OrderStatus;
+import edu.example.learner.course.dto.OrderItemDTO;
+import edu.example.learner.course.entity.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -16,7 +15,6 @@ import org.springframework.test.annotation.Commit;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @SpringBootTest
 @Log4j2
@@ -27,33 +25,50 @@ public class OrderRepositoryTests {
     private OrderRepository orderRepository;
     @Autowired
     private CourseRepository courseRepository;
+    @Autowired
+    private OrderItemRepository orderItemRepository;
 
 
     @Test
     @Transactional
     @Commit
     public void add() {
-        List<CourseDTO> courseDTOList = new ArrayList<>();
-        CourseDTO courseDTO = new CourseDTO(courseRepository.findById(1L).orElseThrow());
-        courseDTOList.add(courseDTO);
-        courseDTOList.add(new CourseDTO(courseRepository.findById(2L).orElseThrow()));
-        OrderDTO orderDTO = OrderDTO.builder().orderStatus(String.valueOf(OrderStatus.ACCEPT))
-                .courseDTOList(courseDTOList).build();
 
-        Order order = orderDTO.toEntity(orderDTO);
-        for (CourseDTO dto : orderDTO.getCourseDTOList()) {
-            order.getCourses().add(courseRepository.findById(dto.getCourseId()).orElseThrow());
+        OrderDTO orderDTO = OrderDTO.builder().orderStatus(String.valueOf(OrderStatus.CANCELED))
+                .build();
+        Order order = orderRepository.save(orderDTO.toEntity(orderDTO));
+        List<OrderItemDTO> orderItemDTOS = new ArrayList<>();
+        OrderItemDTO build = OrderItemDTO.builder()
+                .courseId(1L)
+                .orderId(order.getOrderId())
+                .price(10000L)
+                .courseAttribute(String.valueOf(CourseAttribute.C))
+                .build();
+        orderItemDTOS.add(build);
+        orderItemDTOS.add(build);
+
+
+
+
+
+        for (OrderItemDTO dto : orderItemDTOS) {
+            Course course = courseRepository.save(courseRepository.findById(dto.getCourseId()).orElseThrow());
+            log.info("course -----" + course);
+            OrderItem orderItem = orderItemRepository.save(dto.toEntity(dto));
+            order.getOrderItems().add(orderItem);
         }
-        orderRepository.save(order);
-        System.out.println("Added Order with courses size: " + order.getCourses().size());
-        System.out.println("Read Order with courses size: " + order.getCourses().get(0));
+
+
+
+        System.out.println("Added Order with courses size: " + order.getOrderItems().size());
+        System.out.println("Read Order with courses size: " + order.getOrderItems().get(0));
     }
 
     @Test
     @Transactional
     public void read() {
-        Order order = orderRepository.findById(1L).orElseThrow();
-        System.out.println("Read Order with courses size: " + order.getCourses().get(0));
+        Order order = orderRepository.findById(12L).orElseThrow();
+        System.out.println("Read Order with courses size: " + order.getOrderItems().get(0));
     }
 
     @Test
@@ -66,13 +81,18 @@ public class OrderRepositoryTests {
         OrderDTO orderDTO =new OrderDTO();
         orderDTO.setOrderStatus(String.valueOf(OrderStatus.FAILED));
         orderDTO.setOId(20L);
-        orderDTO.setCourseDTOList(courseDTOList);
+        orderDTO.setOrderItemDTOList(orderDTO.getOrderItemDTOList());
         Order order = orderRepository.findById(orderDTO.getOId()).orElseThrow();
         order.changeOrderStatus(OrderStatus.valueOf(orderDTO.getOrderStatus()));
-        order.getCourses().clear();
+        order.getOrderItems().clear();
 
-        for (CourseDTO courseDTO : courseDTOList) {
-            order.getCourses().add(courseRepository.findById(courseDTO.getCourseId()).orElseThrow());
+        for (OrderItemDTO dto : orderDTO.getOrderItemDTOList()) {
+            Course course = courseRepository.save(courseRepository.findById(dto.getCourseId()).orElseThrow());
+            log.info("course -----" + course);
+            OrderItem orderItem = OrderItem.builder().course(course)
+                    .price(course.getCoursePrice())
+                    .build();
+            order.getOrderItems().add(orderItem);
         }
         Assertions.assertEquals(order.getOrderStatus(), OrderStatus.FAILED);
     }
