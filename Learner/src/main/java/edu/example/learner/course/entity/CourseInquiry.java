@@ -42,19 +42,19 @@ public class CourseInquiry implements Inquiry {
 
 
     @Override
-    public void changeInqueryTitle(String title){
-
+    public void changeInqueryTitle(String inquiryTitle){
+        this.inquiryTitle = inquiryTitle;
     }
     @Override
-    public void changeInquiryContent(String content){
-
+    public void changeInquiryContent(String inquiryContent){
+        this.inquiryContent = inquiryContent;
     }
     @Override
     public void changeInquiryStatus(InquiryStatus inquiryStatus){
-
+        this.inquiryStatus = inquiryStatus;
     }
     @Override
-    public void changeInquiryGood(int good){
-
+    public void changeInquiryGood(Long inquiryGood){
+        this.inquiryGood = inquiryGood;
     }
 }

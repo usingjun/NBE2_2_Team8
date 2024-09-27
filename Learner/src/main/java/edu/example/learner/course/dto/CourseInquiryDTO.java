@@ -2,6 +2,7 @@ package edu.example.learner.course.dto;
 
 import edu.example.learner.course.entity.CourseInquiry;
 import edu.example.learner.course.entity.InquiryStatus;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,7 +22,11 @@ public class CourseInquiryDTO {
     private String inquiryContent;
     private LocalDateTime createdDate;
     private LocalDateTime updateDate;
+
+
     private InquiryStatus inquiryStatus;
+
+    @Min(0)
     private Long inquiryGood;
 
     public CourseInquiry toEntity(){

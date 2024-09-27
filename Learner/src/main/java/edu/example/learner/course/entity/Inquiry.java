@@ -15,5 +15,5 @@ public interface Inquiry {
     void changeInqueryTitle(String title);
     void changeInquiryContent(String content);
     void changeInquiryStatus(InquiryStatus inquiryStatus);
-    void changeInquiryGood(int good);
+    void changeInquiryGood(Long good);
 }
