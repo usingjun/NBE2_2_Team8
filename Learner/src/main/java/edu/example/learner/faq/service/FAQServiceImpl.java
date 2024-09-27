@@ -1,5 +1,6 @@
 package edu.example.learner.faq.service;
 
+import edu.example.learner.exception.LearnerException;
 import edu.example.learner.faq.dto.FAQDTO;
 import edu.example.learner.faq.entity.FAQ;
 import edu.example.learner.faq.repository.FAQRepository;
@@ -22,7 +23,7 @@ public class FAQServiceImpl implements FAQService {
 
     @Override
     public FAQDTO read(Long faqId) {
-        return new FAQDTO(faqRepository.findById(faqId).orElseThrow());
+        return new FAQDTO(faqRepository.findById(faqId).orElseThrow(LearnerException.NOT_FOUND_EXCEPTION::getTaskException));
     }
 
     @Override
@@ -42,7 +43,7 @@ public class FAQServiceImpl implements FAQService {
             return new FAQDTO(savedFAQ);
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new RuntimeException();
+            throw LearnerException.NOT_REGISTERED_EXCEPTION.getTaskException();
         }
     }
 
@@ -56,7 +57,7 @@ public class FAQServiceImpl implements FAQService {
             return new FAQDTO(faq);
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new RuntimeException();
+            throw LearnerException.NOT_MODIFIED_EXCEPTION.getTaskException();
         }
     }
 
@@ -67,7 +68,7 @@ public class FAQServiceImpl implements FAQService {
             faqRepository.deleteById(faqId);
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new RuntimeException();
+            throw LearnerException.NOT_REMOVED_EXCEPTION.getTaskException();
         }
     }
 }

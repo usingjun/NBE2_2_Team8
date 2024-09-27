@@ -1,8 +1,8 @@
 package edu.example.learner.inquiry.service;
 
+import edu.example.learner.exception.LearnerException;
 import edu.example.learner.inquiry.dto.InquiryDTO;
 import edu.example.learner.inquiry.entity.Inquiry;
-import edu.example.learner.inquiry.entity.InquiryStatus;
 import edu.example.learner.inquiry.repository.InquiryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -21,7 +21,7 @@ public class InquiryServiceImpl implements InquiryService {
 
     @Override
     public InquiryDTO read(Long inquiryId) {
-        return new InquiryDTO(inquiryRepository.findById(inquiryId).orElseThrow());
+        return new InquiryDTO(inquiryRepository.findById(inquiryId).orElseThrow(LearnerException.NOT_FOUND_EXCEPTION::getTaskException));
     }
 
     @Override
@@ -35,8 +35,8 @@ public class InquiryServiceImpl implements InquiryService {
             Inquiry savedInquiry = inquiryRepository.save(inquiryDTO.toEntity());
             return new InquiryDTO(savedInquiry);
         } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new RuntimeException();
+            log.error(e);
+            throw LearnerException.NOT_REGISTERED_EXCEPTION.getTaskException();
         }
     }
 
@@ -49,8 +49,8 @@ public class InquiryServiceImpl implements InquiryService {
             inquiry.changeInquiryStatus(inquiryDTO.getInquiryStatus());
             return new InquiryDTO(inquiry);
         } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new RuntimeException();
+            log.error(e);
+            throw LearnerException.NOT_MODIFIED_EXCEPTION.getTaskException();
         }
     }
 
@@ -60,8 +60,8 @@ public class InquiryServiceImpl implements InquiryService {
         try {
             inquiryRepository.deleteById(inquiryId);
         } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new RuntimeException();
+            log.error(e);
+            throw LearnerException.NOT_REMOVED_EXCEPTION.getTaskException();
         }
     }
 }

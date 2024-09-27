@@ -3,6 +3,7 @@ package edu.example.learner.answer.service;
 import edu.example.learner.answer.dto.AnswerDTO;
 import edu.example.learner.answer.entity.Answer;
 import edu.example.learner.answer.repository.AnswerRepository;
+import edu.example.learner.exception.LearnerException;
 import edu.example.learner.inquiry.repository.InquiryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -22,7 +23,7 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     public AnswerDTO read(Long answerId) {
-        return new AnswerDTO(answerRepository.findById(answerId).orElseThrow());
+        return new AnswerDTO(answerRepository.findById(answerId).orElseThrow(LearnerException.NOT_FOUND_EXCEPTION::getTaskException));
     }
 
     @Override
@@ -36,8 +37,8 @@ public class AnswerServiceImpl implements AnswerService {
             Answer savedAnswer = answerRepository.save(answerDTO.toEntity());
             return new AnswerDTO(savedAnswer);
         } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new RuntimeException();
+            log.error(e);
+            throw LearnerException.NOT_REGISTERED_EXCEPTION.getTaskException();
         }
     }
 
@@ -48,8 +49,8 @@ public class AnswerServiceImpl implements AnswerService {
             answer.changeAnswerContent(answerDTO.getAnswerContent());
             return new AnswerDTO(answer);
         } catch (Exception e) {
-            log.error(e.getMessage());
-            throw new RuntimeException();
+            log.error(e);
+            throw LearnerException.NOT_MODIFIED_EXCEPTION.getTaskException();
         }
     }
 
@@ -60,7 +61,7 @@ public class AnswerServiceImpl implements AnswerService {
             answerRepository.deleteById(answerId);
         } catch (Exception e) {
             log.error(e.getMessage());
-            throw new RuntimeException();
+            throw LearnerException.NOT_REMOVED_EXCEPTION.getTaskException();
         }
     }
 }
