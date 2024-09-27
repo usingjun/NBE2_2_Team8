@@ -57,7 +57,6 @@ public class OrderServiceImpl implements OrderService {
             orderItemDTOS.add(new OrderItemDTO(orderItem));
         }
 
-
         OrderDTO orderDTO = new OrderDTO(order);
         orderDTO.setOrderItemDTOList(orderItemDTOS);
         return orderDTO;
