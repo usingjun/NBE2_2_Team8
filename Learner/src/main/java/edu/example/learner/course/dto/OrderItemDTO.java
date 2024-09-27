@@ -16,27 +16,29 @@ import lombok.*;
 @Embeddable
 @Data
 public class OrderItemDTO {
-    private Long courseId;
     private Long orderId;
+    private Long courseId;
     private String courseName;
     private String courseAttribute;
     private Long price;
 
-    private int quantity;
 
     public OrderItemDTO(OrderItem orderItem) {
         this.courseId = orderItem.getCourse().getCourseId();
         this.courseAttribute = String.valueOf(orderItem.getCourse().getCourseAttribute());
-        this.price = orderItem.getPrice();
+        this.price = orderItem.getCourse().getCoursePrice();
+        this.orderId = orderItem.getOrder().getOrderId();
+        this.courseName = orderItem.getCourse().getCourseName();
     }
 
-    public OrderItem toEntity(OrderItemDTO orderItemDTO){
+    public OrderItem toEntity(OrderItemDTO orderItemDTO, Order order) {
         return OrderItem.builder()
-                .order(Order.builder().orderId(orderId).build())
+                .order(order) // 외부에서 전달된 Order를 사용
                 .course(Course.builder()
-                        .courseId(courseId).build())
-                .price(price)
-                .courseAttribute(CourseAttribute.valueOf(courseAttribute))
+                        .courseId(orderItemDTO.getCourseId()).coursePrice(orderItemDTO.price).build())
+                .price(orderItemDTO.getPrice())
+                .courseAttribute(CourseAttribute.valueOf(orderItemDTO.getCourseAttribute()))
                 .build();
     }
+
 }

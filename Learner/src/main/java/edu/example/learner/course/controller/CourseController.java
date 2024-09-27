@@ -8,6 +8,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -24,12 +25,19 @@ public class CourseController {
 
         return ResponseEntity.ok(courseService.addCourse(courseDTO));
     }
+
     @GetMapping
     public ResponseEntity<CourseDTO> readCourse(@RequestParam Long courseId) {
 
         log.info("Reading course {}", courseId);
 
         return ResponseEntity.ok(courseService.read(courseId));
+    }
+
+    @GetMapping("/list")
+    public ResponseEntity<List<CourseDTO>> readCourseList() {
+        log.info("Reading course list");
+        return ResponseEntity.ok(courseService.readAll());
     }
 
     @PutMapping("/update")

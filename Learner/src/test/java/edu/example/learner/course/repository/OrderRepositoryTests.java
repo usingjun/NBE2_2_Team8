@@ -4,6 +4,8 @@ import edu.example.learner.course.dto.CourseDTO;
 import edu.example.learner.course.dto.OrderDTO;
 import edu.example.learner.course.dto.OrderItemDTO;
 import edu.example.learner.course.entity.*;
+import edu.example.learner.course.exception.OrderException;
+import edu.example.learner.course.exception.OrderTaskException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -47,14 +49,10 @@ public class OrderRepositoryTests {
         orderItemDTOS.add(build);
         orderItemDTOS.add(build);
 
-
-
-
-
         for (OrderItemDTO dto : orderItemDTOS) {
             Course course = courseRepository.save(courseRepository.findById(dto.getCourseId()).orElseThrow());
             log.info("course -----" + course);
-            OrderItem orderItem = orderItemRepository.save(dto.toEntity(dto));
+            OrderItem orderItem = orderItemRepository.save(dto.toEntity(dto,order));
             order.getOrderItems().add(orderItem);
         }
 
@@ -67,8 +65,11 @@ public class OrderRepositoryTests {
     @Test
     @Transactional
     public void read() {
-        Order order = orderRepository.findById(12L).orElseThrow();
-        System.out.println("Read Order with courses size: " + order.getOrderItems().get(0));
+        Long orderId = 13L;
+        Order order = orderRepository.findById(orderId).orElseThrow(OrderException.ORDER_NOT_FOUND::get);
+        for (OrderItem orderItem : order.getOrderItems()) {
+            System.out.println("orderItem : "+orderItem);
+        }
     }
 
     @Test
