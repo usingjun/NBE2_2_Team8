@@ -29,6 +29,7 @@ public class Course {
 
     private String courseName;
     private String courseDescription;
+
     @Enumerated(EnumType.STRING)
     private CourseAttribute courseAttribute;
 

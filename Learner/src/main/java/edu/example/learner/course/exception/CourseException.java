@@ -12,7 +12,7 @@ public enum CourseException {
     CourseException(String message, int code){
         courseTaskException = new CourseTaskException(message, code);
     }
-    public CourseTaskException getCourseTaskException() {
+    public CourseTaskException get() {
         return courseTaskException;
     }
 }
