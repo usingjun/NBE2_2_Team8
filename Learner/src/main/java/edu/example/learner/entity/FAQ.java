@@ -31,8 +31,7 @@ public class FAQ {
     @LastModifiedDate
     private LocalDateTime faqUpdateDate;
 
-    @Enumerated(EnumType.STRING)
-    private FAQCategory faqCategory;
+    private String faqCategory;
 
     public void changeFaqTitle(String faqTitle) {
         this.faqTitle = faqTitle;
@@ -42,7 +41,7 @@ public class FAQ {
         this.faqContent = faqContent;
     }
 
-    public void changeFaqCategory(FAQCategory faqCategory) {
+    public void changeFaqCategory(String faqCategory) {
         this.faqCategory = faqCategory;
     }
 }

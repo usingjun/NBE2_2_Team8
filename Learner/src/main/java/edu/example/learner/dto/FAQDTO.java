@@ -28,7 +28,7 @@ public class FAQDTO {
     private LocalDateTime faqUpdateDate;
 
     @NotEmpty
-    private FAQCategory faqCategory;
+    private String faqCategory;
 
     public FAQDTO(FAQ faq) {
         this.faqId = faq.getFaqId();

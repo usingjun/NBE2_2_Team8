@@ -27,7 +27,6 @@ public class Inquiry {
     @CreatedDate
     private LocalDateTime inquiryCreateDate;
 
-//    @Enumerated(EnumType.STRING)
     private String inquiryStatus;
 
     @ManyToOne(fetch = FetchType.LAZY)
