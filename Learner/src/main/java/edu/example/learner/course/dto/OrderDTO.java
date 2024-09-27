@@ -1,9 +1,11 @@
 package edu.example.learner.course.dto;
 
 import edu.example.learner.course.entity.Order;
+import edu.example.learner.course.entity.OrderItem;
 import edu.example.learner.course.entity.OrderStatus;
 import lombok.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -13,7 +15,7 @@ import java.util.List;
 @Data
 public class OrderDTO {
     private Long oId;
-    private List<CourseDTO> courseDTOList;
+    private List<OrderItemDTO> orderItemDTOList;
     private String orderStatus;
 
     public OrderDTO(Order order) {
