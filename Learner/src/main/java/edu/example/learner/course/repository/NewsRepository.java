@@ -18,4 +18,12 @@ public interface NewsRepository extends JpaRepository<NewsEntity, Long> {
     @Modifying
     @Query("update NewsEntity n set n.viewCount = n.viewCount + 1 where n.newsId = :newsId")
     int updateView(@Param("newsId") Long newsId);
+
+    @Modifying
+    @Query("update NewsEntity n set n.likeCount = n.likeCount + 1 where n = :news")
+    void addLikeCount(@Param("news") NewsEntity news);
+
+    @Modifying
+    @Query("update NewsEntity n set n.likeCount = n.likeCount - 1 where n = :news")
+    void subLikeCount(@Param("news") NewsEntity news);
 }
