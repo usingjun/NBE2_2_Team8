@@ -1,8 +1,10 @@
 package edu.example.learner.repository;
 
-import edu.example.learner.entity.Answer;
-import edu.example.learner.entity.Inquiry;
+import edu.example.learner.answer.entity.Answer;
+import edu.example.learner.answer.repository.AnswerRepository;
+import edu.example.learner.inquiry.entity.Inquiry;
 import edu.example.learner.entity.Member;
+import edu.example.learner.inquiry.repository.InquiryRepository;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;

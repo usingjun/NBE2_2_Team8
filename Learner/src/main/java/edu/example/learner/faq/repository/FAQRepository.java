@@ -1,6 +1,6 @@
-package edu.example.learner.repository;
+package edu.example.learner.faq.repository;
 
-import edu.example.learner.entity.FAQ;
+import edu.example.learner.faq.entity.FAQ;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

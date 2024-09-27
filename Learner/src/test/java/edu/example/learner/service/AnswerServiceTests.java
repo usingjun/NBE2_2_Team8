@@ -1,11 +1,12 @@
 package edu.example.learner.service;
 
-import edu.example.learner.dto.AnswerDTO;
-import edu.example.learner.entity.Inquiry;
-import edu.example.learner.entity.InquiryStatus;
+import edu.example.learner.answer.dto.AnswerDTO;
+import edu.example.learner.answer.service.AnswerService;
+import edu.example.learner.inquiry.entity.Inquiry;
+import edu.example.learner.inquiry.entity.InquiryStatus;
 import edu.example.learner.entity.Member;
-import edu.example.learner.repository.AnswerRepository;
-import edu.example.learner.repository.InquiryRepository;
+import edu.example.learner.answer.repository.AnswerRepository;
+import edu.example.learner.inquiry.repository.InquiryRepository;
 import edu.example.learner.repository.MemberRepository;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.*;

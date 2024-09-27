@@ -1,8 +1,9 @@
 package edu.example.learner.service;
 
-import edu.example.learner.dto.FAQDTO;
-import edu.example.learner.entity.FAQCategory;
-import edu.example.learner.repository.FAQRepository;
+import edu.example.learner.faq.dto.FAQDTO;
+import edu.example.learner.faq.entity.FAQCategory;
+import edu.example.learner.faq.repository.FAQRepository;
+import edu.example.learner.faq.service.FAQService;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;

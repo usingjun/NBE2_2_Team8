@@ -1,8 +1,10 @@
-package edu.example.learner.entity;
+package edu.example.learner.inquiry.entity;
 
+import edu.example.learner.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
@@ -27,9 +29,12 @@ public class Inquiry {
     @CreatedDate
     private LocalDateTime inquiryCreateDate;
 
+    @LastModifiedDate
+    private LocalDateTime inquiryUpdateDate;
+    
     private String inquiryStatus;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "member_id")
     private Member member;
 
@@ -41,7 +46,7 @@ public class Inquiry {
         this.inquiryContent = inquiryContent;
     }
 
-    public void changeInquiryStatus(InquiryStatus inquiryStatus) {
-        this.inquiryStatus = inquiryStatus.name();
+    public void changeInquiryStatus(String inquiryStatus) {
+        this.inquiryStatus = inquiryStatus;
     }
 }

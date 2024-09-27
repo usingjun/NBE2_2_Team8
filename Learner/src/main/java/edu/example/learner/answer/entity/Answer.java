@@ -1,5 +1,6 @@
-package edu.example.learner.entity;
+package edu.example.learner.answer.entity;
 
+import edu.example.learner.inquiry.entity.Inquiry;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;

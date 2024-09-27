@@ -1,4 +1,4 @@
-package edu.example.learner.entity;
+package edu.example.learner.faq.entity;
 
 public enum FAQCategory {
     LOGIN,

@@ -1,6 +1,6 @@
-package edu.example.learner.service;
+package edu.example.learner.answer.service;
 
-import edu.example.learner.dto.AnswerDTO;
+import edu.example.learner.answer.dto.AnswerDTO;
 
 import java.util.List;
 

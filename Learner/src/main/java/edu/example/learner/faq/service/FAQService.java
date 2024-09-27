@@ -1,7 +1,6 @@
-package edu.example.learner.service;
+package edu.example.learner.faq.service;
 
-import edu.example.learner.dto.FAQDTO;
-import edu.example.learner.entity.FAQCategory;
+import edu.example.learner.faq.dto.FAQDTO;
 
 import java.util.List;
 

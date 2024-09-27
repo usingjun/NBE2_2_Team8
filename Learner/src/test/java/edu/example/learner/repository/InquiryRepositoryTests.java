@@ -1,8 +1,9 @@
 package edu.example.learner.repository;
 
-import edu.example.learner.entity.Inquiry;
-import edu.example.learner.entity.InquiryStatus;
+import edu.example.learner.inquiry.entity.Inquiry;
+import edu.example.learner.inquiry.entity.InquiryStatus;
 import edu.example.learner.entity.Member;
+import edu.example.learner.inquiry.repository.InquiryRepository;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -10,10 +11,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Commit;
 import org.springframework.test.annotation.Rollback;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 

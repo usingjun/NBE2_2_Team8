@@ -1,7 +1,7 @@
-package edu.example.learner.dto;
+package edu.example.learner.answer.dto;
 
-import edu.example.learner.entity.Answer;
-import edu.example.learner.entity.Inquiry;
+import edu.example.learner.answer.entity.Answer;
+import edu.example.learner.inquiry.entity.Inquiry;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

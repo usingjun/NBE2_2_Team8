@@ -1,7 +1,7 @@
-package edu.example.learner.dto;
+package edu.example.learner.inquiry.dto;
 
-import edu.example.learner.entity.Inquiry;
-import edu.example.learner.entity.InquiryStatus;
+import edu.example.learner.inquiry.entity.Inquiry;
+import edu.example.learner.inquiry.entity.InquiryStatus;
 import edu.example.learner.entity.Member;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -26,6 +26,8 @@ public class InquiryDTO {
 
     private LocalDateTime inquiryCreateDate;
 
+    private LocalDateTime inquiryUpdateDate;
+
     @Builder.Default
     private String inquiryStatus = InquiryStatus.CONFIRMING.name();
 
@@ -36,6 +38,7 @@ public class InquiryDTO {
         this.inquiryTitle = inquiry.getInquiryTitle();
         this.inquiryContent = inquiry.getInquiryContent();
         this.inquiryCreateDate = inquiry.getInquiryCreateDate();
+        this.inquiryUpdateDate = inquiry.getInquiryUpdateDate();
         this.inquiryStatus = inquiry.getInquiryStatus();
         this.memberId = inquiry.getMember().getMemberId();
     }
@@ -46,6 +49,7 @@ public class InquiryDTO {
                 .inquiryTitle(inquiryTitle)
                 .inquiryContent(inquiryContent)
                 .inquiryCreateDate(inquiryCreateDate)
+                .inquiryUpdateDate(inquiryUpdateDate)
                 .inquiryStatus(inquiryStatus)
                 .member(Member.builder().memberId(memberId).build())
                 .build();

@@ -1,10 +1,9 @@
-package edu.example.learner.service;
+package edu.example.learner.answer.service;
 
-import edu.example.learner.dto.AnswerDTO;
-import edu.example.learner.entity.Answer;
-import edu.example.learner.entity.InquiryStatus;
-import edu.example.learner.repository.AnswerRepository;
-import edu.example.learner.repository.InquiryRepository;
+import edu.example.learner.answer.dto.AnswerDTO;
+import edu.example.learner.answer.entity.Answer;
+import edu.example.learner.answer.repository.AnswerRepository;
+import edu.example.learner.inquiry.repository.InquiryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;

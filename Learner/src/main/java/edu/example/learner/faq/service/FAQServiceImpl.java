@@ -1,9 +1,9 @@
-package edu.example.learner.service;
+package edu.example.learner.faq.service;
 
-import edu.example.learner.dto.FAQDTO;
-import edu.example.learner.entity.FAQ;
-import edu.example.learner.repository.FAQRepository;
-import edu.example.learner.repository.InquiryRepository;
+import edu.example.learner.faq.dto.FAQDTO;
+import edu.example.learner.faq.entity.FAQ;
+import edu.example.learner.faq.repository.FAQRepository;
+import edu.example.learner.inquiry.repository.InquiryRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
