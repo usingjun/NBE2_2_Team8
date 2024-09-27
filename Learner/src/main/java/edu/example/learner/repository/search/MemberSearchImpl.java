@@ -6,6 +6,7 @@ import edu.example.learner.entity.QMember;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
+import java.util.Optional;
 
 @RequiredArgsConstructor
 public class MemberSearchImpl implements MemberSearch{
@@ -26,5 +27,13 @@ public class MemberSearchImpl implements MemberSearch{
         return jpaQueryFactory
                 .selectFrom(qMember)
                 .fetch();
+    }
+
+    @Override
+    public Optional<Member> getMemberByEmail(String email) {
+        return Optional.ofNullable(jpaQueryFactory
+                .selectFrom(qMember)
+                .where(qMember.email.eq(email))
+                .fetchOne());
     }
 }

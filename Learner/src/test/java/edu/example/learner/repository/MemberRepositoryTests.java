@@ -1,6 +1,7 @@
 package edu.example.learner.repository;
 
 import edu.example.learner.entity.Member;
+import edu.example.learner.entity.Role;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,15 +34,15 @@ public class MemberRepositoryTests {
                                   .password("PasswordEncoder")
                                   .nickname("Nickname" + i)
                                   .phoneNumber("010-0000-000" + i)
-                                  .profileImage("default.jpg")
-                                  .profileAddress("default.jpg,address")
                                   .introduction("안녕하세요")
+                                  .role(i > 2 ? Role.ADMIN : Role.USER)
                                   .build();
 
         Member savedmember = memberRepository.save(member);
 
         assertNotNull(savedmember);
         assertEquals(i, savedmember.getMemberId());
+        assertNotNull(savedmember.getCreateDate());
         });
     }
 
@@ -67,8 +68,6 @@ public class MemberRepositoryTests {
         String email = "변경 주소";
         String password = "변경 비밀번호";
         String nickname = "변경 닉네임";
-        String profileImage = "변경이미지.jpg";
-        String profileAddress = "변경 이미지 주소";
         String introduction = "변경 자기소개";
 
         Member member = memberRepository.getMemberInfo(memberId);
@@ -77,8 +76,6 @@ public class MemberRepositoryTests {
         member.changeEmail(email);
         member.changePassword(password);
         member.changeNickname(nickname);
-        member.changeProfileImage(profileImage);
-        member.changeProfileAddress(profileAddress);
         member.changeIntroduction(introduction);
 
         memberRepository.save(member);
@@ -87,8 +84,6 @@ public class MemberRepositoryTests {
         assertEquals(email, member.getEmail());
         assertEquals(password, member.getPassword());
         assertEquals(nickname, member.getNickname());
-        assertEquals(profileImage, member.getProfileImage());
-        assertEquals(profileAddress, member.getProfileAddress());
         assertEquals(introduction, member.getIntroduction());
     }
 

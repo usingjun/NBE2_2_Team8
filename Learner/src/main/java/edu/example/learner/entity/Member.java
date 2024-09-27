@@ -4,18 +4,23 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Table(name = "member")
+@Setter
 @Getter
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
-public class Member {
+public class Member{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
@@ -32,11 +37,14 @@ public class Member {
     @Column(nullable = false)
     private String phoneNumber;
 
-    @Column(nullable = false)
-    private String profileImage;
+    @Lob  // BLOB 타입으로 처리됨
+    private byte[] profileImage;
+
+    private String imageType;
 
     @Column(nullable = false)
-    private String profileAddress;
+    @Enumerated(value = EnumType.STRING)
+    private Role role;
 
     @Column(nullable = false)
     private String introduction;
@@ -56,15 +64,16 @@ public class Member {
         this.nickname = nickname;
     }
 
-    public void changeProfileImage(String profileImage) {
-        this.profileImage = profileImage;
-    }
-
-    public void changeProfileAddress(String profileAddress) {
-        this.profileAddress = profileAddress;
-    }
 
     public void changeIntroduction(String introduction) {
         this.introduction = introduction;
+    }
+
+    public void changeProfileImage(byte[] profileImage) {
+        this.profileImage = profileImage;
+    }
+
+    public void changeImageType(String imageType) {
+        this.imageType = imageType;
     }
 }
