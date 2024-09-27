@@ -44,7 +44,7 @@ public class InquiryServiceImpl implements InquiryService {
         try {
             inquiry.changeInquiryTitle(inquiryDTO.getInquiryTitle());
             inquiry.changeInquiryContent(inquiryDTO.getInquiryContent());
-            inquiry.changeInquiryStatus(InquiryStatus.valueOf(inquiryDTO.getInquiryStatus()));
+            inquiry.changeInquiryStatus(inquiryDTO.getInquiryStatus());
             return new InquiryDTO(inquiry);
         } catch (Exception e) {
             log.error(e.getMessage());
