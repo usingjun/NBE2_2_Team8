@@ -15,7 +15,10 @@ import java.util.List;
 @Data
 public class OrderDTO {
     private Long oId;
+
     private List<OrderItemDTO> orderItemDTOList;
+
+
     private String orderStatus;
 
     public OrderDTO(Order order) {

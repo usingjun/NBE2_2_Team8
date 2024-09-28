@@ -1,6 +1,7 @@
 package edu.example.learner.course.controller;
 
 import edu.example.learner.course.dto.OrderDTO;
+import edu.example.learner.course.dto.OrderUpdateDTO;
 import edu.example.learner.course.service.CourseService;
 import edu.example.learner.course.service.OrderService;
 import lombok.RequiredArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -29,12 +31,17 @@ public class OrderController {
         log.info("Read order: " + orderId);
         return ResponseEntity.ok(orderService.read(orderId));
     }
-
-    @PutMapping("/update")
-    public ResponseEntity<OrderDTO> updateOrder(@RequestBody OrderDTO orderDTO) {
-        log.info("Update order: " + orderDTO);
-        return ResponseEntity.ok(orderService.update(orderDTO));
+    @GetMapping("/list")
+    public ResponseEntity<List<OrderDTO>> readAllOrders() {
+        log.info("Read all orders");
+        return ResponseEntity.ok(orderService.readAll());
     }
+    @PutMapping("/update")
+    public ResponseEntity<OrderUpdateDTO> updateOrder(@RequestBody OrderUpdateDTO orderUpdateDTO, @RequestParam Long orderId) {
+        log.info("Update order: " + orderUpdateDTO);
+        return ResponseEntity.ok(orderService.update(orderUpdateDTO,orderId));
+    }
+
 
     @DeleteMapping("/delete")
     public ResponseEntity<?> deleteOrder(@RequestParam Long orderId) {
