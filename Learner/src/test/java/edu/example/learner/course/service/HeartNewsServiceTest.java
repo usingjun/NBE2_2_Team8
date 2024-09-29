@@ -1,14 +1,16 @@
 package edu.example.learner.course.service;
 
-import edu.example.learner.course.dto.HeartNewsReqDTO;
-import edu.example.learner.course.dto.NewsRqDTO;
+import edu.example.learner.course.news.dto.HeartNewsReqDTO;
+import edu.example.learner.course.news.dto.NewsRqDTO;
 import edu.example.learner.course.entity.Course;
-import edu.example.learner.course.entity.HeartNews;
-import edu.example.learner.course.entity.NewsEntity;
+import edu.example.learner.course.news.entity.HeartNews;
+import edu.example.learner.course.news.entity.NewsEntity;
+import edu.example.learner.course.news.service.HeartNewsService;
 import edu.example.learner.course.repository.CourseRepository;
-import edu.example.learner.course.repository.HeartNewsRepository;
-import edu.example.learner.course.repository.NewsRepository;
+import edu.example.learner.course.news.repository.HeartNewsRepository;
+import edu.example.learner.course.news.repository.NewsRepository;
 import edu.example.learner.entity.Member;
+import edu.example.learner.entity.Role;
 import edu.example.learner.repository.MemberRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
@@ -47,13 +49,12 @@ class HeartNewsServiceTest {
     public void setUp() {
         // Create a member
         member = Member.builder()
-                .idx(1L)
                 .email("test@example.com")
                 .password("password123")
                 .nickname("nickname")
                 .phoneNumber("010-1234-5678")
                 .profileImage(null) // 필요 시 이미지 경로를 추가
-                .profileAddress("Seoul")
+                .role(Role.ADMIN)
                 .introduction("Hi, I'm a test user.")
                 .createDate(LocalDateTime.now())
                 .build();
@@ -85,8 +86,6 @@ class HeartNewsServiceTest {
         // Then
         Optional<HeartNews> heartNews = heartNewsRepository.findByMemberAndNewsEntity(member, news);
         assertTrue(heartNews.isPresent());
-//        log.info("likecont {}", news.getLikeCount());
-//        assertEquals(1, news.getLikeCount()); 여기선 실패하는데 db에는 잘 올라감
     }
 
     @Test

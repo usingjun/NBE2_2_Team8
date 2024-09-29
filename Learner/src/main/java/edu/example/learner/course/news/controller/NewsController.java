@@ -1,8 +1,11 @@
-package edu.example.learner.course.controller;
+package edu.example.learner.course.news.controller;
 
-import edu.example.learner.course.dto.NewsResDTO;
-import edu.example.learner.course.dto.NewsRqDTO;
-import edu.example.learner.course.service.NewsService;
+import edu.example.learner.course.news.dto.HeartNewsReqDTO;
+import edu.example.learner.course.news.dto.NewsResDTO;
+import edu.example.learner.course.news.dto.NewsRqDTO;
+import edu.example.learner.course.news.service.HeartNewsService;
+import edu.example.learner.course.news.service.NewsService;
+import edu.example.learner.redis.RedisViewServiceImpl;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -15,14 +18,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
+import java.time.Duration;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/course/{courseId}/news")
 public class NewsController {
     private final NewsService newsService;
+    private final HeartNewsService heartNewsService;
+    private final RedisViewServiceImpl redisViewServiceImpl;
 
     // 새소식 등록
     @PostMapping
@@ -52,13 +56,21 @@ public class NewsController {
     @GetMapping("/{newsId}")
     public ResponseEntity<NewsResDTO> getNews(@PathVariable Long courseId,
                                               @PathVariable Long newsId,
-                                              HttpServletRequest request,
-                                              HttpServletResponse response) {
-
-        //조회수 추가
-        newsService.addViewCount(request, response, courseId);
-
+                                              HttpServletRequest request) {
         NewsResDTO news = newsService.getNews(courseId, newsId);
+
+        //조회수 올리기
+        String ipAddress = request.getRemoteAddr(); // IP주소
+        String redisKey = "viewNews:" + newsId + ":-" + ipAddress;
+
+        // 레디스 중복조회 여부확인
+        boolean isDuplicate = redisViewServiceImpl.isDuplicateView(redisKey, Duration.ofHours(24));
+        if (!isDuplicate) {
+            // 중복이 아닐시 조회수 증가
+            newsService.addViewCountV2(newsId);
+        }
+
+
         return ResponseEntity.ok().body(news);
     }
 
@@ -70,4 +82,17 @@ public class NewsController {
         return ResponseEntity.ok().body(allNews);
     }
 
+    //좋아요 처리
+    // courseId 처리는 고려
+    @PatchMapping
+    public ResponseEntity<?> increaseHeart(@RequestBody @Validated HeartNewsReqDTO heartNewsReqDTO) throws Exception {
+        heartNewsService.insert(heartNewsReqDTO);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping
+    public ResponseEntity<?> decreaseHeart(@RequestBody @Validated HeartNewsReqDTO heartNewsReqDTO) {
+        heartNewsService.delete(heartNewsReqDTO);
+        return ResponseEntity.ok().build();
+    }
 }

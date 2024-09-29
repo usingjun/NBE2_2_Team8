@@ -1,6 +1,7 @@
-package edu.example.learner.course.entity;
+package edu.example.learner.course.news.entity;
 
 
+import edu.example.learner.course.entity.Course;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,8 +40,8 @@ public class NewsEntity {
     @Column(columnDefinition = "integer default 0", nullable = false)
     private int likeCount;
 
-    @Column(columnDefinition = "bigint default 0", nullable = false)
-    private Long CommentCnt;
+//    @Column(columnDefinition = "bigint default 0", nullable = false)
+//    private Long commentCnt = 0L; // 초기값 설정
 
     @CreatedDate
     private LocalDateTime newsDate;
@@ -58,6 +59,10 @@ public class NewsEntity {
 
     public void changeNewsDescription(String newsDescription) {
         this.newsDescription = newsDescription;
+    }
+
+    public void changeViewCount(int viewCount) {
+        this.viewCount = viewCount;
     }
 
     public void changeCourse(Course course) {
