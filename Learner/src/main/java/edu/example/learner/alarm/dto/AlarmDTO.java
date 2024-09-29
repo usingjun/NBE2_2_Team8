@@ -1,13 +1,10 @@
-package edu.example.learner.course.dto;
+package edu.example.learner.alarm.dto;
 
-import edu.example.learner.course.entity.Alarm;
+import edu.example.learner.alarm.entity.Alarm;
 import edu.example.learner.course.entity.Priority;
 import edu.example.learner.course.entity.TemporaryMember;
 import edu.example.learner.entity.Member;
 import jakarta.persistence.Embeddable;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -45,13 +42,12 @@ public class AlarmDTO {
                 .alarmStatus(alarmStatus)
                 .priority(Priority.valueOf(priority))
                 .createdAt(createdAt)
-                .temporaryMember(TemporaryMember.builder().id(memberId)
-                        .build())
+                .member(Member.builder().memberId(memberId).build())
                 .build();
     }
     public AlarmDTO(Alarm alarm) {
         this.alarmId = alarm.getAlarmId();
-        this.memberId = alarm.getTemporaryMember().getId();
+        this.memberId = alarm.getMember().getMemberId();
         this.alarmContent = alarm.getAlarmContent();
         this.alarmTitle = alarm.getAlarmTitle();
         this.priority = alarm.getPriority().name();

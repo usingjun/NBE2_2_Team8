@@ -1,4 +1,4 @@
-package edu.example.learner.course.exception;
+package edu.example.learner.order.exception;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

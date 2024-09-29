@@ -1,7 +1,8 @@
-package edu.example.learner.course.service;
+package edu.example.learner.alarm.service;
 
-import edu.example.learner.course.dto.AlarmDTO;
-import edu.example.learner.course.repository.AlarmRepository;
+import edu.example.learner.alarm.dto.AlarmDTO;
+import edu.example.learner.alarm.repository.AlarmRepository;
+import edu.example.learner.course.service.TemporaryMemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

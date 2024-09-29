@@ -1,7 +1,7 @@
-package edu.example.learner.course.service;
+package edu.example.learner.alarm.service;
 
 
-import edu.example.learner.course.dto.AlarmDTO;
+import edu.example.learner.alarm.dto.AlarmDTO;
 
 import java.util.List;
 

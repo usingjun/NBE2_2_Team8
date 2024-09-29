@@ -1,4 +1,4 @@
-package edu.example.learner.course.exception;
+package edu.example.learner.order.exception;
 
 public enum OrderException {
     ORDER_NOT_FOUND("ORDER CAN'T FOUNDED",400),

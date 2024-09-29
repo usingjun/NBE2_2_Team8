@@ -1,12 +1,10 @@
-package edu.example.learner.course.dto;
+package edu.example.learner.order.dto;
 
 import edu.example.learner.course.entity.Course;
 import edu.example.learner.course.entity.CourseAttribute;
-import edu.example.learner.course.entity.Order;
-import edu.example.learner.course.entity.OrderItem;
+import edu.example.learner.order.entity.Order;
+import edu.example.learner.order.entity.OrderItem;
 import jakarta.persistence.Embeddable;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Getter
