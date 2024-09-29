@@ -1,6 +1,7 @@
 package edu.example.learner.course.entity;
 
 
+import edu.example.learner.alarm.entity.Alarm;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;

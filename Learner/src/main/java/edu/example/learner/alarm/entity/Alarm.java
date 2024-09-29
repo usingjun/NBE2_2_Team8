@@ -1,5 +1,7 @@
-package edu.example.learner.course.entity;
+package edu.example.learner.alarm.entity;
 
+import edu.example.learner.course.entity.Priority;
+import edu.example.learner.course.entity.TemporaryMember;
 import edu.example.learner.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,8 +25,8 @@ public class Alarm {
     private Long alarmId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "temporarymember_Id")
-    private TemporaryMember temporaryMember;
+    @JoinColumn(name = "member_id")
+    private Member member;
 
     private String alarmContent;
 

@@ -1,18 +1,18 @@
-package edu.example.learner.course.service;
+package edu.example.learner.order.service;
 
-import edu.example.learner.course.dto.OrderDTO;
-import edu.example.learner.course.dto.OrderItemDTO;
+import edu.example.learner.order.dto.OrderDTO;
+import edu.example.learner.order.dto.OrderItemDTO;
 
-import edu.example.learner.course.dto.OrderUpdateDTO;
+import edu.example.learner.order.dto.OrderUpdateDTO;
 import edu.example.learner.course.entity.Course;
-import edu.example.learner.course.entity.Order;
-import edu.example.learner.course.entity.OrderItem;
-import edu.example.learner.course.entity.OrderStatus;
-import edu.example.learner.course.exception.OrderException;
+import edu.example.learner.order.entity.Order;
+import edu.example.learner.order.entity.OrderItem;
+import edu.example.learner.order.entity.OrderStatus;
+import edu.example.learner.order.exception.OrderException;
 
 import edu.example.learner.course.repository.CourseRepository;
-import edu.example.learner.course.repository.OrderItemRepository;
-import edu.example.learner.course.repository.OrderRepository;
+import edu.example.learner.order.repository.OrderItemRepository;
+import edu.example.learner.order.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

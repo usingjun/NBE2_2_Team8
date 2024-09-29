@@ -47,13 +47,12 @@ class HeartNewsServiceTest {
     public void setUp() {
         // Create a member
         member = Member.builder()
-                .idx(1L)
+                .memberId(1L)
                 .email("test@example.com")
                 .password("password123")
                 .nickname("nickname")
                 .phoneNumber("010-1234-5678")
                 .profileImage(null) // 필요 시 이미지 경로를 추가
-                .profileAddress("Seoul")
                 .introduction("Hi, I'm a test user.")
                 .createDate(LocalDateTime.now())
                 .build();

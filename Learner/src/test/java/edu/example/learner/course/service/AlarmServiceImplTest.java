@@ -1,9 +1,15 @@
 package edu.example.learner.course.service;
 
-import edu.example.learner.course.entity.Alarm;
+import edu.example.learner.alarm.entity.Alarm;
+import edu.example.learner.alarm.entity.AlarmType;
+import edu.example.learner.alarm.service.AlarmService;
 import edu.example.learner.course.entity.Priority;
 import edu.example.learner.course.entity.TemporaryMember;
-import edu.example.learner.course.repository.AlarmRepository;
+import edu.example.learner.alarm.repository.AlarmRepository;
+import edu.example.learner.entity.Member;
+import edu.example.learner.entity.Role;
+import edu.example.learner.repository.MemberRepository;
+import edu.example.learner.service.MemberService;
 import jakarta.transaction.Transactional;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.BeforeEach;
@@ -11,8 +17,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Log4j2
@@ -25,21 +29,21 @@ class AlarmServiceImplTest {
     @Autowired
     private TemporaryMemberService temporaryMemberService;
     @Autowired
+    private MemberRepository memberRepository;
+    @Autowired
     private AlarmRepository alarmRepository;
 
     @BeforeEach
     void setUp() {
-        TemporaryMember test = TemporaryMember.builder()
-                .name("test")
-                .email("test@example.com")
-                .build();
-        temporaryMemberService.register(test);
+        Member member = Member.builder().nickname("test")
+                .role(Role.USER).email("test").build();
+        memberRepository.save(member);
         Alarm alarm = Alarm.builder().alarmId(1L)
                 .alarmTitle("test")
                 .priority(Priority.LOW)
-                .temporaryMember(test)
+                .member(member)
                 .alarmStatus(false)
-                .alarmType(edu.example.learner.course.entity.AlarmType.INQUIRY)
+                .alarmType(AlarmType.INQUIRY)
                 .build();
         alarm = alarmRepository.save(alarm);
 

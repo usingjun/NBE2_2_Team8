@@ -82,6 +82,9 @@ public class Course {
     @Builder.Default
     private List<NewsEntity> newsEntities = new ArrayList<>();
 
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Video> videos = new ArrayList<>();
+
 
 
 }

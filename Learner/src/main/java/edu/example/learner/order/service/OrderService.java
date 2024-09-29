@@ -1,8 +1,7 @@
-package edu.example.learner.course.service;
+package edu.example.learner.order.service;
 
-import edu.example.learner.course.dto.OrderDTO;
-import edu.example.learner.course.dto.OrderUpdateDTO;
-
+import edu.example.learner.order.dto.OrderDTO;
+import edu.example.learner.order.dto.OrderUpdateDTO;
 import java.util.List;
 
 public interface OrderService {
