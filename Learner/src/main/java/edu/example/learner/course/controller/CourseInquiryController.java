@@ -13,12 +13,12 @@ import java.util.List;
 @RestController
 @Log4j2
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/course_inquiry")
+@RequestMapping("/api/v1/course-inquiry")
 public class CourseInquiryController {
     private final CourseInquiryService courseInquiryService;
 
     //강의 문의 등록
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<CourseInquiryDTO> register(@RequestBody CourseInquiryDTO courseInquiryDTO){
         return ResponseEntity.ok(courseInquiryService.register(courseInquiryDTO));
     }
@@ -42,7 +42,7 @@ public class CourseInquiryController {
     }
 
     //강의 문의 수정
-    @PutMapping("/{inquiryId}/update")
+    @PutMapping("/{inquiryId}")
     public ResponseEntity<CourseInquiryDTO> modify( @PathVariable("inquiryId") Long inquiryId ,
                                                     @RequestBody CourseInquiryDTO courseInquiryDTO){
         courseInquiryDTO.setInquiryId(inquiryId);
@@ -50,7 +50,7 @@ public class CourseInquiryController {
     }
 
     //강의 문의 상태 수정
-    @PutMapping("/{inquiryId}/updateStatus")
+    @PutMapping("/{inquiryId}/status")
     public ResponseEntity<CourseInquiryDTO> modifyStatus ( @PathVariable("inquiryId") Long inquiryId ,
                                                             @RequestBody CourseInquiryDTO courseInquiryDTO){
         courseInquiryDTO.setInquiryId(inquiryId);
@@ -58,7 +58,7 @@ public class CourseInquiryController {
     }
 
     //강의 문의 삭제
-    @DeleteMapping("/{inquiryId}/delete")
+    @DeleteMapping("/{inquiryId}")
     public ResponseEntity<Void> remove( @PathVariable("inquiryId") Long inquiryId ){
         courseInquiryService.delete(inquiryId);
         return ResponseEntity.ok().build();
