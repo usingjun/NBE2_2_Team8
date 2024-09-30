@@ -1,7 +1,6 @@
 package edu.example.learner.security.auth;
 
-import edu.example.learner.entity.Member;
-import lombok.Data;
+import edu.example.learner.member.entity.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
