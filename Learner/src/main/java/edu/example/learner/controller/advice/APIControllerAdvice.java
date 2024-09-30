@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,6 +16,7 @@ import java.util.Map;
 @RestControllerAdvice
 @Log4j2
 public class APIControllerAdvice {
+    //validation 예외처리
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         Map<String, Object> errMap = new HashMap<>();
@@ -23,6 +25,7 @@ public class APIControllerAdvice {
         return new ResponseEntity<>(errMap, HttpStatus.BAD_REQUEST);
     }
 
+    //member 예외처리
     @ExceptionHandler(MemberTaskException.class)
     public ResponseEntity<?> handleOrderTaskException(MemberTaskException e) {
         log.info("--- MemberTaskException");
@@ -33,5 +36,12 @@ public class APIControllerAdvice {
 
 
         return ResponseEntity.status(e.getStatusCode()).body(errMap);
+    }
+
+    //파일 업로드 예외처리
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public ResponseEntity<String> handleMaxSizeException(MaxUploadSizeExceededException exc) {
+        return ResponseEntity.status(HttpStatus.EXPECTATION_FAILED)
+                .body("File too large!");
     }
 }
