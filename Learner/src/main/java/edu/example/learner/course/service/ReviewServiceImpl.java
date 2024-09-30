@@ -3,8 +3,6 @@ package edu.example.learner.course.service;
 import edu.example.learner.course.dto.ReviewDTO;
 import edu.example.learner.course.entity.Review;
 import edu.example.learner.course.exception.ReviewException;
-import edu.example.learner.course.repository.CourseRepository;
-import edu.example.learner.course.repository.MemberRepository;
 import edu.example.learner.course.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;

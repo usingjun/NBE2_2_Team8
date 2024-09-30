@@ -1,8 +1,12 @@
 package edu.example.learner.alarm.repository;
 
 import edu.example.learner.alarm.entity.Alarm;
+import edu.example.learner.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface AlarmRepository extends JpaRepository<Alarm, Long> {
+import java.util.List;
 
+public interface AlarmRepository extends JpaRepository<Alarm, Long> {
+    Alarm findByAlarmTitle(String alarmTitle);
+    List<Alarm> findByMember(Member member);
 }
