@@ -1,16 +1,16 @@
-package edu.example.learner.entity;
+package edu.example.learner.course.entity;
 
 
+import edu.example.learner.course.news.entity.NewsEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Embeddable
 @Builder
@@ -23,12 +23,18 @@ import java.time.LocalDateTime;
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "course_id")
     private Long courseId;
+
     private String courseName;
+
     private String courseDescription;
+
+    @Enumerated(EnumType.STRING)
     private CourseAttribute courseAttribute;
 
     private String instructorName;
+
     private Long coursePrice;
     private Integer courseLevel;
     private boolean sale;
@@ -47,6 +53,10 @@ public class Course {
 
     public void changeInstructorName(String instructorName) {
         this.instructorName = instructorName;
+    }
+
+    public void changePrice(Long coursePrice) {
+        this.coursePrice = coursePrice;
     }
 
     public void changeCourseLevel(Integer courseLevel) {
@@ -69,5 +79,13 @@ public class Course {
     private LocalDateTime courseCreatedDate;
     @LastModifiedDate
     private LocalDateTime courseModifiedDate;
+
+    @OneToMany(mappedBy = "courseNews")
+    @Builder.Default
+    private List<NewsEntity> newsEntities = new ArrayList<>();
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Video> videos = new ArrayList<>();
+
 
 }
