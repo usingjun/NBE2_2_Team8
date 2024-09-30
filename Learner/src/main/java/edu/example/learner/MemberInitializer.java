@@ -1,13 +1,5 @@
 package edu.example.learner;
 
-import edu.example.learner.entity.Member;
-import edu.example.learner.entity.Role;
-import edu.example.learner.repository.MemberRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Component;
-
 //기본 MEMBER 3명 삽입
 
 //@Component

@@ -1,19 +1,15 @@
 package edu.example.learner.courseInquiry.repository;
 
-import edu.example.learner.course.dto.CourseAnswerDTO;
-import edu.example.learner.course.dto.CourseInquiryDTO;
-import edu.example.learner.course.entity.CourseAnswer;
-import edu.example.learner.course.entity.CourseInquiry;
-import edu.example.learner.course.repository.CourseAnswerRepository;
-import edu.example.learner.course.service.CourseAnswerService;
+import edu.example.learner.courseabout.courseqna.entity.CourseAnswer;
+import edu.example.learner.courseabout.courseqna.entity.CourseInquiry;
+import edu.example.learner.courseabout.courseqna.repository.CourseAnswerRepository;
+import edu.example.learner.courseabout.courseqna.service.CourseAnswerService;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 
-import javax.swing.text.html.Option;
 import java.util.List;
 import java.util.Optional;
 

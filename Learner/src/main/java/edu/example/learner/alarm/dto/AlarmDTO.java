@@ -1,8 +1,8 @@
 package edu.example.learner.alarm.dto;
 
 import edu.example.learner.alarm.entity.Alarm;
-import edu.example.learner.course.entity.Priority;
-import edu.example.learner.entity.Member;
+import edu.example.learner.alarm.entity.Priority;
+import edu.example.learner.member.entity.Member;
 import jakarta.persistence.Embeddable;
 import lombok.*;
 

@@ -1,10 +1,10 @@
 package edu.example.learner.courseInquiry.repository;
 
-import edu.example.learner.course.dto.CourseInquiryDTO;
-import edu.example.learner.course.entity.CourseInquiry;
-import edu.example.learner.course.entity.InquiryStatus;
-import edu.example.learner.course.repository.CourseInquiryRepository;
-import edu.example.learner.course.service.CourseInquiryService;
+import edu.example.learner.courseabout.courseqna.dto.CourseInquiryDTO;
+import edu.example.learner.courseabout.courseqna.entity.CourseInquiry;
+import edu.example.learner.courseabout.courseqna.entity.InquiryStatus;
+import edu.example.learner.courseabout.courseqna.repository.CourseInquiryRepository;
+import edu.example.learner.courseabout.courseqna.service.CourseInquiryService;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static edu.example.learner.course.entity.InquiryStatus.ANSWERED;
+import static edu.example.learner.courseabout.courseqna.entity.InquiryStatus.ANSWERED;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @SpringBootTest

@@ -31,6 +31,8 @@ dependencies {
     compileOnly 'org.projectlombok:lombok'
     developmentOnly 'org.springframework.boot:spring-boot-devtools'
 
+    implementation 'com.querydsl:querydsl-jpa:5.1.0:jakarta'
+
     //JSON Web Token (JWT) 생성 및 검증을 위한 라이브러리입니다. jjwt-api는 API를 제공하고, jjwt-impl은 구현체를, jjwt-jackson은 Jackson을 통한 JSON 처리를 제공합니다.
     implementation 'io.jsonwebtoken:jjwt-api:0.12.6'
     runtimeOnly    'io.jsonwebtoken:jjwt-impl:0.12.6'
@@ -50,6 +52,16 @@ dependencies {
     )
 
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+}
+
+def qDomainPath = 'src/main/generated'
+
+tasks.withType(JavaCompile).configureEach {
+    options.getGeneratedSourceOutputDirectory().set(file(qDomainPath))
+}
+
+clean {
+    delete file(qDomainPath)
 }
 
 tasks.named('test') {

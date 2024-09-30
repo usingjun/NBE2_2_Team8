@@ -1,7 +1,7 @@
 package edu.example.learner.alarm.repository;
 
 import edu.example.learner.alarm.entity.Alarm;
-import edu.example.learner.entity.Member;
+import edu.example.learner.member.entity.Member;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

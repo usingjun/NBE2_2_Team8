@@ -1,8 +1,9 @@
 package edu.example.learner.repository;
 
-import edu.example.learner.entity.Member;
-import edu.example.learner.entity.Role;
+import edu.example.learner.member.entity.Member;
+import edu.example.learner.member.entity.Role;
 import lombok.extern.log4j.Log4j2;
+import edu.example.learner.member.repository.MemberRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
@@ -10,7 +11,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
 import java.util.stream.IntStream;
 
 import static org.junit.jupiter.api.Assertions.*;
