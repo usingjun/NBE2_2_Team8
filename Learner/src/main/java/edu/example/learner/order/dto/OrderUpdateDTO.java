@@ -1,7 +1,7 @@
-package edu.example.learner.course.dto;
+package edu.example.learner.order.dto;
 
-import edu.example.learner.course.entity.Order;
-import edu.example.learner.course.entity.OrderStatus;
+import edu.example.learner.order.entity.Order;
+import edu.example.learner.order.entity.OrderStatus;
 import lombok.*;
 
 import java.util.ArrayList;

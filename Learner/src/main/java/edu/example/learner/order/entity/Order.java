@@ -1,4 +1,4 @@
-package edu.example.learner.course.entity;
+package edu.example.learner.order.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;

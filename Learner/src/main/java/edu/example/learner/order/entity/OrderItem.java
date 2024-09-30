@@ -1,6 +1,8 @@
-package edu.example.learner.course.entity;
+package edu.example.learner.order.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import edu.example.learner.course.entity.Course;
+import edu.example.learner.course.entity.CourseAttribute;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;

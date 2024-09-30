@@ -1,18 +1,21 @@
 package edu.example.learner.course.repository;
 
 import edu.example.learner.course.dto.CourseDTO;
-import edu.example.learner.course.dto.OrderDTO;
-import edu.example.learner.course.dto.OrderItemDTO;
+import edu.example.learner.order.dto.OrderDTO;
+import edu.example.learner.order.dto.OrderItemDTO;
 import edu.example.learner.course.entity.*;
 
 import edu.example.learner.course.exception.CourseException;
-import edu.example.learner.course.exception.OrderException;
-import edu.example.learner.course.exception.OrderTaskException;
+import edu.example.learner.order.exception.OrderException;
 
+import edu.example.learner.order.entity.Order;
+import edu.example.learner.order.entity.OrderItem;
+import edu.example.learner.order.entity.OrderStatus;
+import edu.example.learner.order.repository.OrderItemRepository;
+import edu.example.learner.order.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

@@ -26,14 +26,15 @@ public class Course {
     @Column(name = "course_id")
     private Long courseId;
 
-
     private String courseName;
+
     private String courseDescription;
 
     @Enumerated(EnumType.STRING)
     private CourseAttribute courseAttribute;
 
     private String instructorName;
+
     private Long coursePrice;
     private Integer courseLevel;
     private boolean sale;
@@ -83,6 +84,8 @@ public class Course {
     @Builder.Default
     private List<NewsEntity> newsEntities = new ArrayList<>();
 
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Video> videos = new ArrayList<>();
 
 
 }
