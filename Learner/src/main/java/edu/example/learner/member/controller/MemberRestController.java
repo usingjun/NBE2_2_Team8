@@ -11,14 +11,14 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 @RestController
-@RequestMapping("/api/members")
+@RequestMapping("/members")
 @RequiredArgsConstructor
 @Log4j2
 public class MemberRestController {
     private final MemberService memberService;
 
     //이미지 업로드
-    @PutMapping("{memberId}/image")
+    @PutMapping("/{memberId}/image")
     public ResponseEntity<String> memberUploadImage(@RequestParam("file") MultipartFile file,
                                                     @PathVariable Long memberId) {
         log.info("--- memberUploadImage()");
@@ -42,7 +42,7 @@ public class MemberRestController {
     }
 
     //마이페이지
-    @GetMapping("{memberId}")
+    @GetMapping("/{memberId}")
     public ResponseEntity<MemberDTO> myPageRead(@PathVariable Long memberId) {
         log.info("--- myPageRead()");
         log.info(memberId);
@@ -59,7 +59,7 @@ public class MemberRestController {
     }
 
     //회원 정보 수정
-    @PutMapping("{memberId}")
+    @PutMapping("/{memberId}")
     public ResponseEntity<MemberDTO> memberModify(@RequestBody @Validated MemberDTO memberDTO,
                                                   @PathVariable Long memberId) {
         log.info("--- memberModify()");
@@ -68,7 +68,7 @@ public class MemberRestController {
     }
 
     //회원 탈퇴
-    @DeleteMapping("{memberId}")
+    @DeleteMapping("/{memberId}")
     public ResponseEntity<String> memberDelete(@PathVariable Long memberId) {
         log.info("--- memberDelete()");
 
