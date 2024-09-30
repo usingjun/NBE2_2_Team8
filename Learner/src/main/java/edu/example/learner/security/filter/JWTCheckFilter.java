@@ -35,6 +35,10 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             return true;
         }
 
+        if(!request.getRequestURI().startsWith("/read")) { // /read 로 끝나는 경로 제외
+            return true;
+        }
+
         return false;   //그외 경로들은 필터링
     }
 

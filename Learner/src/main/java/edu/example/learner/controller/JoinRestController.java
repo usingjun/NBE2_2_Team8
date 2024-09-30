@@ -38,6 +38,5 @@ public class JoinRestController {
         return ResponseEntity.ok(memberService.login(loginDTO.getEmail(), loginDTO.getPassword()));
     }
 
-    //로그아웃
 
 }
