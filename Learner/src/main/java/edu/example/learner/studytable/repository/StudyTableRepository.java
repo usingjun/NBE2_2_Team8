@@ -14,13 +14,19 @@ public interface StudyTableRepository extends JpaRepository<StudyTable, Long> {
     int getWeeklyStudyTime(@Param("memberId") Long memberId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     //연간 학습 시간
-//    @Query("select sum(st.studyTime) from StudyTable st where st.member.memberId =:memberId and year(st.studyDate) = :year")
-//    int getYearlyStudyTime(@Param("memberID") Long memberID, @Param("year") int year);
+    @Query("select sum(st.studyTime) from StudyTable st where st.member.memberId =:memberId and year(st.studyDate) = :year")
+    int getYearlyStudyTime(@Param("memberId") Long memberID, @Param("year") int year);
 
-    //일별 완료한 수업
+    //주간 완료한 수업
+    @Query("select sum(st.completed) from StudyTable st where st.member.memberId = :memberId and st.studyDate between :startDate and :endDate")
+    int getWeeklyCompleted(@Param("memberId") Long memberID, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
-    //월별 완료한 수업
+    //월간 완료한 수업
+    @Query("select sum(st.completed) from StudyTable st where st.member.memberId = :memberId and month(st.studyDate) = :month")
+    int getMonthlyCompleted(@Param("memberId") Long memberID, @Param("month") int month);
 
     //연간 완료한 수업
+    @Query("select sum(st.completed) from StudyTable st where st.member.memberId =:memberId and year(st.studyDate) = :year")
+    int getYearlyCompleted(@Param("memberId") Long memberID, @Param("year") int year);
 
 }
