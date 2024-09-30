@@ -25,14 +25,15 @@ public class Course {
     @Column(name = "course_id")
     private Long courseId;
 
-
     private String courseName;
+
     private String courseDescription;
 
     @Enumerated(EnumType.STRING)
     private CourseAttribute courseAttribute;
 
     private String instructorName;
+
     private Long coursePrice;
     private Integer courseLevel;
     private boolean sale;
