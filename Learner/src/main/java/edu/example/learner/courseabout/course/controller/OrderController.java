@@ -26,8 +26,8 @@ public class OrderController {
         return ResponseEntity.ok(orderService.add(orderDTO));
     }
 
-    @GetMapping
-    public ResponseEntity<OrderDTO> readOrder(@RequestParam Long orderId) {
+    @GetMapping("/{orderId}")
+    public ResponseEntity<OrderDTO> readOrder(@PathVariable("orderId") Long orderId) {
         log.info("Read order: " + orderId);
         return ResponseEntity.ok(orderService.read(orderId));
     }
@@ -36,8 +36,8 @@ public class OrderController {
         log.info("Read all orders");
         return ResponseEntity.ok(orderService.readAll());
     }
-    @PutMapping("/update")
-    public ResponseEntity<OrderUpdateDTO> updateOrder(@RequestBody OrderUpdateDTO orderUpdateDTO, @RequestParam Long orderId) {
+    @PutMapping("/{orderId}/update")
+    public ResponseEntity<OrderUpdateDTO> updateOrder(@RequestBody OrderUpdateDTO orderUpdateDTO, @PathVariable("orderId") Long orderId) {
         log.info("Update order: " + orderUpdateDTO);
         return ResponseEntity.ok(orderService.update(orderUpdateDTO,orderId));
     }
