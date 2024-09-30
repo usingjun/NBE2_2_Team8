@@ -1,12 +1,12 @@
-package edu.example.learner.course.service;
+package edu.example.learner.course.news.service;
 
-import edu.example.learner.course.dto.HeartNewsReqDTO;
-import edu.example.learner.course.entity.HeartNews;
-import edu.example.learner.course.entity.NewsEntity;
+import edu.example.learner.course.news.dto.HeartNewsReqDTO;
+import edu.example.learner.course.news.entity.HeartNews;
+import edu.example.learner.course.news.entity.NewsEntity;
 import edu.example.learner.course.exception.HeartNewsAlreadyExistsException;
 import edu.example.learner.course.exception.NotFoundException;
-import edu.example.learner.course.repository.HeartNewsRepository;
-import edu.example.learner.course.repository.NewsRepository;
+import edu.example.learner.course.news.repository.HeartNewsRepository;
+import edu.example.learner.course.news.repository.NewsRepository;
 import edu.example.learner.entity.Member;
 import edu.example.learner.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

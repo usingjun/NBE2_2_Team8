@@ -1,6 +1,7 @@
 package edu.example.learner.course.entity;
 
 
+import edu.example.learner.course.news.entity.NewsEntity;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;

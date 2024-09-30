@@ -1,7 +1,6 @@
-package edu.example.learner.course.dto;
+package edu.example.learner.course.news.dto;
 
-import edu.example.learner.course.entity.NewsEntity;
-import jakarta.validation.constraints.NotBlank;
+import edu.example.learner.course.news.entity.NewsEntity;
 import lombok.*;
 
 import java.time.LocalDateTime;

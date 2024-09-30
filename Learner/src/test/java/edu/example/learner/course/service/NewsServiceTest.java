@@ -1,11 +1,12 @@
 package edu.example.learner.course.service;
 
-import edu.example.learner.course.dto.NewsResDTO;
-import edu.example.learner.course.dto.NewsRqDTO;
+import edu.example.learner.course.news.dto.NewsResDTO;
+import edu.example.learner.course.news.dto.NewsRqDTO;
 import edu.example.learner.course.entity.Course;
-import edu.example.learner.course.entity.NewsEntity;
+import edu.example.learner.course.news.entity.NewsEntity;
+import edu.example.learner.course.news.service.NewsService;
 import edu.example.learner.course.repository.CourseRepository;
-import edu.example.learner.course.repository.NewsRepository;
+import edu.example.learner.course.news.repository.NewsRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,8 +17,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 import static org.assertj.core.api.Assertions.*;
 

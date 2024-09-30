@@ -1,24 +1,20 @@
-package edu.example.learner.course.service;
+package edu.example.learner.course.news.service;
 
-import edu.example.learner.course.dto.NewsResDTO;
-import edu.example.learner.course.dto.NewsRqDTO;
+import edu.example.learner.course.news.dto.NewsResDTO;
+import edu.example.learner.course.news.dto.NewsRqDTO;
 import edu.example.learner.course.entity.Course;
-import edu.example.learner.course.entity.NewsEntity;
+import edu.example.learner.course.news.entity.NewsEntity;
 import edu.example.learner.course.repository.CourseRepository;
-import edu.example.learner.course.repository.NewsRepository;
+import edu.example.learner.course.news.repository.NewsRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Transactional
@@ -121,9 +117,13 @@ public class NewsService {
         }
     }
 
-    // 레디스 버전
-    public void addViewCountV2() {
+    //  조회수 증가
+    public void addViewCountV2(Long newsId) {
+        NewsEntity newsEntity = newsRepository.findById(newsId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 아이디의 소식을 찾을 수 없습니다."));
 
+        newsEntity.changeViewCount(newsEntity.getViewCount() + 1);
+        newsRepository.save(newsEntity);
     }
 
 
