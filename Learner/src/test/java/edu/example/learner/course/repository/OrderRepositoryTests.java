@@ -1,85 +1,187 @@
 package edu.example.learner.course.repository;
 
 import edu.example.learner.course.dto.CourseDTO;
-import edu.example.learner.course.dto.OrderDTO;
-import edu.example.learner.course.entity.Course;
-import edu.example.learner.course.entity.Order;
-import edu.example.learner.course.entity.OrderStatus;
+import edu.example.learner.order.dto.OrderDTO;
+import edu.example.learner.order.dto.OrderItemDTO;
+import edu.example.learner.course.entity.*;
+
+import edu.example.learner.course.exception.CourseException;
+import edu.example.learner.order.exception.OrderException;
+
+import edu.example.learner.order.entity.Order;
+import edu.example.learner.order.entity.OrderItem;
+import edu.example.learner.order.entity.OrderStatus;
+import edu.example.learner.order.repository.OrderItemRepository;
+import edu.example.learner.order.repository.OrderRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Commit;
+import org.springframework.test.annotation.Rollback;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @SpringBootTest
 @Log4j2
 @RequiredArgsConstructor
 @Commit
+@Rollback(false)
 public class OrderRepositoryTests {
     @Autowired
     private OrderRepository orderRepository;
     @Autowired
     private CourseRepository courseRepository;
+    @Autowired
+    private OrderItemRepository orderItemRepository;
 
+
+
+    @BeforeEach
+    @Transactional
+    public void registerOrderData(){
+        //given
+        // Course 테스트 데이터
+        Course course = new Course();
+        course.changeCourseName("새 강의");
+        course.changeCourseDescription("새 강의 설명");
+        course.changeInstructorName("새 강사");
+        course.changePrice(10000L);
+        course.changeCourseLevel(2);
+        course.changeCourseStatus(CourseAttribute.C);
+        course.changeSale(true);
+
+        Course saveCourse = courseRepository.save(course);
+
+        // OrderItem 데이터 등록을 위해 먼저 Order 설정
+        Order order = new Order();
+        order.changeOrderStatus(OrderStatus.PROCESSING);
+        orderRepository.save(order);
+
+
+        //OrderItem 등록
+        OrderItem orderItem = OrderItem.builder().order(order)
+                .course(course)
+                .price(course.getCoursePrice())
+                .courseAttribute(course.getCourseAttribute())
+                .build();
+        order.getOrderItems().add(orderItem);
+
+        orderRepository.save(order);
+
+    }
 
     @Test
     @Transactional
     @Commit
     public void add() {
-        List<CourseDTO> courseDTOList = new ArrayList<>();
-        CourseDTO courseDTO = new CourseDTO(courseRepository.findById(1L).orElseThrow());
-        courseDTOList.add(courseDTO);
-        courseDTOList.add(new CourseDTO(courseRepository.findById(2L).orElseThrow()));
-        OrderDTO orderDTO = OrderDTO.builder().orderStatus(String.valueOf(OrderStatus.ACCEPT))
-                .courseDTOList(courseDTOList).build();
 
-        Order order = orderDTO.toEntity(orderDTO);
-        for (CourseDTO dto : orderDTO.getCourseDTOList()) {
-            order.getCourses().add(courseRepository.findById(dto.getCourseId()).orElseThrow());
+        OrderDTO orderDTO = OrderDTO.builder().orderStatus(String.valueOf(OrderStatus.CANCELED))
+                .build();
+        Order order = orderRepository.save(orderDTO.toEntity(orderDTO));
+        List<OrderItemDTO> orderItemDTOS = new ArrayList<>();
+        OrderItemDTO orderItemDTO = OrderItemDTO.builder()
+
+                .courseId(1L)
+                .orderId(order.getOrderId())
+                .price(10000L)
+                .courseAttribute(String.valueOf(CourseAttribute.C))
+                .build();
+
+        orderItemDTOS.add(orderItemDTO);
+        orderItemDTOS.add(orderItemDTO);
+
+
+        for (OrderItemDTO dto : orderItemDTOS) {
+            Course course = courseRepository.save(courseRepository.findById(dto.getCourseId()).orElseThrow());
+            log.info("course -----" + course);
+
+            OrderItem orderItem = orderItemRepository.save(dto.toEntity(dto,order));
+
+            order.getOrderItems().add(orderItem);
         }
-        orderRepository.save(order);
-        System.out.println("Added Order with courses size: " + order.getCourses().size());
-        System.out.println("Read Order with courses size: " + order.getCourses().get(0));
+
+
+
+        System.out.println("Added Order with courses size: " + order.getOrderItems().size());
+        System.out.println("Read Order with courses size: " + order.getOrderItems().get(0));
     }
 
     @Test
     @Transactional
     public void read() {
-        Order order = orderRepository.findById(1L).orElseThrow();
-        System.out.println("Read Order with courses size: " + order.getCourses().get(0));
+
+        //given
+        Long orderId = 1L;
+        Order order = orderRepository.findById(orderId).orElseThrow(OrderException.ORDER_NOT_FOUND::get);
+        //when
+        List<OrderItemDTO> orderItemDTOS=new ArrayList<>();
+        for (OrderItem orderItem : order.getOrderItems()) {
+            OrderItemDTO orderItemDTO=new OrderItemDTO();
+            orderItemDTO.setPrice(orderItem.getCourse().getCoursePrice());
+            orderItemDTOS.add(new OrderItemDTO(orderItem));
+        }
+
+        OrderDTO orderDTO = new OrderDTO(order);
+
+        // then
+        if (!orderItemDTOS.isEmpty()) {
+            for (OrderItemDTO orderItemDTO : orderItemDTOS) {
+                System.out.println("orderItemDTO = " + orderItemDTO);
+            }
+        }
+
+
     }
 
     @Test
     @Transactional
     @Commit
     public void update(){
+        Long orderId = 1L;
+        Long courseId = 1L;
         List<CourseDTO> courseDTOList = new ArrayList<>();
-        courseDTOList.add(new CourseDTO(courseRepository.findById(1L).orElseThrow()));
-        courseDTOList.add(new CourseDTO(courseRepository.findById(1L).orElseThrow()));
+        Course foundCourse = courseRepository.findById(courseId).orElseThrow(CourseException.COURSE_NOT_FOUND::get);
+        // update 테스트 데이터
+
         OrderDTO orderDTO =new OrderDTO();
         orderDTO.setOrderStatus(String.valueOf(OrderStatus.FAILED));
-        orderDTO.setOId(20L);
-        orderDTO.setCourseDTOList(courseDTOList);
+
+        orderDTO.setOId(orderId);
+        orderDTO.getOrderItemDTOList().clear();
+
+        OrderItemDTO orderItemDTO = OrderItemDTO.builder().orderId(orderId)
+                .courseId(foundCourse.getCourseId())
+                .price(foundCourse.getCoursePrice())
+                .courseName(foundCourse.getCourseName()).build();
+
+        orderDTO.getOrderItemDTOList().add(orderItemDTO);
+        orderDTO.getOrderItemDTOList().add(orderItemDTO);
+
+
         Order order = orderRepository.findById(orderDTO.getOId()).orElseThrow();
         order.changeOrderStatus(OrderStatus.valueOf(orderDTO.getOrderStatus()));
-        order.getCourses().clear();
+        order.getOrderItems().clear();
 
-        for (CourseDTO courseDTO : courseDTOList) {
-            order.getCourses().add(courseRepository.findById(courseDTO.getCourseId()).orElseThrow());
+        for (OrderItemDTO dto : orderDTO.getOrderItemDTOList()) {
+            Course course = courseRepository.save(courseRepository.findById(dto.getCourseId()).orElseThrow());
+            log.info("course -----" + course);
+            OrderItem orderItem = OrderItem.builder().course(course)
+                    .price(course.getCoursePrice())
+                    .build();
+            order.getOrderItems().add(orderItem);
         }
         Assertions.assertEquals(order.getOrderStatus(), OrderStatus.FAILED);
     }
     @Test
     @Transactional
     public void delete() {
-        Long orderId = 21L;
+        Long orderId = 1L;
         Order order = orderRepository.findById(orderId).orElseThrow();
 
     }

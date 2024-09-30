@@ -1,20 +1,18 @@
 package edu.example.learner.course.service;
 
 import edu.example.learner.course.dto.ReviewDTO;
-import edu.example.learner.course.entity.Review;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
-public class ReviewService {
-    @Autowired
-    private ReviewMapper reviewMapper;
+public interface ReviewService {
+    ReviewDTO createReview(ReviewDTO reviewDTO);
+    ReviewDTO getReviewById(Long reviewId);
+    ReviewDTO updateReview(ReviewDTO reviewDTO);
+    void deleteReview(Long reviewId);
 
-    public ReviewDTO getReviewDTO(Review review) {
-        return reviewMapper.toDTO(review);
-    }
-
-    public void saveReview(ReviewDTO reviewDTO) {
-        // ReviewDTO에 따라 저장 로직 처리
-    }
+    List<ReviewDTO> getCourseReviewList(Long courseId, ReviewDTO reviewDTO);
+    List<ReviewDTO> getInstructorReviewList(String instructorName, ReviewDTO reviewDTO);
 }
+

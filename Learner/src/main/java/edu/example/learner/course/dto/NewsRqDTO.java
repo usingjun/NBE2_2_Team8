@@ -1,5 +1,6 @@
 package edu.example.learner.course.dto;
 
+import edu.example.learner.course.entity.NewsEntity;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -7,15 +8,22 @@ import java.time.LocalDateTime;
 
 @Getter
 @Setter
-@Builder
+//@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class NewsRqDTO {
-    // 수정, 삭제시 필요
-    private Long newsId;
+//    private Long newsId;
 
     @NotBlank(message = "새소식을 적어주세요.")
     private String newsName;
 
     private String newsDescription;
+
+    public NewsEntity toEntity() {
+        return NewsEntity.builder()
+//                .newsId(newsId)
+                .newsName(newsName)
+                .newsDescription(newsDescription)
+                .build();
+    }
 }

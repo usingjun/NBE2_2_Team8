@@ -1,5 +1,7 @@
 package edu.example.learner.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import edu.example.learner.alarm.entity.Alarm;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -8,6 +10,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -51,6 +54,11 @@ public class Member{
 
     @CreatedDate
     private LocalDateTime createDate;
+
+    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @Builder.Default
+    @JsonIgnore
+    private List<Alarm> alarmList = new ArrayList<>();
 
     public void changeEmail(String email) {
         this.email = email;

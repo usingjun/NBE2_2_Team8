@@ -8,6 +8,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Embeddable
 @Builder
@@ -15,24 +17,23 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@ToString
 @Table(name = "course")
 @EntityListeners(AuditingEntityListener.class)
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "course_id")
     private Long courseId;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
-    private Order order;
-
     private String courseName;
+
     private String courseDescription;
+
     @Enumerated(EnumType.STRING)
     private CourseAttribute courseAttribute;
 
     private String instructorName;
+
     private Long coursePrice;
     private Integer courseLevel;
     private boolean sale;
@@ -53,15 +54,16 @@ public class Course {
         this.instructorName = instructorName;
     }
 
+    public void changePrice(Long coursePrice) {
+        this.coursePrice = coursePrice;
+    }
+
     public void changeCourseLevel(Integer courseLevel) {
         this.courseLevel = courseLevel;
     }
 
     public void changeSale(boolean sale) {
         this.sale = sale;
-    }
-    public void changeOrder(Order order) {
-        this.order = order;
     }
 
     public void changeCourseCreatedDate(LocalDateTime courseCreatedDate) {
@@ -76,5 +78,13 @@ public class Course {
     private LocalDateTime courseCreatedDate;
     @LastModifiedDate
     private LocalDateTime courseModifiedDate;
+
+    @OneToMany(mappedBy = "courseNews")
+    @Builder.Default
+    private List<NewsEntity> newsEntities = new ArrayList<>();
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Video> videos = new ArrayList<>();
+
 
 }
