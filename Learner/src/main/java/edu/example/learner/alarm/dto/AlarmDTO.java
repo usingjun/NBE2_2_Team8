@@ -2,7 +2,6 @@ package edu.example.learner.alarm.dto;
 
 import edu.example.learner.alarm.entity.Alarm;
 import edu.example.learner.course.entity.Priority;
-import edu.example.learner.course.entity.TemporaryMember;
 import edu.example.learner.entity.Member;
 import jakarta.persistence.Embeddable;
 import lombok.*;
@@ -13,6 +12,7 @@ import java.time.LocalDateTime;
 @Embeddable
 @Builder
 @Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
@@ -34,7 +34,7 @@ public class AlarmDTO {
 
     private boolean alarmStatus;
 
-    public Alarm toEntity() {
+    public Alarm toEntity(AlarmDTO alarmDTO) {
         return Alarm.builder()
                 .alarmId(alarmId)
                 .alarmContent(alarmContent)

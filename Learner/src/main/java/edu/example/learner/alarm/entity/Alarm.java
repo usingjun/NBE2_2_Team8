@@ -1,7 +1,6 @@
 package edu.example.learner.alarm.entity;
 
 import edu.example.learner.course.entity.Priority;
-import edu.example.learner.course.entity.TemporaryMember;
 import edu.example.learner.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;

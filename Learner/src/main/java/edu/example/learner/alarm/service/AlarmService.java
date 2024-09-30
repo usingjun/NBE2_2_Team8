@@ -11,5 +11,7 @@ public interface AlarmService {
     public List<AlarmDTO> findAllAlarms();
     public AlarmDTO add(AlarmDTO alarmDTO);
     public AlarmDTO update(AlarmDTO alarmDTO);
-    public AlarmDTO delete(Long alarmId);
+    public void delete(Long alarmId);
+
+    List<AlarmDTO> listAlarmsForMember(Long memberId);
 }

@@ -86,5 +86,4 @@ public class Course {
     private List<Video> videos = new ArrayList<>();
 
 
-
 }
