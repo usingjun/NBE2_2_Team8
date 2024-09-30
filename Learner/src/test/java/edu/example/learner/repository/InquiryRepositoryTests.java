@@ -1,10 +1,11 @@
 package edu.example.learner.repository;
 
-import edu.example.learner.inquiry.entity.Inquiry;
-import edu.example.learner.inquiry.entity.InquiryStatus;
-import edu.example.learner.entity.Member;
-import edu.example.learner.inquiry.repository.InquiryRepository;
+import edu.example.learner.qna.inquiry.entity.Inquiry;
+import edu.example.learner.qna.inquiry.entity.InquiryStatus;
+import edu.example.learner.member.entity.Member;
+import edu.example.learner.qna.inquiry.repository.InquiryRepository;
 import lombok.extern.log4j.Log4j2;
+import edu.example.learner.member.repository.MemberRepository;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;

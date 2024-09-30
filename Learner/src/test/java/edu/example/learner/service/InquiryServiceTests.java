@@ -1,11 +1,11 @@
 package edu.example.learner.service;
 
-import edu.example.learner.inquiry.dto.InquiryDTO;
-import edu.example.learner.inquiry.entity.InquiryStatus;
-import edu.example.learner.entity.Member;
-import edu.example.learner.inquiry.repository.InquiryRepository;
-import edu.example.learner.inquiry.service.InquiryService;
-import edu.example.learner.repository.MemberRepository;
+import edu.example.learner.qna.inquiry.dto.InquiryDTO;
+import edu.example.learner.qna.inquiry.entity.InquiryStatus;
+import edu.example.learner.member.entity.Member;
+import edu.example.learner.qna.inquiry.repository.InquiryRepository;
+import edu.example.learner.qna.inquiry.service.InquiryService;
+import edu.example.learner.member.repository.MemberRepository;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;

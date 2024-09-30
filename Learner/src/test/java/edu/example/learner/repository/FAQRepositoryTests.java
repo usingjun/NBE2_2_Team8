@@ -1,8 +1,8 @@
 package edu.example.learner.repository;
 
-import edu.example.learner.faq.entity.FAQ;
-import edu.example.learner.faq.entity.FAQCategory;
-import edu.example.learner.faq.repository.FAQRepository;
+import edu.example.learner.qna.faq.entity.FAQ;
+import edu.example.learner.qna.faq.entity.FAQCategory;
+import edu.example.learner.qna.faq.repository.FAQRepository;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
