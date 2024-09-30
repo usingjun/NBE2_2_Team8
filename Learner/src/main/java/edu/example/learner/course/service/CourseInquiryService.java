@@ -1,8 +1,11 @@
 package edu.example.learner.course.service;
 
+import edu.example.learner.course.dto.CourseAnswerDTO;
+import edu.example.learner.course.dto.CourseDTO;
 import edu.example.learner.course.dto.CourseInquiryDTO;
 import edu.example.learner.course.entity.Course;
 import edu.example.learner.course.entity.CourseInquiry;
+import edu.example.learner.course.entity.InquiryStatus;
 import edu.example.learner.course.exception.CourseInquiryException;
 import edu.example.learner.course.repository.CourseInquiryRepository;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +23,7 @@ import java.util.Optional;
 public class CourseInquiryService {
     private final CourseInquiryRepository courseInquiryRepository;
 
-    //문의 등록
+    //강의 문의 등록
     public CourseInquiryDTO register(CourseInquiryDTO courseInquiryDTO){
         try{
             CourseInquiry courseInquiry = courseInquiryDTO.toEntity();
@@ -42,7 +45,7 @@ public class CourseInquiryService {
         }
     }
 
-    //문의 조회
+    //강의 문의 조회
     public CourseInquiryDTO read(Long inquiryId){
         Optional<CourseInquiry> foundcourseInquiry = courseInquiryRepository.findById(inquiryId);
         CourseInquiry courseInquiry = foundcourseInquiry.orElseThrow(CourseInquiryException.NOT_FOUND::get);
@@ -50,7 +53,7 @@ public class CourseInquiryService {
     }
 
 
-    //문의 수정 - 제목과 내용만 수정 가능
+    //강의 문의 수정 - 제목과 내용만 수정 가능
     public CourseInquiryDTO update(CourseInquiryDTO courseInquiryDTO){
         Optional<CourseInquiry> foundCourseInquiry = courseInquiryRepository.findById(courseInquiryDTO.getInquiryId());
         CourseInquiry modifyCourseInquiry = foundCourseInquiry.orElseThrow(CourseInquiryException.NOT_FOUND::get);
@@ -65,8 +68,22 @@ public class CourseInquiryService {
         }
     }
 
+    //강의 문의 상태 변경 - 사용자 변경 불가
+    public CourseInquiryDTO updateStatus(CourseInquiryDTO courseInquiryDTO){
+        Optional<CourseInquiry> foundCourseInquiry = courseInquiryRepository.findById(courseInquiryDTO.getInquiryId());
+        CourseInquiry modifyCourseInquiry = foundCourseInquiry.orElseThrow(CourseInquiryException.NOT_FOUND::get);
 
-    //문의 삭제
+        try{
+            modifyCourseInquiry.changeInquiryStatus(courseInquiryDTO.getInquiryStatus());
+            return new CourseInquiryDTO(modifyCourseInquiry);
+        } catch(Exception e){
+            log.error("--- "+ e.getMessage());
+            throw CourseInquiryException.NOT_MODIFIED.get();
+        }
+    }
+
+
+    //강의 문의 삭제
     public void delete(Long inquiryId){
         Optional<CourseInquiry> foundCourseInquiry = courseInquiryRepository.findById(inquiryId);
         CourseInquiry courseInquiry = foundCourseInquiry.orElseThrow(CourseInquiryException.NOT_FOUND::get);

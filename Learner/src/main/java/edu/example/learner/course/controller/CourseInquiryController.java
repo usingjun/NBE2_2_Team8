@@ -17,13 +17,13 @@ import java.util.List;
 public class CourseInquiryController {
     private final CourseInquiryService courseInquiryService;
 
-    //문의 등록
+    //강의 문의 등록
     @PostMapping("/create")
     public ResponseEntity<CourseInquiryDTO> register(@RequestBody CourseInquiryDTO courseInquiryDTO){
         return ResponseEntity.ok(courseInquiryService.register(courseInquiryDTO));
     }
 
-    //전체 문의 조회
+    //전체 강의 문의 조회
     @GetMapping
     public ResponseEntity<List<CourseInquiryDTO>> getList(){
         List<CourseInquiry> courseInquiries = courseInquiryService.readAll();
@@ -35,13 +35,13 @@ public class CourseInquiryController {
         return ResponseEntity.ok(courseInquiryDTOS);
     }
 
-    //문의 조회
+    //강의 문의 조회
     @GetMapping("/{inquiryId}")
     public ResponseEntity<CourseInquiryDTO> getInquiry( @PathVariable("inquiryId") Long inquiryId ){
         return ResponseEntity.ok(courseInquiryService.read(inquiryId));
     }
 
-    //문의 수정
+    //강의 문의 수정
     @PutMapping("/{inquiryId}/update")
     public ResponseEntity<CourseInquiryDTO> modify( @PathVariable("inquiryId") Long inquiryId ,
                                                     @RequestBody CourseInquiryDTO courseInquiryDTO){
@@ -49,9 +49,17 @@ public class CourseInquiryController {
         return ResponseEntity.ok(courseInquiryService.update(courseInquiryDTO));
     }
 
-    //문의 삭제
+    //강의 문의 상태 수정
+    @PutMapping("/{inquiryId}/updateStatus")
+    public ResponseEntity<CourseInquiryDTO> modifyStatus ( @PathVariable("inquiryId") Long inquiryId ,
+                                                            @RequestBody CourseInquiryDTO courseInquiryDTO){
+        courseInquiryDTO.setInquiryId(inquiryId);
+        return ResponseEntity.ok(courseInquiryService.updateStatus(courseInquiryDTO));
+    }
+
+    //강의 문의 삭제
     @DeleteMapping("/{inquiryId}/delete")
-    public ResponseEntity<Void> delete( @PathVariable("inquiryId") Long inquiryId ){
+    public ResponseEntity<Void> remove( @PathVariable("inquiryId") Long inquiryId ){
         courseInquiryService.delete(inquiryId);
         return ResponseEntity.ok().build();
     }

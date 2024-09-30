@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 
 
 @Entity
-@Table(name="course_inquiry", indexes=@Index(columnList = "customer"))
+@Table(name="course_inquiry")
 @Getter
 @ToString
 @AllArgsConstructor
