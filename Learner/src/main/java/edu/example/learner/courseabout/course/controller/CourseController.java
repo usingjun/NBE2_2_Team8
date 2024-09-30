@@ -14,7 +14,7 @@ import java.util.Map;
 @RestController
 @Log4j2
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/course")
+@RequestMapping("/course")
 public class CourseController {
     private final CourseService courseService;
 
@@ -26,7 +26,7 @@ public class CourseController {
         return ResponseEntity.ok(courseService.addCourse(courseDTO));
     }
 
-    @GetMapping("{courseId}")
+    @GetMapping("/{courseId}")
     public ResponseEntity<CourseDTO> readCourse(@PathVariable Long courseId) {
 
         log.info("Reading course {}", courseId);
@@ -45,7 +45,7 @@ public class CourseController {
         return ResponseEntity.ok(courseService.updateCourse(courseDTO));
     }
 
-    @DeleteMapping("{courseId}")
+    @DeleteMapping("/{courseId}")
     public ResponseEntity<?> deleteCourse(@RequestParam Long courseId) {
         log.info("Deleting course {}", courseId);
         return ResponseEntity.ok(Map.of("delete","success"));
