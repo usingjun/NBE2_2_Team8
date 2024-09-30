@@ -18,7 +18,7 @@ import java.util.Map;
 public class CourseController {
     private final CourseService courseService;
 
-    @PostMapping("/create")
+    @PostMapping()
     public ResponseEntity<CourseDTO> createCourse(@RequestBody CourseDTO courseDTO) {
 
         log.info("Creating course {}", courseDTO);
@@ -26,11 +26,10 @@ public class CourseController {
         return ResponseEntity.ok(courseService.addCourse(courseDTO));
     }
 
-    @GetMapping
-    public ResponseEntity<CourseDTO> readCourse(@RequestParam Long courseId) {
+    @GetMapping("{courseId}")
+    public ResponseEntity<CourseDTO> readCourse(@PathVariable Long courseId) {
 
         log.info("Reading course {}", courseId);
-
         return ResponseEntity.ok(courseService.read(courseId));
     }
 
@@ -46,7 +45,7 @@ public class CourseController {
         return ResponseEntity.ok(courseService.updateCourse(courseDTO));
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("{courseId}")
     public ResponseEntity<?> deleteCourse(@RequestParam Long courseId) {
         log.info("Deleting course {}", courseId);
         return ResponseEntity.ok(Map.of("delete","success"));
