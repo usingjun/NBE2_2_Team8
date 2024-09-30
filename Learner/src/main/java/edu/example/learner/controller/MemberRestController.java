@@ -20,10 +20,11 @@ import org.springframework.web.multipart.MultipartFile;
 @Log4j2
 public class MemberRestController {
     private final MemberService memberService;
+
     //이미지 업로드
-    @PostMapping("/upload_image")
+    @PutMapping("{memberId}/image")
     public ResponseEntity<String> memberUploadImage(@RequestParam("file") MultipartFile file,
-                                                    @AuthenticationPrincipal CustomUserPrincipal principal) {
+                                                    @PathVariable Long memberId) {
         log.info("--- memberUploadImage()");
         //파일 크기 제한
         if (!file.isEmpty() && file.getSize() > 2097152) {
@@ -36,35 +37,46 @@ public class MemberRestController {
         }
 
         try {
-            memberService.uploadImage(file, Long.parseLong(principal.getUsername()));
+            memberService.uploadImage(file, memberId);
             return ResponseEntity.ok("Image uploaded successfully");
         } catch (Exception e) {
             log.error("Error uploading image", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading image: " + e.getMessage());
         }
     }
-    //회원 정보 조회
-    @GetMapping("/read")
-    public ResponseEntity<MemberDTO> memberRead(@AuthenticationPrincipal CustomUserPrincipal principal) {
+
+    //마이페이지
+    @GetMapping("{memberId}")
+    public ResponseEntity<MemberDTO> myPageRead(@PathVariable Long memberId) {
+        log.info("--- myPageRead()");
+        log.info(memberId);
+        return ResponseEntity.ok(memberService.getMemberInfo(memberId));
+    }
+
+    //다른 사용자 조회
+    @GetMapping("/other")
+    public ResponseEntity<MemberDTO> memberRead(@RequestParam Long memberId) {
         log.info("--- memberRead()");
-        log.info(principal.getUsername());
-        return ResponseEntity.ok(memberService.getMemberInfo(Long.parseLong(principal.getUsername())));
+        MemberDTO memberDTO = memberService.getMemberInfo(memberId);
+        //본인이 아닌 사용자 조회시 개인정보빼고 정보 전달
+        return ResponseEntity.ok(memberDTO.getNonSensitiveInfo(memberDTO));
     }
 
     //회원 정보 수정
-    @PutMapping("/modify")
+    @PutMapping("{memberId}")
     public ResponseEntity<MemberDTO> memberModify(@RequestBody @Validated MemberDTO memberDTO,
-                                                  @AuthenticationPrincipal CustomUserPrincipal principal) {
+                                                  @PathVariable Long memberId) {
         log.info("--- memberModify()");
 
-        return ResponseEntity.ok(memberService.updateMemberInfo(Long.parseLong(principal.getUsername()),memberDTO));
+        return ResponseEntity.ok(memberService.updateMemberInfo(memberId,memberDTO));
     }
+
     //회원 탈퇴
-    @DeleteMapping("/delete")
-    public ResponseEntity<String> memberDelete(@AuthenticationPrincipal CustomUserPrincipal principal) {
+    @DeleteMapping("{memberId}")
+    public ResponseEntity<String> memberDelete(@PathVariable Long memberId) {
         log.info("--- memberDelete()");
 
-        memberService.deleteMember(Long.parseLong(principal.getUsername()));
+        memberService.deleteMember(memberId);
 
         return ResponseEntity.ok("회원 탈퇴에 성공하였습니다.");
     }
