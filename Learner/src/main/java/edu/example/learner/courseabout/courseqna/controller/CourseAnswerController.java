@@ -13,7 +13,7 @@ import java.util.List;
 @RestController
 @Log4j2
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/course-answer")
+@RequestMapping("/course/{courseId}/course-answer")
 public class CourseAnswerController {
     private final CourseAnswerService courseAnswerService;
 
