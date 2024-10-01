@@ -1,22 +1,28 @@
 package edu.example.learner.repository;
 
+import edu.example.learner.member.entity.Member;
+import edu.example.learner.member.repository.MemberRepository;
 import edu.example.learner.qna.answer.entity.Answer;
 import edu.example.learner.qna.answer.repository.AnswerRepository;
 import edu.example.learner.qna.inquiry.entity.Inquiry;
-import edu.example.learner.member.entity.Member;
 import edu.example.learner.qna.inquiry.repository.InquiryRepository;
 import lombok.extern.log4j.Log4j2;
-import edu.example.learner.member.repository.MemberRepository;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DataJpaTest
+@SpringBootTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Transactional(propagation = Propagation.NOT_SUPPORTED)
 @Log4j2
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class AnswerRepositoryTests {
@@ -24,20 +30,12 @@ public class AnswerRepositoryTests {
     private AnswerRepository answerRepository;
     @Autowired
     private InquiryRepository inquiryRepository;
-    @Autowired
-    private MemberRepository memberRepository;
-
-    @BeforeEach
-    void setUp() {
-        Member member = memberRepository.save(Member.builder().memberId(1L).build());
-        inquiryRepository.save(Inquiry.builder().inquiryId(1L).member(member).build());
-    }
 
     @Test
     @Order(1)
-    @Rollback(false)
     void testInsert() {
         //GIVEN
+        inquiryRepository.save(Inquiry.builder().inquiryId(1L).member(Member.builder().memberId(1L).build()).build());
         Answer answer = Answer.builder()
                 .answerContent("answer test content")
                 .inquiry(Inquiry.builder().inquiryId(1L).build())
@@ -55,6 +53,7 @@ public class AnswerRepositoryTests {
     }
 
     @Test
+    @Transactional
     @Order(2)
     void testRead() {
         //GIVEN
@@ -71,6 +70,7 @@ public class AnswerRepositoryTests {
     }
 
     @Test
+    @Transactional
     @Order(3)
     void testUpdate() {
         //GIVEN

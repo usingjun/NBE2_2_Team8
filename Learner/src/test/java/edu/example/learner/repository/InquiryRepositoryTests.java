@@ -11,28 +11,30 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DataJpaTest
+@SpringBootTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Transactional(propagation = Propagation.NOT_SUPPORTED)
 @Log4j2
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class InquiryRepositoryTests {
     @Autowired
     private InquiryRepository inquiryRepository;
-    @Autowired
-    private MemberRepository memberRepository;
 
     @Test
     @Order(1)
-    @Rollback(false)
     void testInsert() {
         //GIVEN
-        memberRepository.save(Member.builder().build());
         Inquiry inquiry = Inquiry.builder()
                 .inquiryTitle("inquiry test title")
                 .inquiryContent("inquiry test content")
@@ -53,6 +55,7 @@ public class InquiryRepositoryTests {
     }
 
     @Test
+    @Transactional
     @Order(2)
     void testRead() {
         //GIVEN
@@ -69,6 +72,7 @@ public class InquiryRepositoryTests {
     }
 
     @Test
+    @Transactional
     @Order(3)
     void testUpdate() {
         //GIVEN
@@ -78,7 +82,7 @@ public class InquiryRepositoryTests {
         //WHEN
         inquiry.changeInquiryTitle("new inquiry title");
         inquiry.changeInquiryContent("new inquiry content");
-        inquiry.changeInquiryStatus(String.valueOf(InquiryStatus.RESOLVED));
+        inquiry.changeInquiryStatus(InquiryStatus.RESOLVED.name());
         Inquiry updatedInquiry = inquiryRepository.findById(inquiryId).get();
 
         //THEN

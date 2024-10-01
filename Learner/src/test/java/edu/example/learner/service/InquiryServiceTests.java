@@ -23,14 +23,7 @@ public class InquiryServiceTests {
     @Autowired
     private InquiryService inquiryService;
     @Autowired
-    private MemberRepository memberRepository;
-    @Autowired
     private InquiryRepository inquiryRepository;
-
-    @BeforeEach
-    public void setUp() {
-        memberRepository.save(Member.builder().memberId(1L).build());
-    }
 
     @Test
     @Order(1)
