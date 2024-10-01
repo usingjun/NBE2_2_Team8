@@ -33,7 +33,6 @@ class VideoServiceTest {
         video.setTitle("Test Video");
         video.setUrl("http://example.com/test-video.mp4");
         video.setDescription("This is a test video.");
-
         // 비디오 저장
         videoRepository.save(video);
     }
@@ -59,7 +58,6 @@ class VideoServiceTest {
     void testDeleteVideo() {
         Long videoId = video.getVideo_Id();
         videoRepository.delete(video);
-
         Optional<Video> deletedVideo = videoRepository.findById(videoId);
         assertFalse(deletedVideo.isPresent());
     }
