@@ -25,23 +25,16 @@ public class AnswerServiceTests {
     @Autowired
     private AnswerService answerService;
     @Autowired
-    private MemberRepository memberRepository;
-    @Autowired
     private InquiryRepository inquiryRepository;
     @Autowired
     private AnswerRepository answerRepository;
-
-    @BeforeEach
-    public void setUp() {
-        Member member = memberRepository.save(Member.builder().memberId(1L).build());
-    }
 
     @Test
     @Order(1)
     void testRegister() {
         IntStream.rangeClosed(1, 10).forEach(i -> {
             //GIVEN
-            inquiryRepository.save(Inquiry.builder().inquiryId((long) i).member(Member.builder().memberId(1L).build()).build());
+            inquiryRepository.save(Inquiry.builder().inquiryId((long) i).inquiryStatus(InquiryStatus.ANSWERED.name()).member(Member.builder().memberId(1L).build()).build());
             AnswerDTO answerDTO = AnswerDTO.builder()
                     .answerContent("content" + i)
                     .inquiryId((long) i)

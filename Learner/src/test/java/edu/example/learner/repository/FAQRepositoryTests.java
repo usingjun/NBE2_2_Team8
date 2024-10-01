@@ -9,15 +9,20 @@ import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-@DataJpaTest
+@SpringBootTest
+@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
+@Transactional(propagation = Propagation.NOT_SUPPORTED)
 @Log4j2
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class FAQRepositoryTests {
@@ -26,7 +31,6 @@ public class FAQRepositoryTests {
 
     @Test
     @Order(1)
-    @Rollback(false)
     void testInsert() {
         //GIVEN
         FAQ faq = FAQ.builder()
@@ -81,6 +85,7 @@ public class FAQRepositoryTests {
     }
 
     @Test
+    @Transactional
     @Order(3)
     void testUpdate() {
 
