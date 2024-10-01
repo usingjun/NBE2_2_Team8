@@ -78,7 +78,7 @@ public class InquiryRepositoryTests {
         //WHEN
         inquiry.changeInquiryTitle("new inquiry title");
         inquiry.changeInquiryContent("new inquiry content");
-        inquiry.changeInquiryStatus(InquiryStatus.RESOLVED);
+        inquiry.changeInquiryStatus(String.valueOf(InquiryStatus.RESOLVED));
         Inquiry updatedInquiry = inquiryRepository.findById(inquiryId).get();
 
         //THEN
