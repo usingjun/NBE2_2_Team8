@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 
 
 import java.time.LocalDateTime;
@@ -33,10 +34,10 @@ public class MemberDTO {
 
     private String imageType;
 
-    @NotNull
     private String introduction;
 
     private LocalDateTime createDate;
+
 
     public MemberDTO(Member member) {
         this.memberId = member.getMemberId();
@@ -45,7 +46,11 @@ public class MemberDTO {
         this.nickname = member.getNickname();
         this.phoneNumber = member.getPhoneNumber();
         this.createDate = member.getCreateDate();
-        this.introduction = member.getIntroduction();
+        if(member.getIntroduction() == null){
+            this.introduction = "자기소개란 입니다.";
+        } else{
+            this.introduction = member.getIntroduction();
+        }
         this.imageType = member.getImageType();
         // 이미지를 Base64로 인코딩하여 저장
         if (member.getProfileImage() != null) {

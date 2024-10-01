@@ -61,6 +61,8 @@ class AlarmServiceImplTest {
                     .createdAt(LocalDateTime.now())
                     .build();
             alarmRepository.save(alarm);
+//            member.getAlarmList().add(alarm);
+
         }
     }
 

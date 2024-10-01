@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import edu.example.learner.alarm.entity.Alarm;
 import jakarta.persistence.*;
 import lombok.*;
+import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -12,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "member")
+@Table(name = "member", indexes = @Index(columnList = "email"))
 @Setter
 @Getter
 @ToString
@@ -25,16 +26,16 @@ public class Member{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long memberId;
 
-    @Column(nullable = false)
+    @Column(nullable = false , unique = true )
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String password;
 
     @Column(nullable = false)
     private String nickname;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String phoneNumber;
 
     @Lob  // BLOB 타입으로 처리됨
@@ -46,12 +47,11 @@ public class Member{
     @Enumerated(value = EnumType.STRING)
     private Role role;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String introduction;
 
     @CreatedDate
     private LocalDateTime createDate;
-
 
     public void changeEmail(String email) {
         this.email = email;
