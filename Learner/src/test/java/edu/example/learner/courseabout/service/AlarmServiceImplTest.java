@@ -1,4 +1,3 @@
-
 package edu.example.learner.courseabout.service;
 
 import edu.example.learner.alarm.dto.AlarmDTO;
@@ -63,9 +62,8 @@ class AlarmServiceImplTest {
                     .build();
             alarmRepository.save(alarm);
 //            member.getAlarmList().add(alarm);
+
         }
-
-
     }
 
     @Test
@@ -80,7 +78,6 @@ class AlarmServiceImplTest {
                 .alarmStatus(false)
                 .createdAt(LocalDateTime.now())
                 .build();
-
         // when
         AlarmDTO savedAlarmDTO = alarmService.add(newAlarmDTO); // assuming there is an addAlarm method
         Alarm alarm = savedAlarmDTO.toEntity(savedAlarmDTO);

@@ -42,7 +42,7 @@ public class InquiryServiceImpl implements InquiryService {
 
     @Override
     public InquiryDTO update(InquiryDTO inquiryDTO) {
-        Inquiry inquiry = inquiryRepository.findById(inquiryDTO.getInquiryId()).orElseThrow();
+        Inquiry inquiry = inquiryRepository.findById(inquiryDTO.getInquiryId()).orElseThrow(LearnerException.NOT_FOUND_EXCEPTION::getTaskException);
         try {
             inquiry.changeInquiryTitle(inquiryDTO.getInquiryTitle());
             inquiry.changeInquiryContent(inquiryDTO.getInquiryContent());
@@ -56,7 +56,7 @@ public class InquiryServiceImpl implements InquiryService {
 
     @Override
     public void delete(Long inquiryId) {
-        inquiryRepository.findById(inquiryId).orElseThrow();
+        inquiryRepository.findById(inquiryId).orElseThrow(LearnerException.NOT_FOUND_EXCEPTION::getTaskException);
         try {
             inquiryRepository.deleteById(inquiryId);
         } catch (Exception e) {
