@@ -52,10 +52,6 @@ public class Member{
     @CreatedDate
     private LocalDateTime createDate;
 
-    @OneToMany(mappedBy = "member",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
-    @Builder.Default
-    @JsonIgnore
-    private List<Alarm> alarmList = new ArrayList<>();
 
     public void changeEmail(String email) {
         this.email = email;
@@ -68,7 +64,6 @@ public class Member{
     public void changeNickname(String nickname) {
         this.nickname = nickname;
     }
-
 
     public void changeIntroduction(String introduction) {
         this.introduction = introduction;

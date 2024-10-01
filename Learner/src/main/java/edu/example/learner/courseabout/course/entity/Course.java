@@ -4,6 +4,8 @@ package edu.example.learner.courseabout.course.entity;
 import edu.example.learner.courseabout.news.entity.NewsEntity;
 import edu.example.learner.courseabout.video.entity.Video;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -13,12 +15,13 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Embeddable
+
 @Builder
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
+@ToString(exclude = {"videos","newsEntities"})
 @Table(name = "course")
 @EntityListeners(AuditingEntityListener.class)
 public class Course {
@@ -27,18 +30,23 @@ public class Course {
     @Column(name = "course_id")
     private Long courseId;
 
+    @NotEmpty
     private String courseName;
 
+    @NotEmpty
     private String courseDescription;
 
     @Enumerated(EnumType.STRING)
     private CourseAttribute courseAttribute;
 
+    @NotEmpty
     private String instructorName;
 
+    @NotNull
     private Long coursePrice;
+    @NotNull
     private Integer courseLevel;
-    private boolean sale;
+    private boolean sale =false;
 
     public void changeCourseStatus(CourseAttribute courseStatus) {
         this.courseAttribute = courseStatus;

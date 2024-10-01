@@ -28,6 +28,9 @@ public class Video {
 
     private String description;
 
+    private Long totalVideoDuration; // 전체 동영상 시간 추가
+    private Long currentVideoTime;   // 현재 동영상 시간 추가
+
     @CreatedDate
     private LocalDateTime createdAt;
     @LastModifiedDate
@@ -49,5 +52,11 @@ public class Video {
 
     public void changeDescription(String description) {
         this.description = description;
+    }
+
+    // 초기 동영상 시간 설정 메서드
+    public void initializeTimes(Long totalDuration, Long currentTime) {
+        this.totalVideoDuration = totalDuration;
+        this.currentVideoTime = currentTime;
     }
 }

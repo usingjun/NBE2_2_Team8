@@ -26,9 +26,13 @@ public class QVideo extends EntityPathBase<Video> {
 
     public final DateTimePath<java.time.LocalDateTime> createdAt = createDateTime("createdAt", java.time.LocalDateTime.class);
 
+    public final NumberPath<Long> currentVideoTime = createNumber("currentVideoTime", Long.class);
+
     public final StringPath description = createString("description");
 
     public final StringPath title = createString("title");
+
+    public final NumberPath<Long> totalVideoDuration = createNumber("totalVideoDuration", Long.class);
 
     public final DateTimePath<java.time.LocalDateTime> updatedAt = createDateTime("updatedAt", java.time.LocalDateTime.class);
 
