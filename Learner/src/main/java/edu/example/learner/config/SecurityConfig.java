@@ -2,6 +2,7 @@ package edu.example.learner.config;
 
 import edu.example.learner.member.service.CustomOauth2UserService;
 import edu.example.learner.security.filter.JWTCheckFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -24,12 +25,14 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig{
     private final JWTCheckFilter jwtCheckFilter;
+    private final CustomSuccessHandler customSuccessHandler;
     private final CustomOauth2UserService customOauth2UserService;
 
-    @Autowired
-    public SecurityConfig(JWTCheckFilter jwtCheckFilter, CustomOauth2UserService customOauth2UserService) {
+
+    public SecurityConfig(JWTCheckFilter jwtCheckFilter, CustomOauth2UserService customOauth2UserService, CustomSuccessHandler  customSuccessHandler) {
         this.jwtCheckFilter = jwtCheckFilter;
         this.customOauth2UserService = customOauth2UserService;
+        this.customSuccessHandler = customSuccessHandler;
     }
 
     @Bean
@@ -53,6 +56,7 @@ public class SecurityConfig{
                         oauth2.userInfoEndpoint((userInfoEndpointConfig ->
                                 userInfoEndpointConfig.userService(customOauth2UserService)))
                                 .clientRegistrationRepository(customClientRegistrationRepo.clientRegistrationRepository())
+                                .successHandler(customSuccessHandler)
                 );
 
         //JWTCheckFilter 필터 추가
