@@ -20,7 +20,7 @@ const YoutubePlayer = ({ videoUrl }) => {
     }, [videoUrl]);
 
     const fetchVideoDuration = (videoId) => {
-        const apiKey = 'AIzaSyDoEwQOJ6Igsm9dCnk1b1y1sqzG3qdoEw0'; // 발급받은 API 키
+        const apiKey = "AIzaSyDoEwQOJ6Igsm9dCnk1b1y1sqzG3qdoEw0";
         const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${apiKey}&part=contentDetails`;
 
         return fetch(url)

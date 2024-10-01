@@ -25,7 +25,7 @@ import java.util.List;
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long orderId ;
+    private Long orderId;
 
     @CreatedDate
     private LocalDateTime createdAt;
@@ -38,18 +38,25 @@ public class Order {
 
     @JsonIgnore
     @Builder.Default
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL ,orphanRemoval = true , fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private List<OrderItem> orderItems = new ArrayList<>();
 
     public void changeOrderStatus(OrderStatus status) {
         this.orderStatus = status;
     }
-    public void add(OrderItem orderItem) {
-        orderItems.add(orderItem);
-    }
-    public void changeOrderItems(List<OrderItem> orderItems) {
-        this.orderItems = orderItems;
+
+    public void addOrderItem(OrderItem orderItem) {
+        if (orderItem != null) {
+            orderItems.add(orderItem);
+            orderItem.setOrder(this); // OrderItem에 현재 Order 설정
+        }
     }
 
+    public void removeOrderItem(OrderItem orderItem) {
+        if (orderItems.remove(orderItem)) {
+            orderItem.setOrder(null); // OrderItem의 order 필드 null 설정
+        }
 
+
+    }
 }

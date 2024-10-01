@@ -17,7 +17,6 @@ import java.util.List;
 import java.util.Optional;
 @SpringBootTest
 @Transactional
-@Rollback(false)
 @Slf4j
 @Controller
 class VideoServiceTest {
