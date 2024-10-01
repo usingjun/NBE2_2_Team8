@@ -27,7 +27,7 @@ import org.springframework.stereotype.Component;
 //        String[][] members = {
 //                {"ADMIN@gmail.com", "자기소개란 입니다.", "관리자", "010-0000-0000", "ADMIN"},
 //                {"customer@gmail.com", "자기소개란 입니다.", "학생", "010-0000-0000", "USER"},
-//                {"instructor@gmail.com", "자기소개란 입니다.", "강사", "010-0000-0000", "INSTRUCTOR"},
+//                {"instructor@gmail.com", "자기소개란 입니다.", "김영한", "010-0000-0000", "INSTRUCTOR"},
 //        };
 //
 //        for (String[] memberData : members) {

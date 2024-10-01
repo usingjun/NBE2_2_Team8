@@ -58,7 +58,7 @@ public class QVideo extends EntityPathBase<Video> {
 
     public QVideo(Class<? extends Video> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.course = inits.isInitialized("course") ? new edu.example.learner.courseabout.course.entity.QCourse(forProperty("course")) : null;
+        this.course = inits.isInitialized("course") ? new edu.example.learner.courseabout.course.entity.QCourse(forProperty("course"), inits.get("course")) : null;
     }
 
 }
