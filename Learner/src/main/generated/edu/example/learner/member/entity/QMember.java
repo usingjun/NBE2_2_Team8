@@ -7,7 +7,6 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
-import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -19,8 +18,6 @@ public class QMember extends EntityPathBase<Member> {
     private static final long serialVersionUID = -1581299734L;
 
     public static final QMember member = new QMember("member1");
-
-    public final ListPath<edu.example.learner.alarm.entity.Alarm, edu.example.learner.alarm.entity.QAlarm> alarmList = this.<edu.example.learner.alarm.entity.Alarm, edu.example.learner.alarm.entity.QAlarm>createList("alarmList", edu.example.learner.alarm.entity.Alarm.class, edu.example.learner.alarm.entity.QAlarm.class, PathInits.DIRECT2);
 
     public final DateTimePath<java.time.LocalDateTime> createDate = createDateTime("createDate", java.time.LocalDateTime.class);
 

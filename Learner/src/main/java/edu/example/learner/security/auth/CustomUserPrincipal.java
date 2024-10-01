@@ -11,11 +11,11 @@ import java.util.List;
 
 @RequiredArgsConstructor
 public class CustomUserPrincipal implements UserDetails {
-    private final String memberId;
+    private final String email;
     private final String role;
 
     public CustomUserPrincipal(Member member) {
-        this.memberId = member.getMemberId().toString();
+        this.email = member.getEmail().toString();
         this.role = member.getRole().toString();
     }
 
@@ -31,6 +31,6 @@ public class CustomUserPrincipal implements UserDetails {
 
     @Override
     public String getUsername() {
-        return memberId;
+        return email;
     }
 }

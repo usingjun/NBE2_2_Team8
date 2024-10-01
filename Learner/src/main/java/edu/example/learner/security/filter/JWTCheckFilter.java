@@ -15,29 +15,19 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Component
 @RequiredArgsConstructor
 @Log4j2
 public class JWTCheckFilter extends OncePerRequestFilter {
-    private final JWTUtil jwtUtil; //생성자 인젝션으로 JWTUtil 객체 받기
+    private final JWTUtil jwtUtil;
 
     @Override           //필터링 적용 X - 액세스 토큰 확인 X
     protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
         log.info("--- shouldNotFilter() ");
         log.info("--- requestURI : " + request.getRequestURI());
-
-        if(!request.getRequestURI().startsWith("/api/")) { // /api/로 시작하지 않는 경로는 제외
-            return true;
-        }
-
-        if(!request.getRequestURI().startsWith("/read")) { // /read 로 끝나는 경로 제외
-            return true;
-        }
 
         return false;   //그외 경로들은 필터링
     }
