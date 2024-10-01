@@ -26,6 +26,14 @@ const SignUp = () => {
         console.log(form);
     };
 
+    const handleNaverClick = () => {
+        window.location.href = "http://localhost:8080/oauth2/authorization/naver";
+    };
+
+    const handleGoogleClick = () => {
+        window.location.href = "http://localhost:8080/login/oauth2/code/google";
+    };
+
     return (
         <SignUpContainer>
             <Title>회원가입</Title>
@@ -57,49 +65,14 @@ const SignUp = () => {
                     placeholder="비밀번호를 다시 입력하세요"
                 />
 
-                {/*<Label>닉네임</Label>*/}
-                {/*<Input*/}
-                {/*    type="text"*/}
-                {/*    name="nickname"*/}
-                {/*    value={form.nickname}*/}
-                {/*    onChange={handleChange}*/}
-                {/*    placeholder="닉네임을 입력하세요"*/}
-                {/*/>*/}
-
-                {/*<Label>전화 번호</Label>*/}
-                {/*<Input*/}
-                {/*    type="text"*/}
-                {/*    name="phoneNumber"*/}
-                {/*    value={form.phoneNumber}*/}
-                {/*    onChange={handleChange}*/}
-                {/*    placeholder="전화 번호를 입력하세요"*/}
-                {/*/>*/}
-
-                {/*<Label>프로필 이미지 URL</Label>*/}
-                {/*<Input*/}
-                {/*    type="text"*/}
-                {/*    name="profileImage"*/}
-                {/*    value={form.profileImage}*/}
-                {/*    onChange={handleChange}*/}
-                {/*    placeholder="프로필 이미지 URL을 입력하세요"*/}
-                {/*/>*/}
-
-                {/*<Label>자기 소개</Label>*/}
-                {/*<TextArea*/}
-                {/*    name="introduction"*/}
-                {/*    value={form.introduction}*/}
-                {/*    onChange={handleChange}*/}
-                {/*    placeholder="자기 소개를 입력하세요"*/}
-                {/*/>*/}
-
                 <SubmitButton type="submit">가입하기</SubmitButton>
             </Form>
 
             <SimpleSignUp>
                 <span>간편 회원가입</span>
                 <SocialButtons>
-                    <SocialButton>카카오</SocialButton>
-                    <SocialButton>구글</SocialButton>
+                    <SocialButton onClick={handleNaverClick}>네이버</SocialButton>
+                    <SocialButton onClick={handleGoogleClick}>구글</SocialButton>
                 </SocialButtons>
             </SimpleSignUp>
         </SignUpContainer>
@@ -109,96 +82,71 @@ const SignUp = () => {
 export default SignUp;
 
 const SignUpContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 2rem;
 `;
 
 const Title = styled.h2`
-  font-size: 2rem;
-  margin-bottom: 2rem;
+    font-size: 2rem;
+    margin-bottom: 2rem;
 `;
 
 const Form = styled.form`
-  display: flex;
-  flex-direction: column;
-  width: 300px;
+    display: flex;
+    flex-direction: column;
+    width: 300px;
 `;
 
 const Label = styled.label`
-  font-size: 1rem;
-  margin-bottom: 0.5rem;
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
 `;
 
 const Input = styled.input`
-  padding: 0.75rem;
-  margin-bottom: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 1rem;
-`;
-
-const TextArea = styled.textarea`
-  padding: 0.75rem;
-  margin-bottom: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 1rem;
-  height: 100px;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
 `;
 
 const SubmitButton = styled.button`
-  padding: 0.75rem;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 1.1rem;
-  cursor: pointer;
-  &:hover {
-    background-color: #218838;
-  }
+    padding: 0.75rem;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    &:hover {
+        background-color: #218838;
+    }
 `;
 
 const SimpleSignUp = styled.div`
-  margin-top: 2rem;
-  text-align: center;
-  span {
-    margin-bottom: 1rem;
-    display: block;
-  }
+    margin-top: 2rem;
+    text-align: center;
+    span {
+        margin-bottom: 1rem;
+        display: block;
+    }
 `;
 
 const SocialButtons = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
 `;
 
 const SocialButton = styled.button`
-  background-color: #f9f9f9;
-  border: 1px solid #ddd;
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  cursor: pointer;
-  &:hover {
-    background-color: #f1f1f1;
-  }
-`;
-
-
-const KakaoIcon = styled.div`
-  width: 50px;
-  height: 50px;
-  background-color: #fddc3f;
-  border-radius: 50%;
-`;
-
-const GoogleIcon = styled.div`
-  width: 50px;
-  height: 50px;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 50%;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    &:hover {
+        background-color: #f1f1f1;
+    }
 `;
