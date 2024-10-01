@@ -61,7 +61,6 @@ class AlarmServiceImplTest {
                     .createdAt(LocalDateTime.now())
                     .build();
             alarmRepository.save(alarm);
-            member.getAlarmList().add(alarm);
         }
     }
 
@@ -77,7 +76,6 @@ class AlarmServiceImplTest {
                 .alarmStatus(false)
                 .createdAt(LocalDateTime.now())
                 .build();
-
         // when
         AlarmDTO savedAlarmDTO = alarmService.add(newAlarmDTO); // assuming there is an addAlarm method
         Alarm alarm = savedAlarmDTO.toEntity(savedAlarmDTO);

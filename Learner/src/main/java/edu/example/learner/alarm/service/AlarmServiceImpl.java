@@ -54,7 +54,6 @@ public class AlarmServiceImpl implements AlarmService {
     public AlarmDTO add(AlarmDTO alarmDTO) {
         Alarm save = alarmRepository.save(alarmDTO.toEntity(alarmDTO));
         Member member = memberRepository.findById(Math.toIntExact(alarmDTO.getMemberId())).orElseThrow(MemberException.MEMBER_NOT_FOUND::getMemberTaskException);
-        member.getAlarmList().add(save);
         memberRepository.save(member);
         return new AlarmDTO(save);
     }
