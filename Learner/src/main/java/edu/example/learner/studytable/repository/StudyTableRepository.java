@@ -31,7 +31,7 @@ public interface StudyTableRepository extends JpaRepository<StudyTable, Long> {
     int getYearlyCompleted(@Param("memberId") Long memberID, @Param("year") int year);
 
     //주간 요약
-    @Query("select st.studyDate, st.completed from StudyTable st where st.member.memberId = :memberId and st.studyDate >= :startDate and st.studyDate <= :endDate group by st.studyDate order by st.studyDate")
+    @Query("select st.studyDate, st.completed from StudyTable st where st.member.memberId = :memberId and st.studyDate between :startDate and :endDate order by st.studyDate")
     List<Object[]> getWeeklySummary(@Param("memberId") Long memberId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     //연간 요약

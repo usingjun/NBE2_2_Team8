@@ -9,7 +9,9 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.List;
 
 @Service
@@ -61,37 +63,44 @@ public class StudyTableServiceImpl implements StudyTableService {
     }
 
     @Override
-    public int getWeeklyStudyTime(Long memberId, LocalDate startDate, LocalDate endDate) {
-        return 0;
+    public int getWeeklyStudyTime(Long memberId, LocalDate localDate) {
+        LocalDate startDate = localDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        LocalDate endDate = localDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
+        log.info("--- startDate : " + startDate + " endDate : " + endDate);
+        return studyTableRepository.getWeeklyStudyTime(memberId, startDate, endDate);
     }
 
     @Override
     public int getYearlyStudyTime(Long memberId, int year) {
-        return 0;
+        return studyTableRepository.getYearlyStudyTime(memberId, year);
     }
 
     @Override
-    public int getWeeklyCompleted(Long memberID, LocalDate startDate, LocalDate endDate) {
-        return 0;
+    public int getWeeklyCompleted(Long memberID, LocalDate localDate) {
+        LocalDate startDate = localDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        LocalDate endDate = localDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
+        return studyTableRepository.getWeeklyCompleted(memberID, startDate, endDate);
     }
 
     @Override
     public int getMonthlyCompleted(Long memberID, int month) {
-        return 0;
+        return studyTableRepository.getMonthlyCompleted(memberID, month);
     }
 
     @Override
     public int getYearlyCompleted(Long memberID, int year) {
-        return 0;
+        return studyTableRepository.getYearlyCompleted(memberID, year);
     }
 
     @Override
-    public List<Object[]> getWeeklySummary(Long memberId, LocalDate startDate, LocalDate endDate) {
-        return List.of();
+    public List<Object[]> getWeeklySummary(Long memberId, LocalDate localDate) {
+        LocalDate startDate = localDate.with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY));
+        LocalDate endDate = localDate.with(TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY));
+        return studyTableRepository.getWeeklySummary(memberId, startDate, endDate);
     }
 
     @Override
     public List<Object[]> getYearlySummary(Long memberId, int year) {
-        return List.of();
+        return studyTableRepository.getYearlySummary(memberId, year);
     }
 }

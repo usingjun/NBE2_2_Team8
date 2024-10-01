@@ -15,17 +15,17 @@ public interface StudyTableService {
 
     StudyTableDTO delete(Long studyTableId);
 
-    int getWeeklyStudyTime(Long memberId, LocalDate startDate, LocalDate endDate);
+    int getWeeklyStudyTime(Long memberId, LocalDate localDate);
 
     int getYearlyStudyTime(Long memberId, int year);
 
-    int getWeeklyCompleted(Long memberID, LocalDate startDate, LocalDate endDate);
+    int getWeeklyCompleted(Long memberID, LocalDate localDate);
 
     int getMonthlyCompleted(Long memberID, int month);
 
     int getYearlyCompleted(Long memberID, int year);
 
-    List<Object[]> getWeeklySummary(Long memberId, LocalDate startDate, LocalDate endDate);
+    List<Object[]> getWeeklySummary(Long memberId, LocalDate localDate);
 
     List<Object[]> getYearlySummary(Long memberId, int year);
 }
