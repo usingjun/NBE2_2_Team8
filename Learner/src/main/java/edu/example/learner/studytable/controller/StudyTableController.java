@@ -39,4 +39,16 @@ public class StudyTableController {
     public ResponseEntity<StudyTableDTO> create(@Validated @RequestBody StudyTableDTO studyTableDTO) {
         return ResponseEntity.ok(studyTableService.register(studyTableDTO));
     }
+
+    @PutMapping("/{studyTableId}")
+    public ResponseEntity<StudyTableDTO> update(@Validated @RequestBody StudyTableDTO studyTableDTO, @PathVariable("studyTableId") Long studyTableId) {
+        studyTableDTO.setStudyTableId(studyTableId);
+        return ResponseEntity.ok(studyTableService.update(studyTableDTO));
+    }
+
+    @DeleteMapping("/{studyTableId}")
+    public ResponseEntity<Map<String, String>> delete(@PathVariable("studyTableId") Long studyTableId) {
+        studyTableService.delete(studyTableId);
+        return ResponseEntity.ok(Map.of("result", "success"));
+    }
 }
