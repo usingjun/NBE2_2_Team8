@@ -12,7 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/reviews/course")
+@RequestMapping("/course/{courseId}/reviews")
 @Log4j2
 public class CourseReviewController {
 
