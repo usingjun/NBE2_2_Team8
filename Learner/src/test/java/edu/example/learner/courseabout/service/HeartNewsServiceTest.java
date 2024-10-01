@@ -49,19 +49,12 @@ class HeartNewsServiceTest {
     public void setUp() {
         // Create a member
         member = Member.builder()
-<<<<<<< HEAD
-=======
-                .memberId(1L)
->>>>>>> origin/course
                 .email("test@example.com")
                 .password("password123")
                 .nickname("nickname")
                 .phoneNumber("010-1234-5678")
                 .profileImage(null) // 필요 시 이미지 경로를 추가
-<<<<<<< HEAD
                 .role(Role.ADMIN)
-=======
->>>>>>> origin/course
                 .introduction("Hi, I'm a test user.")
                 .createDate(LocalDateTime.now())
                 .build();
