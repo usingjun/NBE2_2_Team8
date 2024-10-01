@@ -28,19 +28,28 @@ public class OrderItem {
     private Long orderItemId;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "courseId")
+    @JoinColumn(name = "courseId", nullable = false)
     private Course course;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name= "orderId")
+    @JoinColumn(name = "orderId", nullable = false, updatable = false) // 변경 불가 설정
     private Order order;
 
     private CourseAttribute courseAttribute;
+
     @CreatedDate
     private LocalDateTime createdAt;
+
     @LastModifiedDate
     private LocalDateTime updatedAt;
 
+    @Column(nullable = false)
     private Long price;
 
+    // OrderItem 생성 시 Order 설정
+    public void setOrder(Order order) {
+        if (this.order == null) { // Order가 아직 설정되지 않은 경우만
+            this.order = order;
+        }
+    }
 }

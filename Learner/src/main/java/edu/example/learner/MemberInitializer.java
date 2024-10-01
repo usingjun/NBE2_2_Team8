@@ -1,7 +1,7 @@
 package edu.example.learner;
-
+//
 //기본 MEMBER 3명 삽입
-
+//
 //@Component
 //@RequiredArgsConstructor
 //public class MemberInitializer implements CommandLineRunner {

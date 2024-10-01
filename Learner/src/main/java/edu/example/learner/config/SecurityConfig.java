@@ -1,10 +1,13 @@
 package edu.example.learner.config;
 
+import edu.example.learner.member.service.CustomOauth2UserService;
 import edu.example.learner.security.filter.JWTCheckFilter;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,11 +24,15 @@ import java.util.List;
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig{
-    private JWTCheckFilter jwtCheckFilter;
+    private final JWTCheckFilter jwtCheckFilter;
+    private final CustomSuccessHandler customSuccessHandler;
+    private final CustomOauth2UserService customOauth2UserService;
 
-    @Autowired
-    public void setJwtCheckFilter(JWTCheckFilter jwtCheckFilter) {
+
+    public SecurityConfig(JWTCheckFilter jwtCheckFilter, CustomOauth2UserService customOauth2UserService, CustomSuccessHandler  customSuccessHandler) {
         this.jwtCheckFilter = jwtCheckFilter;
+        this.customOauth2UserService = customOauth2UserService;
+        this.customSuccessHandler = customSuccessHandler;
     }
 
     @Bean
@@ -34,20 +41,22 @@ public class SecurityConfig{
     }
 
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, CustomClientRegistrationRepo customClientRegistrationRepo) throws Exception {
         http
                 .csrf(csrf -> csrf.disable()) // CSRF 보호 비활성화
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers("/api/members/**").authenticated()
+                        .requestMatchers("/my").authenticated()
                         .requestMatchers(HttpMethod.GET,"/api/members/other").permitAll()
                         .anyRequest().permitAll()
                 )
-                .formLogin(form -> form
-                        .loginPage("/login")
-                        .permitAll()
-                )
-                .logout(logout -> logout
-                        .permitAll()
+                .formLogin(login -> login.disable())
+                .logout(logout -> logout.permitAll())
+                .oauth2Login((oauth2) ->
+                        oauth2.userInfoEndpoint((userInfoEndpointConfig ->
+                                userInfoEndpointConfig.userService(customOauth2UserService)))
+                                .clientRegistrationRepository(customClientRegistrationRepo.clientRegistrationRepository())
+                                .successHandler(customSuccessHandler)
                 );
 
         //JWTCheckFilter 필터 추가
@@ -88,5 +97,4 @@ public class SecurityConfig{
 
         return corsSource;
     }
-
 }
