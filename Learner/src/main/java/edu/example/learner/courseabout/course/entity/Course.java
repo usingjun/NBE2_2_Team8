@@ -46,7 +46,8 @@ public class Course {
     private Long coursePrice;
     @NotNull
     private Integer courseLevel;
-    private boolean sale =false;
+
+    private boolean sale;
 
     public void changeCourseStatus(CourseAttribute courseStatus) {
         this.courseAttribute = courseStatus;

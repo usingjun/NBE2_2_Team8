@@ -38,3 +38,8 @@ out/
 
 # Ignore application.properties in test/resources
 Learner/src/test/resources/application.properties
+
+## Ignore application.properties
+#src/main/resources/application.properties
+#
+#src/test/resources/application.peoperties
