@@ -5,7 +5,6 @@ import edu.example.learner.member.repository.MemberRepository;
 import edu.example.learner.qna.answer.entity.Answer;
 import edu.example.learner.qna.answer.repository.AnswerRepository;
 import edu.example.learner.qna.inquiry.entity.Inquiry;
-import edu.example.learner.qna.inquiry.entity.InquiryStatus;
 import edu.example.learner.qna.inquiry.repository.InquiryRepository;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.*;
@@ -58,6 +57,7 @@ public class AnswerRepositoryTests {
     @Order(1)
     void testInsert() {
         //GIVEN
+        inquiryRepository.save(Inquiry.builder().inquiryId(1L).member(Member.builder().memberId(1L).build()).build());
         Answer answer = Answer.builder()
                 .answerContent("answer test content")
                 .inquiry(Inquiry.builder().inquiryId(1L).build())

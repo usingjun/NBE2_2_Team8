@@ -18,6 +18,8 @@ public class QCourse extends EntityPathBase<Course> {
 
     private static final long serialVersionUID = 764815304L;
 
+    private static final PathInits INITS = PathInits.DIRECT2;
+
     public static final QCourse course = new QCourse("course");
 
     public final EnumPath<CourseAttribute> courseAttribute = createEnum("courseAttribute", CourseAttribute.class);
@@ -36,7 +38,7 @@ public class QCourse extends EntityPathBase<Course> {
 
     public final NumberPath<Long> coursePrice = createNumber("coursePrice", Long.class);
 
-    public final StringPath instructorName = createString("instructorName");
+    public final edu.example.learner.member.entity.QMember instructorName;
 
     public final ListPath<edu.example.learner.courseabout.news.entity.NewsEntity, edu.example.learner.courseabout.news.entity.QNewsEntity> newsEntities = this.<edu.example.learner.courseabout.news.entity.NewsEntity, edu.example.learner.courseabout.news.entity.QNewsEntity>createList("newsEntities", edu.example.learner.courseabout.news.entity.NewsEntity.class, edu.example.learner.courseabout.news.entity.QNewsEntity.class, PathInits.DIRECT2);
 
@@ -45,15 +47,24 @@ public class QCourse extends EntityPathBase<Course> {
     public final ListPath<edu.example.learner.courseabout.video.entity.Video, edu.example.learner.courseabout.video.entity.QVideo> videos = this.<edu.example.learner.courseabout.video.entity.Video, edu.example.learner.courseabout.video.entity.QVideo>createList("videos", edu.example.learner.courseabout.video.entity.Video.class, edu.example.learner.courseabout.video.entity.QVideo.class, PathInits.DIRECT2);
 
     public QCourse(String variable) {
-        super(Course.class, forVariable(variable));
+        this(Course.class, forVariable(variable), INITS);
     }
 
     public QCourse(Path<? extends Course> path) {
-        super(path.getType(), path.getMetadata());
+        this(path.getType(), path.getMetadata(), PathInits.getFor(path.getMetadata(), INITS));
     }
 
     public QCourse(PathMetadata metadata) {
-        super(Course.class, metadata);
+        this(metadata, PathInits.getFor(metadata, INITS));
+    }
+
+    public QCourse(PathMetadata metadata, PathInits inits) {
+        this(Course.class, metadata, inits);
+    }
+
+    public QCourse(Class<? extends Course> type, PathMetadata metadata, PathInits inits) {
+        super(type, metadata, inits);
+        this.instructorName = inits.isInitialized("instructorName") ? new edu.example.learner.member.entity.QMember(forProperty("instructorName")) : null;
     }
 
 }
