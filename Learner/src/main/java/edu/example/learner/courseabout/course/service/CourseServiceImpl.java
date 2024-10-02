@@ -52,12 +52,11 @@ public class CourseServiceImpl implements CourseService {
     public CourseDTO updateCourse(CourseDTO courseDTO) {
         Optional<Course> courseRepositoryById = courseRepository.findById(courseDTO.getCourseId());
         courseRepositoryById.ifPresent(course -> {
-            course.changeCourseName(courseDTO.getCourseName());
             course.changeCourseLevel(courseDTO.getCourseLevel());
+            course.changeCourseName(courseDTO.getCourseName());
             course.changeCourseDescription(courseDTO.getCourseDescription());
             course.changeCourseLevel(courseDTO.getCourseLevel());
             course.changeCourseStatus(CourseAttribute.valueOf(courseDTO.getCourseAttribute()));
-            course.changeInstructorName(courseDTO.getInstructorName());
             course.changeSale(courseDTO.isSale());
         });
         return courseDTO;

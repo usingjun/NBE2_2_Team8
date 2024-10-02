@@ -4,6 +4,7 @@ import edu.example.learner.security.auth.CustomUserPrincipal;
 import edu.example.learner.security.util.JWTUtil;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -18,30 +19,44 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-@Component
 @RequiredArgsConstructor
 @Log4j2
 public class JWTCheckFilter extends OncePerRequestFilter {
     private final JWTUtil jwtUtil;
-
-    @Override           //필터링 적용 X - 액세스 토큰 확인 X
-    protected boolean shouldNotFilter(HttpServletRequest request) throws ServletException {
-        log.info("--- shouldNotFilter() ");
-        log.info("--- requestURI : " + request.getRequestURI());
-
-        return false;   //그외 경로들은 필터링
-    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         log.info("--- doFilterInternal() ");
         log.info("--- requestURI : " + request.getRequestURI());
 
-        String headerAuth = request.getHeader("Authorization");
-        log.info("--- headerAuth : " + headerAuth);
+        // 제외할 경로 배열
+        String[] shouldNotPath = {"/api/", "/join", "/login"}; // 배열에 모든 경로 추가
 
-        //액세스 토큰이 없거나 'Bearer '가 아니면 403 예외 발생
-        if( headerAuth == null || !headerAuth.startsWith("Bearer ") ) {
+        // shouldNotPath 배열과 비교
+        for (String path : shouldNotPath) {
+            if (request.getRequestURI().startsWith(path)) { // startsWith 사용
+                log.info("--- Skipping JWT verification for path: " + request.getRequestURI());
+                filterChain.doFilter(request, response); // 다음 필터로 요청 전달
+                return; // JWT 검증 로직을 실행하지 않음
+            }
+        }
+
+        String authrization = null;
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("Authorization")) {
+                    authrization = cookie.getValue();
+                }
+            }
+        } else {
+            log.info("--- No cookies found");
+        }
+
+        log.info("--- authrization : " + authrization);
+
+
+        if( authrization == null) {
             handleException(response,
                     new Exception("ACCESS TOKEN NOT FOUND"));
             return;
@@ -49,7 +64,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
 
         //토큰 유효성 검증 --------------------------------------
-        String accessToken = headerAuth.substring(7); //"Bearer "를 제외하고 토큰값 저장
+        String accessToken = authrization;
 
         try {
             Map<String, Object> claims = jwtUtil.validateToken(accessToken);

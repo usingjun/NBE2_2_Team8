@@ -10,13 +10,13 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 public class MemberSearchImpl implements MemberSearch{
-    private final JPAQueryFactory jpaQueryFactory;
+    private final JPAQueryFactory queryFactory;
     private final QMember qMember = QMember.member;
 
 
     @Override
     public Member getMemberInfo(Long id) {
-        return jpaQueryFactory
+        return queryFactory
                 .selectFrom(qMember)
                 .where(qMember.memberId.eq(id))
                 .fetchOne();
@@ -24,14 +24,14 @@ public class MemberSearchImpl implements MemberSearch{
 
     @Override
     public List<Member> getAllMembers() {
-        return jpaQueryFactory
+        return queryFactory
                 .selectFrom(qMember)
                 .fetch();
     }
 
     @Override
     public Optional<Member> getMemberByEmail(String email) {
-        return Optional.ofNullable(jpaQueryFactory
+        return Optional.ofNullable(queryFactory
                 .selectFrom(qMember)
                 .where(qMember.email.eq(email))
                 .fetchOne());

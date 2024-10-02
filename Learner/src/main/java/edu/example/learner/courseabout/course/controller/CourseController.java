@@ -14,7 +14,7 @@ import java.util.Map;
 @RestController
 @Log4j2
 @RequiredArgsConstructor
-@RequestMapping("/course")
+@RequestMapping("/api/course")
 public class CourseController {
     private final CourseService courseService;
 
