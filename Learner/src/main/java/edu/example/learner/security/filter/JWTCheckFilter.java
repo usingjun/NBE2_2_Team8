@@ -29,10 +29,16 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         log.info("--- doFilterInternal() ");
         log.info("--- requestURI : " + request.getRequestURI());
 
+        if ("/join/login".equals(request.getRequestURI())) {
+            filterChain.doFilter(request, response); // 다음 필터로 요청 전달
+            return; // JWT 검증 로직을 실행하지 않음
+        }
+
         if ("/login".equals(request.getRequestURI())) {
             filterChain.doFilter(request, response); // 다음 필터로 요청 전달
             return; // JWT 검증 로직을 실행하지 않음
         }
+
 
         String authrization = null;
         Cookie[] cookies = request.getCookies();
@@ -44,7 +50,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         log.info("--- authrization : " + authrization);
 
         //액세스 토큰이 없거나 'Bearer '가 아니면 403 예외 발생
-        if( authrization == null || !authrization.startsWith("Bearer ") ) {
+        if( authrization == null) {
             handleException(response,
                     new Exception("ACCESS TOKEN NOT FOUND"));
             return;
@@ -52,7 +58,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
 
         //토큰 유효성 검증 --------------------------------------
-        String accessToken = authrization.substring(7); //"Bearer "를 제외하고 토큰값 저장
+        String accessToken = authrization;
 
         try {
             Map<String, Object> claims = jwtUtil.validateToken(accessToken);
