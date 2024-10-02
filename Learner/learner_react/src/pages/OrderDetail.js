@@ -14,7 +14,7 @@ const OrderDetail = () => {
         const fetchOrderDetail = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`http://localhost:8080/api/v1/order/${orderId}`);
+                const response = await axios.get(`http://localhost:8080/order/${orderId}`);
                 setOrder(response.data);
             } catch (error) {
                 console.error("Error fetching order details:", error);
