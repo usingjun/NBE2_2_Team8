@@ -32,9 +32,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderDTO add(OrderDTO orderDTO) {
-
         Order order = orderDTO.toEntity(orderDTO); // Order DTO를 Order로 변환
         order = orderRepository.save(order); // Order 저장
+        double totalPrice = 0.0;
 
         // orderDTO안에 orderItemDTOList를 orderItemList로 변환
         // DTO안에 있는 강의 번호를 조회해 orderItemlist
@@ -44,9 +44,12 @@ public class OrderServiceImpl implements OrderService {
             dto.setCourseAttribute(String.valueOf(course.getCourseAttribute()));
             OrderItem orderItem = orderItemRepository.save(dto.toEntity(dto,order));
             order.getOrderItems().add(orderItem);
+            totalPrice += orderItem.getPrice();
         }
 
-
+        order.changeTotalPrice(totalPrice);
+        order = orderRepository.save(order);
+        orderDTO.setTotalPrice(totalPrice);
         return orderDTO;
     }
 

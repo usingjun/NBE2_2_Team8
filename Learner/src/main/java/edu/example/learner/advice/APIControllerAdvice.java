@@ -47,7 +47,7 @@ public class APIControllerAdvice {
                 .body("File too large!");
     }
 
-    //주문 예외처리
+    //장바구니 예외처리
     @ExceptionHandler
     public ResponseEntity<Map<String, Object>> handleOrderException(OrderTaskException e){
         log.error("OrderTaskException : ", e);

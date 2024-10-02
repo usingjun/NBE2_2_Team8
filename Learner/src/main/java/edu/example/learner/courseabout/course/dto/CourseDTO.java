@@ -2,6 +2,7 @@ package edu.example.learner.courseabout.course.dto;
 
 import edu.example.learner.courseabout.course.entity.Course;
 import edu.example.learner.courseabout.course.entity.CourseAttribute;
+import edu.example.learner.member.entity.Member;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.*;
@@ -17,6 +18,7 @@ public class CourseDTO {
     private String courseName;
     private String courseDescription;
     private Long coursePrice;
+    private String memberNickname;
 
     @Min(1)
     @Max(5)
@@ -28,8 +30,7 @@ public class CourseDTO {
 
     public Course toEntity() {
         return Course.builder().courseId(courseId)
-                //수정 필요
-//                .courseName(courseName)
+                .member(Member.builder().nickname(memberNickname).build())
                 .courseDescription(courseDescription)
                 .courseName(courseName)
                 .coursePrice(coursePrice)
@@ -40,6 +41,7 @@ public class CourseDTO {
     }
 
     public CourseDTO(Course course) {
+        this.memberNickname = course.getMember().getNickname();
         this.courseId = course.getCourseId();
         this.courseName = course.getCourseName();
         this.courseDescription = course.getCourseDescription();
@@ -47,6 +49,6 @@ public class CourseDTO {
         this.courseLevel = course.getCourseLevel();
         this.courseAttribute = course.getCourseAttribute().name();
         this.sale = course.isSale();
-        this.instructorName = course.getInstructorName().getNickname();
+        this.instructorName = course.getMember().getNickname();
     }
 }
