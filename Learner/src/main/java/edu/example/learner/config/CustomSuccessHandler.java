@@ -32,12 +32,10 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
         Collection<? extends GrantedAuthority> userRole = user.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = userRole.iterator();
 
-        claims.put("role", iterator.next().getAuthority());
-
         String token = jwtUtil.createToken(claims,30);
 
         response.addCookie(createCookie("Authorization",token));
-        response.sendRedirect("http://localhost:8080/login");
+        response.sendRedirect("http://localhost:3000");
     }
 
     public Cookie createCookie(String key, String value) {

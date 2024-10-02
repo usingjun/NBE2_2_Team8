@@ -18,7 +18,7 @@ public class CustomOauth2User implements OAuth2User{
 
     @Override
     public Map<String, Object> getAttributes() {
-        return Map.of("mid",oauth2Response.getEmail());
+        return Map.of("mid",oauth2Response.getEmail(), "role", ("Role_" + role));
     }
 
     @Override
