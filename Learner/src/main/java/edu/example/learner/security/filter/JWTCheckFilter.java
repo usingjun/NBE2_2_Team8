@@ -29,22 +29,34 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         log.info("--- doFilterInternal() ");
         log.info("--- requestURI : " + request.getRequestURI());
 
-        if ("/login".equals(request.getRequestURI())) {
-            filterChain.doFilter(request, response); // 다음 필터로 요청 전달
-            return; // JWT 검증 로직을 실행하지 않음
+        // 제외할 경로 배열
+        String[] shouldNotPath = {"/api/", "/join", "/login"}; // 배열에 모든 경로 추가
+
+        // shouldNotPath 배열과 비교
+        for (String path : shouldNotPath) {
+            if (request.getRequestURI().startsWith(path)) { // startsWith 사용
+                log.info("--- Skipping JWT verification for path: " + request.getRequestURI());
+                filterChain.doFilter(request, response); // 다음 필터로 요청 전달
+                return; // JWT 검증 로직을 실행하지 않음
+            }
         }
 
         String authrization = null;
         Cookie[] cookies = request.getCookies();
-        for(Cookie cookie : cookies) {
-            if(cookie.getName().equals("Authorization")) {
-                authrization = cookie.getValue();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("Authorization")) {
+                    authrization = cookie.getValue();
+                }
             }
+        } else {
+            log.info("--- No cookies found");
         }
+
         log.info("--- authrization : " + authrization);
 
-        //액세스 토큰이 없거나 'Bearer '가 아니면 403 예외 발생
-        if( authrization == null || !authrization.startsWith("Bearer ") ) {
+
+        if( authrization == null) {
             handleException(response,
                     new Exception("ACCESS TOKEN NOT FOUND"));
             return;
@@ -52,7 +64,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
 
         //토큰 유효성 검증 --------------------------------------
-        String accessToken = authrization.substring(7); //"Bearer "를 제외하고 토큰값 저장
+        String accessToken = authrization;
 
         try {
             Map<String, Object> claims = jwtUtil.validateToken(accessToken);

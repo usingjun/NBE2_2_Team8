@@ -12,7 +12,7 @@ const Courses = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get("http://localhost:8080/api/v1/course/list")
+        axios.get("http://localhost:8080/api/course/list")
             .then((response) => {
                 setCourses(response.data);
             })
