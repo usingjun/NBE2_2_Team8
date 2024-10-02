@@ -3,6 +3,7 @@ package edu.example.learner.courseabout.course.entity;
 
 import edu.example.learner.courseabout.news.entity.NewsEntity;
 import edu.example.learner.courseabout.video.entity.Video;
+import edu.example.learner.member.entity.Member;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -14,6 +15,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static jakarta.persistence.FetchType.LAZY;
 
 
 @Builder
@@ -30,7 +33,7 @@ public class Course {
     @Column(name = "course_id")
     private Long courseId;
 
-    @NotEmpty
+    @NotNull
     private String courseName;
 
     @NotEmpty
@@ -39,29 +42,27 @@ public class Course {
     @Enumerated(EnumType.STRING)
     private CourseAttribute courseAttribute;
 
-    @NotEmpty
-    private String instructorName;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_nickname",referencedColumnName = "nickname")
+    private Member instructorName;
 
     @NotNull
     private Long coursePrice;
     @NotNull
     private Integer courseLevel;
-    private boolean sale =false;
+
+    private boolean sale;
 
     public void changeCourseStatus(CourseAttribute courseStatus) {
         this.courseAttribute = courseStatus;
-    }
-
-    public void changeCourseName(String courseName) {
-        this.courseName = courseName;
     }
 
     public void changeCourseDescription(String courseDescription) {
         this.courseDescription = courseDescription;
     }
 
-    public void changeInstructorName(String instructorName) {
-        this.instructorName = instructorName;
+    public void changeCourseName(String courseName) {
+        this.courseName = courseName;
     }
 
     public void changePrice(Long coursePrice) {
@@ -86,6 +87,7 @@ public class Course {
 
     @CreatedDate
     private LocalDateTime courseCreatedDate;
+
     @LastModifiedDate
     private LocalDateTime courseModifiedDate;
 

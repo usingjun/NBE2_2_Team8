@@ -56,7 +56,7 @@ public class QNewsEntity extends EntityPathBase<NewsEntity> {
 
     public QNewsEntity(Class<? extends NewsEntity> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.courseNews = inits.isInitialized("courseNews") ? new edu.example.learner.courseabout.course.entity.QCourse(forProperty("courseNews")) : null;
+        this.courseNews = inits.isInitialized("courseNews") ? new edu.example.learner.courseabout.course.entity.QCourse(forProperty("courseNews"), inits.get("courseNews")) : null;
     }
 
 }
