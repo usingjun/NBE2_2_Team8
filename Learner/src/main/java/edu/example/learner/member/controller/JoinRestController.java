@@ -41,7 +41,6 @@ public class JoinRestController {
         log.info("--- login()");
 
         response.addCookie(memberService.login(loginDTO.getEmail(), loginDTO.getPassword()));
-        response.sendRedirect("http://localhost:3000/courses");
         return ResponseEntity.ok().build();
     }
 }

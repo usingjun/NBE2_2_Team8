@@ -9,7 +9,6 @@ import OrderCreate from "./pages/OrderCreate";
 import SignUp from "./pages/SignUp";
 import LoginModal from "./components/LoginModal";
 import PostCourseInquiry from "./pages/PostCourseInquiry"
-import CourseNewsList from "./pages/CourseNewsList";
 import CourseNews from "./pages/CourseNews";
 
 

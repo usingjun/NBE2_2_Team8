@@ -8,7 +8,7 @@ const CourseNewsList = ({ courseId }) => {
     const newsPerPage = 5; // 한 페이지당 보여줄 뉴스 개수
 
     const fetchNews = (page) => {
-        fetch(`http://localhost:8080/course/${courseId}/news?page=${page}&size=${newsPerPage}`, {
+        fetch(`http://localhost:8080/api/course/${courseId}/news?page=${page}&size=${newsPerPage}`, {
             credentials: 'include',
         })
             .then(res => res.json())
