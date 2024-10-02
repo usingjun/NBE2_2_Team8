@@ -81,9 +81,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
             //토큰을 이용하여 인증된 정보 저장
             UsernamePasswordAuthenticationToken authToken
-                    = new UsernamePasswordAuthenticationToken(
-                    new CustomUserPrincipal(mid, role),
-                    null, List.of(new SimpleGrantedAuthority("ROLE_" + role))
+                    = new UsernamePasswordAuthenticationToken(new CustomUserPrincipal(mid, role), null, List.of(new SimpleGrantedAuthority("ROLE_" + role))
             );
 
             //SecurityContext에 인증/인가 정보 저장
