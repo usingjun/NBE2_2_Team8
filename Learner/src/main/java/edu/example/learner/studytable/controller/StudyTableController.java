@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/study-tables")
+@RequestMapping("/study-tables")
 @RequiredArgsConstructor
 public class StudyTableController {
     private final StudyTableService studyTableService;
@@ -35,8 +35,27 @@ public class StudyTableController {
         return ResponseEntity.ok(response);
     }
 
+    @PostMapping("/{memberId}/initialize/{date}")
+    public ResponseEntity<StudyTableDTO> initializeStudyTable(@PathVariable("memberId") Long memberId, @PathVariable("date") String date) {
+        LocalDate studyDate = LocalDate.parse(date); // YYYY-MM-DD 형식
+        StudyTableDTO defaultStudyTable = StudyTableDTO.builder().studyDate(studyDate).studyTime(0).completed(0).memberId(memberId).build();
+        return ResponseEntity.ok(studyTableService.register(defaultStudyTable));
+    }
+
     @PostMapping
     public ResponseEntity<StudyTableDTO> create(@Validated @RequestBody StudyTableDTO studyTableDTO) {
         return ResponseEntity.ok(studyTableService.register(studyTableDTO));
+    }
+
+    @PutMapping("/{studyTableId}")
+    public ResponseEntity<StudyTableDTO> update(@Validated @RequestBody StudyTableDTO studyTableDTO, @PathVariable("studyTableId") Long studyTableId) {
+        studyTableDTO.setStudyTableId(studyTableId);
+        return ResponseEntity.ok(studyTableService.update(studyTableDTO));
+    }
+
+    @DeleteMapping("/{studyTableId}")
+    public ResponseEntity<Map<String, String>> delete(@PathVariable("studyTableId") Long studyTableId) {
+        studyTableService.delete(studyTableId);
+        return ResponseEntity.ok(Map.of("result", "success"));
     }
 }
