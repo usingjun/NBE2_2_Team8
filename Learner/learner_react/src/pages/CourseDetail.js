@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams , useNavigate } from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
-import courseNewsList from "./CourseNewsList"
+import CourseNewsList from "./CourseNewsList";
 
 // 기본 이미지 경로
 const defaultImage = "/images/course_default_img.png";
@@ -200,7 +200,7 @@ const CourseDetail = () => {
                         )}
                     </>
                 )}
-                {activeTab === "news" && <courseNewsList courseId={courseId} />}
+                {activeTab === "news" && <CourseNewsList courseId={courseId} />}
             </TabContent>
         </DetailPage>
     );

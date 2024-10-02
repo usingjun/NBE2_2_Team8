@@ -6,6 +6,8 @@ import CourseDetail from "./pages/CourseDetail";
 import SignUp from "./pages/SignUp";
 import LoginModal from "./components/LoginModal";
 import PostCourseInquiry from "./pages/PostCourseInquiry"
+import CourseNewsList from "./pages/CourseNewsList";
+import CourseNews from "./pages/CourseNews";
 
 function App() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,6 +29,9 @@ function App() {
                 <Route path="/courses/:courseId" element={<CourseDetail />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/courses/:courseId/post" element={<PostCourseInquiry />} />
+
+                <Route path="/courses/:courseId/news/:newsId" element={<CourseNews />} />
+
             </Routes>
         </Router>
     );
