@@ -1,10 +1,33 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
 
 const Header = ({ openModal }) => {
     const navigate = useNavigate();
     const location = useLocation();
+    const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태
+
+    // 쿠키에서 JWT 토큰 확인
+    useEffect(() => {
+        console.log("Current cookies:", document.cookie); // 쿠키 확인
+        const cookies = document.cookie.split('; ').find(row => row.startsWith('Authorization='));
+        if (cookies) {
+            const token = cookies.split('=')[1]; // '='를 기준으로 분리하여 토큰 값 추출
+            console.log("Extracted token:", token); // 추출한 토큰 확인
+            if (token) {
+                setIsLoggedIn(true); // 로그인 상태로 변경
+            }
+        } else {
+            console.log("No Authorization cookie found"); // 쿠키가 없을 때 메시지
+        }
+    }, []);
+
+    // 로그아웃 처리 함수
+    const handleLogout = () => {
+        document.cookie = "Authorization=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"; // 쿠키 삭제
+        setIsLoggedIn(false); // 로그인 상태 변경
+        navigate('/courses'); // 메인 페이지로 리다이렉션
+    };
 
     // 현재 페이지가 "/courses"인지 여부 확인
     const isCoursesPage = location.pathname === "/courses";
@@ -12,7 +35,7 @@ const Header = ({ openModal }) => {
 
     return (
         <NavBar>
-            <HeaderContent isCoursesPage={isCoursesPage}>
+            <HeaderContent $isCoursesPage={isCoursesPage}>
                 {/* Learner 로고, 강의, 문의, 검색창 배치 */}
                 <LogoWrapper isCoursesPage={isCoursesPage}>
                     <Logo onClick={() => navigate("/courses")}>Learner</Logo>
@@ -30,12 +53,12 @@ const Header = ({ openModal }) => {
                     </LeftSection>
                 )}
 
-                {/* 로그인/회원가입 버튼 */}
+                {/* 로그인/회원가입 버튼 또는 마이페이지/로그아웃 버튼 */}
                 <RightSection>
-                    {isCourseDetailPage ? (
+                    {isLoggedIn ? (
                         <>
-                            <NavItem>로그인</NavItem>
-                            <NavItem>회원가입</NavItem>
+                            <NavItem onClick={() => navigate('/mypage')}>마이페이지</NavItem>
+                            <NavItem onClick={handleLogout}>로그아웃</NavItem>
                         </>
                     ) : (
                         <Menu>
@@ -61,12 +84,11 @@ const NavBar = styled.nav`
     position: relative;
     border-bottom: 1px solid #ddd;
     margin: 0 auto;
-
 `;
 
 const HeaderContent = styled.div`
     display: flex;
-    justify-content: ${({ isCoursesPage }) => (isCoursesPage ? "center" : "space-between")}; /* Courses에서는 중앙 정렬 */
+    justify-content: ${({ $isCoursesPage }) => ($isCoursesPage ? "center" : "space-between")};
     align-items: center;
     width: 100%;
     margin-left: 10rem;
