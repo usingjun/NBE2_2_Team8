@@ -49,6 +49,7 @@ class HeartNewsServiceTest {
     public void setUp() {
         // Create a member
         member = Member.builder()
+                .memberId(1L)
                 .email("test@example.com")
                 .password("password123")
                 .nickname("nickname")

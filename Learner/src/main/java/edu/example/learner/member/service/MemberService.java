@@ -132,6 +132,6 @@ public class MemberService {
         }
 
         // JWT 생성 및 반환
-        return jwtUtil.createToken(Map.of("mid", member.getMemberId(), "role", member.getRole()), 30);
+        return jwtUtil.createToken(Map.of("mid", member.getEmail(), "role", ("ROLE_" + member.getRole())), 30);
     }
 }
