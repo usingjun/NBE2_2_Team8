@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/study-tables")
+@RequestMapping("/study-tables")
 @RequiredArgsConstructor
 public class StudyTableController {
     private final StudyTableService studyTableService;
