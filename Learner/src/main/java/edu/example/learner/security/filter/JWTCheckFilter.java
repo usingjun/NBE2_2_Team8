@@ -65,7 +65,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             //토큰을 이용하여 인증된 정보 저장
             UsernamePasswordAuthenticationToken authToken
                     = new UsernamePasswordAuthenticationToken(
-                     new CustomUserPrincipal(mid, role),
+                    new CustomUserPrincipal(mid, role),
                     null, List.of(new SimpleGrantedAuthority("ROLE_" + role))
             );
 
@@ -76,7 +76,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             //검증 결과 문제가 없는 경우
             //이 코드가 호출되기 전까지는, 현재 필터에서 JWT를 검증하고 사용자 정보를 설정하는 과정을 수행합니다.
             //이 코드가 실행되면, JWT 검증을 성공적으로 마친 후, 요청이 다음 필터 또는 해당 컨트롤러로 전달됩니다.
-        } catch(Exception e) {
+        } catch (Exception e) {
             handleException(response, e);             //예외가 발생한 경우
         }
     }
