@@ -11,4 +11,6 @@ public interface MemberSearch {
     List<Member> getAllMembers();
 
     Optional<Member> getMemberByEmail(String email);
+
+    Optional<Member> getMemberByNickName(String nickName);
 }

@@ -1,39 +1,79 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 
 const LoginModal = ({ closeModal }) => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
+
+    const handleLogin = async () => {
+        try {
+            const response = await fetch("http://localhost:8080/join/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                }),
+                credentials: "include", // 쿠키를 포함하려면 이 옵션을 추가해야 함
+            });
+
+            // 상태 코드 확인
+            if (response.ok) {
+                // 로그인 성공 처리
+                closeModal();
+                console.log("로그인 성공");
+
+                // 쿠키가 있는지 확인
+                const cookies = document.cookie;
+                console.log("받은 쿠키:", cookies);
+            } else {
+                // 오류 상태 코드와 메시지 처리
+                const errorMessage = await response.text(); // 서버가 반환하는 오류 메시지
+                console.error(`오류 발생: ${response.status} - ${errorMessage}`);
+            }
+        } catch (error) {
+            console.error("로그인 요청 실패:", error);
+        }
+    };
+
     return (
         <ModalBackground>
             <ModalContainer>
                 <CloseButton onClick={closeModal}>X</CloseButton>
                 <Logo>Learner</Logo>
                 <Form>
-                    <Input type="email" placeholder="이메일" />
-                    <Input type="password" placeholder="비밀번호" />
-                    <LoginButton>로그인</LoginButton>
+                    <Input
+                        type="email"
+                        placeholder="이메일"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <Input
+                        type="password"
+                        placeholder="비밀번호"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <LoginButton onClick={handleLogin}>로그인</LoginButton>
                 </Form>
                 <PasswordOptions>
-                    <PasswordOptions>
-                        <ButtonLink>아이디(이메일) 찾기</ButtonLink> |
-                        <ButtonLink>비밀번호 찾기</ButtonLink> |
-                        <ButtonLink>회원가입</ButtonLink>
-                    </PasswordOptions>
-
+                    <ButtonLink>아이디(이메일) 찾기</ButtonLink> |
+                    <ButtonLink>비밀번호 찾기</ButtonLink> |
+                    <ButtonLink>회원가입</ButtonLink>
                 </PasswordOptions>
-                <SimpleLogin>
-                    <p>최근 로그인</p>
-                    <SocialLoginButton>
-                        <KakaoIcon />
-                        <GoogleIcon />
-                        <GithubIcon />
-                    </SocialLoginButton>
-                </SimpleLogin>
             </ModalContainer>
         </ModalBackground>
     );
 };
 
 export default LoginModal;
+
+// 스타일 코드 동일
+
+
+// 스타일 코드 동일
 
 const ModalBackground = styled.div`
   position: fixed;
