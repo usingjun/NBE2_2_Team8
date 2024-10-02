@@ -1,4 +1,4 @@
-package edu.example.learner.courseabout.course.controller;
+package edu.example.learner.courseabout.order.controller;
 
 import edu.example.learner.courseabout.order.dto.OrderDTO;
 import edu.example.learner.courseabout.order.dto.OrderUpdateDTO;
@@ -15,17 +15,16 @@ import java.util.Map;
 @RestController
 @Log4j2
 @RequiredArgsConstructor
-@RequestMapping("/course/orders")
+@RequestMapping("/api/v1/order")
 public class OrderController {
     private final OrderService orderService;
     private final CourseService courseService;
 
-    @PostMapping("/create")
+    @PostMapping
     public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO orderDTO) {
         log.info("Create order: " + orderDTO);
         return ResponseEntity.ok(orderService.add(orderDTO));
     }
-
     @GetMapping("/{orderId}")
     public ResponseEntity<OrderDTO> readOrder(@PathVariable("orderId") Long orderId) {
         log.info("Read order: " + orderId);
@@ -36,7 +35,7 @@ public class OrderController {
         log.info("Read all orders");
         return ResponseEntity.ok(orderService.readAll());
     }
-    @PutMapping("/{orderId}/update")
+    @PutMapping("/{orderId}/")
     public ResponseEntity<OrderUpdateDTO> updateOrder(@RequestBody OrderUpdateDTO orderUpdateDTO, @PathVariable("orderId") Long orderId) {
         log.info("Update order: " + orderUpdateDTO);
         return ResponseEntity.ok(orderService.update(orderUpdateDTO,orderId));
