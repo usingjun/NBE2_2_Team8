@@ -12,7 +12,7 @@ const Courses = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get("http://localhost:8080/api/course/list")
+        axios.get("http://localhost:8080/course/list")
             .then((response) => {
                 setCourses(response.data);
             })
@@ -23,7 +23,7 @@ const Courses = () => {
 
     // 검색 요청을 처리하는 함수
     const handleSearch = () => {
-        axios.get(`http://localhost:8080/api/v1/course/${searchId}`)
+        axios.get(`http://localhost:8080/course/${searchId}`)
             .then((response) => {
                 setSearchedCourse(response.data);  // 검색된 강의 결과를 저장
             })

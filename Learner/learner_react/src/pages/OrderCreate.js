@@ -12,7 +12,7 @@ const OrderCreate = () => {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const response = await axios.get("http://localhost:8080/api/course/list");
+                const response = await axios.get("http://localhost:8080/course/list");
                 console.log("Courses fetched:", response.data); // 추가
                 setCourses(response.data);
             } catch (error) {
@@ -44,7 +44,7 @@ const OrderCreate = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.post("http://localhost:8080/api/v1/order", {
+            const response = await axios.post("http://localhost:8080/order", {
                 orderItemDTOList: orderItems,
             });
             console.log("Order created:", response.data);

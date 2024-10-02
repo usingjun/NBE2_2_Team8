@@ -12,7 +12,7 @@ const Orders = () => {
         const fetchOrders = async () => {
             setLoading(true);
             try {
-                const response = await axios.get("http://localhost:8080/api/v1/order/list");
+                const response = await axios.get("http://localhost:8080/order/list");
                 setOrders(response.data);
             } catch (error) {
                 console.error("Error fetching orders:", error);
