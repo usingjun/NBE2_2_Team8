@@ -28,6 +28,8 @@ public class QOrder extends EntityPathBase<Order> {
 
     public final EnumPath<OrderStatus> orderStatus = createEnum("orderStatus", OrderStatus.class);
 
+    public final NumberPath<Double> totalPrice = createNumber("totalPrice", Double.class);
+
     public final DateTimePath<java.time.LocalDateTime> updatedAt = createDateTime("updatedAt", java.time.LocalDateTime.class);
 
     public QOrder(String variable) {

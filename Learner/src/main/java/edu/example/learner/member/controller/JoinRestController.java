@@ -5,6 +5,8 @@ import edu.example.learner.member.dto.MemberDTO;
 import edu.example.learner.member.service.CustomUserDetailsService;
 import edu.example.learner.member.service.MemberService;
 import edu.example.learner.security.util.JWTUtil;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -12,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
 
 @RestController
 @RequestMapping("/join")
@@ -33,13 +37,12 @@ public class JoinRestController {
 
     //로그인
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody @Validated LoginDTO loginDTO) {
+    public ResponseEntity<Void> login(@RequestBody @Validated LoginDTO loginDTO, HttpServletResponse response) throws IOException {
         log.info("--- login()");
 
-        return ResponseEntity.ok(memberService.login(loginDTO.getEmail(), loginDTO.getPassword()));
+        response.addCookie(memberService.login(loginDTO.getEmail(), loginDTO.getPassword()));
+        return ResponseEntity.ok().build();
     }
-
-
 }
 
 

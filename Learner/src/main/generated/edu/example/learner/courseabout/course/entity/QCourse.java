@@ -38,7 +38,7 @@ public class QCourse extends EntityPathBase<Course> {
 
     public final NumberPath<Long> coursePrice = createNumber("coursePrice", Long.class);
 
-    public final edu.example.learner.member.entity.QMember instructorName;
+    public final edu.example.learner.member.entity.QMember member;
 
     public final ListPath<edu.example.learner.courseabout.news.entity.NewsEntity, edu.example.learner.courseabout.news.entity.QNewsEntity> newsEntities = this.<edu.example.learner.courseabout.news.entity.NewsEntity, edu.example.learner.courseabout.news.entity.QNewsEntity>createList("newsEntities", edu.example.learner.courseabout.news.entity.NewsEntity.class, edu.example.learner.courseabout.news.entity.QNewsEntity.class, PathInits.DIRECT2);
 
@@ -64,7 +64,7 @@ public class QCourse extends EntityPathBase<Course> {
 
     public QCourse(Class<? extends Course> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.instructorName = inits.isInitialized("instructorName") ? new edu.example.learner.member.entity.QMember(forProperty("instructorName")) : null;
+        this.member = inits.isInitialized("member") ? new edu.example.learner.member.entity.QMember(forProperty("member")) : null;
     }
 
 }

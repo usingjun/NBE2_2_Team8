@@ -59,7 +59,19 @@ public class NewsController {
         NewsResDTO news = newsService.getNews(courseId, newsId);
 
         //조회수 올리기
-        String ipAddress = request.getRemoteAddr(); // IP주소
+//        String ipAddress = request.getRemoteAddr(); // IP주소
+        // IP 주소 확인 (리버스 프록시 고려)
+        // IP 주소 확인 (리버스 프록시 고려)
+        String ipAddress = request.getHeader("X-Forwarded-For");
+        if (ipAddress == null || ipAddress.isEmpty()) {
+            ipAddress = request.getRemoteAddr();
+        }
+
+        // 로컬 개발 환경에서는 테스트를 위해 직접 IP를 설정
+        if ("0:0:0:0:0:0:0:1".equals(ipAddress)) {
+            ipAddress = "localhost"; // 테스트용 IP
+        }
+
         String redisKey = "viewNews:" + newsId + ":-" + ipAddress;
 
         // 레디스 중복조회 여부확인

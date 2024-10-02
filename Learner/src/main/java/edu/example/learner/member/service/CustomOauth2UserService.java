@@ -26,6 +26,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
 
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
+        log.info("loadUser called");
 
         OAuth2User oAuth2User = super.loadUser(userRequest);
         log.info(oAuth2User.getAttributes());
@@ -35,12 +36,12 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
         OAuth2Response oAuth2Response = null;
 
         if(registrationId.equals("naver")) {
-
+            log.info("naver");
             oAuth2Response = new NaverResponse(oAuth2User.getAttributes());
 
         }
         else if(registrationId.equals("google")) {
-
+            log.info("google");
             oAuth2Response = new GoogleResponse(oAuth2User.getAttributes());
 
         }
