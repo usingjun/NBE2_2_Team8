@@ -29,16 +29,21 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         log.info("--- doFilterInternal() ");
         log.info("--- requestURI : " + request.getRequestURI());
 
-        // 제외할 경로 배열
-        String[] shouldNotPath = {"/api/", "/join", "/login"}; // 배열에 모든 경로 추가
+        // 필터링 필요 도메인
+        String[] doFilterPath = {"/mypage"}; // 배열에 모든 경로 추가
+        boolean doFilter = false;
 
-        // shouldNotPath 배열과 비교
-        for (String path : shouldNotPath) {
+        // doFilterPath 배열과 비교
+        for (String path : doFilterPath) {
             if (request.getRequestURI().startsWith(path)) { // startsWith 사용
-                log.info("--- Skipping JWT verification for path: " + request.getRequestURI());
-                filterChain.doFilter(request, response); // 다음 필터로 요청 전달
-                return; // JWT 검증 로직을 실행하지 않음
+                log.info("--- JWT verification for path: " + request.getRequestURI());
+                doFilter = true;
             }
+        }
+
+        if(!doFilter){
+            filterChain.doFilter(request, response); // 다음 필터로 요청 전달
+            return;
         }
 
         String authrization = null;

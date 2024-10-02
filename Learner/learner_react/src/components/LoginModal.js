@@ -5,7 +5,9 @@ const LoginModal = ({ closeModal }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
-    const handleLogin = async () => {
+    const handleLogin = async (event) => {
+        event.preventDefault(); // 기본 동작 방지
+
         try {
             const response = await fetch("http://localhost:8080/join/login", {
                 method: "POST",
@@ -22,8 +24,9 @@ const LoginModal = ({ closeModal }) => {
             // 상태 코드 확인
             if (response.ok) {
                 // 로그인 성공 처리
-                closeModal();
+                closeModal(); // 로그인 성공 시 모달 닫기
                 console.log("로그인 성공");
+                alert("로그인에 성공하셨습니다."); // 알림창 표시
 
                 // 쿠키가 있는지 확인
                 const cookies = document.cookie;
@@ -32,18 +35,23 @@ const LoginModal = ({ closeModal }) => {
                 // 오류 상태 코드와 메시지 처리
                 const errorMessage = await response.text(); // 서버가 반환하는 오류 메시지
                 console.error(`오류 발생: ${response.status} - ${errorMessage}`);
+
+                // 서버에서 반환한 오류 메시지를 사용자에게 알림
+                alert(`로그인 실패: ${errorMessage}`); // 오류 메시지를 사용자에게 알림
             }
         } catch (error) {
             console.error("로그인 요청 실패:", error);
+            alert("로그인 요청 중 오류가 발생했습니다."); // 오류 알림
         }
     };
+
 
     return (
         <ModalBackground>
             <ModalContainer>
                 <CloseButton onClick={closeModal}>X</CloseButton>
                 <Logo>Learner</Logo>
-                <Form>
+                <Form onSubmit={handleLogin}> {/* onSubmit 추가 */}
                     <Input
                         type="email"
                         placeholder="이메일"
@@ -56,7 +64,7 @@ const LoginModal = ({ closeModal }) => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
-                    <LoginButton onClick={handleLogin}>로그인</LoginButton>
+                    <LoginButton type="submit">로그인</LoginButton> {/* type="submit" 설정 */}
                 </Form>
                 <PasswordOptions>
                     <ButtonLink>아이디(이메일) 찾기</ButtonLink> |
@@ -74,7 +82,6 @@ export default LoginModal;
 
 
 // 스타일 코드 동일
-
 const ModalBackground = styled.div`
   position: fixed;
   top: 0;

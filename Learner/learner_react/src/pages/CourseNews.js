@@ -7,7 +7,7 @@ export default function CourseNews() {
     const [news, setNews] = useState(null);
 
     useEffect(() => {
-        fetch(`http://localhost:8080/course/${courseId}/news/${newsId}`, {
+        fetch(`http://localhost:8080/api/course/${courseId}/news/${newsId}`, {
             credentials: 'include',
         })
             .then(res => res.json())
