@@ -6,27 +6,24 @@ const Header = ({ openModal }) => {
     const navigate = useNavigate();
     const location = useLocation();
     const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태
+    const [isMenuOpen, setIsMenuOpen] = useState(false); // 하위 메뉴 상태
 
     // 쿠키에서 JWT 토큰 확인
     useEffect(() => {
-        console.log("Current cookies:", document.cookie); // 쿠키 확인
         const cookies = document.cookie.split('; ').find(row => row.startsWith('Authorization='));
         if (cookies) {
-            const token = cookies.split('=')[1]; // '='를 기준으로 분리하여 토큰 값 추출
-            console.log("Extracted token:", token); // 추출한 토큰 확인
+            const token = cookies.split('=')[1];
             if (token) {
-                setIsLoggedIn(true); // 로그인 상태로 변경
+                setIsLoggedIn(true);
             }
-        } else {
-            console.log("No Authorization cookie found"); // 쿠키가 없을 때 메시지
         }
     }, []);
 
     // 로그아웃 처리 함수
     const handleLogout = () => {
-        document.cookie = "Authorization=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"; // 쿠키 삭제
-        setIsLoggedIn(false); // 로그인 상태 변경
-        navigate('/courses'); // 메인 페이지로 리다이렉션
+        document.cookie = "Authorization=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+        setIsLoggedIn(false);
+        navigate('/courses');
     };
 
     // 현재 페이지가 "/courses"인지 여부 확인
@@ -36,12 +33,10 @@ const Header = ({ openModal }) => {
     return (
         <NavBar>
             <HeaderContent $isCoursesPage={isCoursesPage}>
-                {/* Learner 로고, 강의, 문의, 검색창 배치 */}
                 <LogoWrapper isCoursesPage={isCoursesPage}>
                     <Logo onClick={() => navigate("/courses")}>Learner</Logo>
                 </LogoWrapper>
 
-                {/* CourseDetail일 경우에만 강의/문의/검색창 표시 */}
                 {isCourseDetailPage && (
                     <LeftSection>
                         <NavItem>강의</NavItem>
@@ -53,17 +48,25 @@ const Header = ({ openModal }) => {
                     </LeftSection>
                 )}
 
-                {/* 로그인/회원가입 버튼 또는 마이페이지/로그아웃 버튼 */}
                 <RightSection>
                     {isLoggedIn ? (
                         <>
-                            <NavItem onClick={() => navigate('/mypage')}>마이페이지</NavItem>
-                            <NavItem onClick={handleLogout}>로그아웃</NavItem>
+                            <NavItem onClick={() => setIsMenuOpen(!isMenuOpen)}>마이페이지</NavItem>
+                            {isMenuOpen && (
+                                <SubMenu>
+                                    <SubMenuItem onClick={() => navigate('/myinfo')}>내정보</SubMenuItem>
+                                    <SubMenuItem onClick={() => navigate('/cart')}>장바구니</SubMenuItem>
+                                    <SubMenuItem onClick={() => navigate('/edit-profile')}>회원정보 수정</SubMenuItem>
+                                    <SubMenuItem onClick={handleLogout}>로그아웃</SubMenuItem>
+                                </SubMenu>
+                            )}
                         </>
                     ) : (
                         <Menu>
-                            <button onClick={openModal}>로그인</button>
-                            <Link to="/signup">회원가입</Link>
+                            <StyledButton onClick={openModal}>로그인</StyledButton>
+                            <Link to="/signup">
+                                <StyledButton>회원가입</StyledButton>
+                            </Link>
                         </Menu>
                     )}
                 </RightSection>
@@ -73,6 +76,9 @@ const Header = ({ openModal }) => {
 };
 
 export default Header;
+
+// 나머지 스타일 컴포넌트는 그대로 두세요.
+
 
 const NavBar = styled.nav`
     display: flex;
@@ -84,6 +90,7 @@ const NavBar = styled.nav`
     position: relative;
     border-bottom: 1px solid #ddd;
     margin: 0 auto;
+    overflow: visible; /* Header 범위를 넘어가는 내용을 보이게 함 */
 `;
 
 const HeaderContent = styled.div`
@@ -91,7 +98,9 @@ const HeaderContent = styled.div`
     justify-content: ${({ $isCoursesPage }) => ($isCoursesPage ? "center" : "space-between")};
     align-items: center;
     width: 100%;
-    margin-left: 10rem;
+    max-width: 1200px; /* Header 최대 너비 설정 */
+    margin: 0 auto; /* 중앙 정렬 */
+    overflow: visible; /* HeaderContent 범위를 넘어가는 내용을 보이게 함 */
 `;
 
 const LogoWrapper = styled.div`
@@ -123,27 +132,48 @@ const RightSection = styled.div`
 const Menu = styled.div`
     display: flex;
     gap: 1rem;
-    button {
-        background: none;
-        border: none;
-        font-size: 1rem;
-        cursor: pointer;
-    }
-    a {
-        text-decoration: none;
-        color: #666;
-        font-weight: 500;
-        &:hover {
-            color: #3cb371;
-        }
+`;
+
+const StyledButton = styled.button`
+    background-color: #3cb371;
+    color: white;
+    border: 2px solid #3cb371;
+    border-radius: 5px;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    &:hover {
+        background-color: white;
+        color: #3cb371;
     }
 `;
 
 const NavItem = styled.span`
     cursor: pointer;
     padding: 0.5rem 1rem;
+    position: relative;
+    border-radius: 5px; /* 테두리 둥글게 */
+    background-color: ${({ $isActive }) => ($isActive ? '#3cb371' : 'transparent')}; /* 마이페이지 활성화 시 배경색 */
+    color: ${({ $isActive }) => ($isActive ? 'white' : 'inherit')}; /* 마이페이지 활성화 시 글자색 변경 */
     &:hover {
-        color: #3cb371;
+        background-color: #3cb371; /* 마우스 오버 시 배경색 */
+        color: white; /* 마우스 오버 시 글자색 */
+    }
+`;
+
+const SubMenu = styled.div`
+    position: absolute;
+    background-color: white;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 0.5rem;
+    z-index: 1000; /* 메뉴가 다른 요소 위에 나타나도록 설정 */
+`;
+
+const SubMenuItem = styled(NavItem)`
+    padding: 0.5rem 1rem;
+    &:hover {
+        background-color: #f0f0f0;
     }
 `;
 
@@ -157,13 +187,13 @@ const SearchBar = styled.div`
         border: 1px solid #ddd;
         width: 200px;
         margin-right: 0.5rem;
-        box-shadow: none; /* 그림자 제거 */
+        box-shadow: none;
     }
     button {
         background: none;
         border: none;
         font-size: 1.2rem;
         cursor: pointer;
-        box-shadow: none; /* 그림자 제거 */
+        box-shadow: none;
     }
 `;

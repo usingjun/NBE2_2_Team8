@@ -18,7 +18,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("select r from Review r " +
             " join fetch r.course" +
-            " where r.course.instructorName=:instructorName" +
+            " where r.course.member.nickname=:instructorName" +
             " order by r.reviewId desc")
     Optional<List<Review>> getInstructorReview(@Param("instructorName") String instructorName);
 }
