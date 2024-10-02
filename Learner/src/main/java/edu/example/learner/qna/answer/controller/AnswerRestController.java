@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/answers")
+@RequestMapping("/answers")
 @RequiredArgsConstructor
 public class AnswerRestController {
     private final AnswerService answerService;
