@@ -32,17 +32,20 @@ const Header = ({ openModal }) => {
 
                 {/* 로그인/회원가입 버튼 */}
                 <RightSection>
-                    {isCourseDetailPage ? (
-                        <>
-                            <NavItem>로그인</NavItem>
-                            <NavItem>회원가입</NavItem>
-                        </>
-                    ) : (
-                        <Menu>
-                            <button onClick={openModal}>로그인</button>
-                            <Link to="/signup">회원가입</Link>
-                        </Menu>
-                    )}
+                    <Menu>
+                        <Link to="/orders">장바구니</Link> {/* 장바구니 링크 추가 */}
+                        {isCourseDetailPage ? (
+                            <>
+                                <NavItem>로그인</NavItem>
+                                <NavItem>회원가입</NavItem>
+                            </>
+                        ) : (
+                            <>
+                                <button onClick={openModal}>로그인</button>
+                                <Link to="/signup">회원가입</Link>
+                            </>
+                        )}
+                    </Menu>
                 </RightSection>
             </HeaderContent>
         </NavBar>
@@ -50,6 +53,9 @@ const Header = ({ openModal }) => {
 };
 
 export default Header;
+
+// 나머지 스타일 컴포넌트는 그대로 두세요.
+
 
 const NavBar = styled.nav`
     display: flex;

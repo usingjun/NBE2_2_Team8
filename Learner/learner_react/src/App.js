@@ -3,6 +3,9 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Header from "./components/Header";
 import Courses from "./pages/Courses";
 import CourseDetail from "./pages/CourseDetail";
+import Orders from "./pages/Orders";
+import OrderDetail from './pages/OrderDetail';
+import OrderCreate from "./pages/OrderCreate";
 import SignUp from "./pages/SignUp";
 import LoginModal from "./components/LoginModal";
 import PostCourseInquiry from "./pages/PostCourseInquiry"
@@ -27,6 +30,9 @@ function App() {
                 <Route path="/courses/:courseId" element={<CourseDetail />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/courses/:courseId/post" element={<PostCourseInquiry />} />
+                <Route path="/orders" element={<Orders />} />
+                <Route path="/orders/:orderId" component={<OrderDetail/>} />
+                <Route path="/order/create" element={<OrderCreate/>} />
             </Routes>
         </Router>
     );
