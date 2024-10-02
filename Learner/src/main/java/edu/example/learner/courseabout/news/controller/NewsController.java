@@ -21,7 +21,7 @@ import java.time.Duration;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/course/{courseId}/news")
+@RequestMapping("/course/{courseId}/news")
 public class NewsController {
     private final NewsService newsService;
     private final HeartNewsService heartNewsService;
