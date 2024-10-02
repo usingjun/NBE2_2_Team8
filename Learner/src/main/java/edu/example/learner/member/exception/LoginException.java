@@ -8,6 +8,7 @@ public enum LoginException {
     PASSWORD_DISAGREEMENT("비밀번호가 일치하지 않습니다.", HttpStatus.NOT_FOUND),
     LOGOUT_FAIL("로그아웃에 실패하였습니다.", HttpStatus.BAD_REQUEST);
 
+
     private String message;
     private HttpStatus status;
 
