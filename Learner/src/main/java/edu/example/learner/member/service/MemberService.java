@@ -1,11 +1,13 @@
 package edu.example.learner.member.service;
 
 import edu.example.learner.member.entity.Member;
+import edu.example.learner.member.entity.Role;
 import edu.example.learner.member.exception.LoginException;
 import edu.example.learner.member.exception.MemberException;
 import edu.example.learner.member.dto.MemberDTO;
 import edu.example.learner.member.repository.MemberRepository;
 import edu.example.learner.security.util.JWTUtil;
+import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -26,13 +28,22 @@ public class MemberService {
 
     //회원가입
     public MemberDTO register(MemberDTO memberDTO) {
+
+        if(memberRepository.getMemberByEmail(memberDTO.getEmail()).isPresent()){
+            throw MemberException.EMAIL_ALREADY_EXISTS.getMemberTaskException();
+        }
+
+        if(memberRepository.getMemberByNickName(memberDTO.getNickname()).isPresent()){
+            throw MemberException.NICKNAME_ALREADY_EXISTS.getMemberTaskException();
+        }
+
         try{
             Member member = Member.builder()
                     .email(memberDTO.getEmail())
                     .password(passwordEncoder.encode(memberDTO.getPassword()))
                     .nickname(memberDTO.getNickname())
-                    .introduction(memberDTO.getIntroduction())
                     .phoneNumber(memberDTO.getPhoneNumber())
+                    .role(Role.USER)
                     .build();
 
             memberRepository.save(member);
@@ -124,14 +135,21 @@ public class MemberService {
     }
 
     //로그인
-    public String login(String email, String password) {
+    public Cookie login(String email, String password) {
         Member member = memberRepository.getMemberByEmail(email).orElseThrow(LoginException.NOT_FOUND_EMAIL::getMemberTaskException);
 
         if (!passwordEncoder.matches(password, member.getPassword())) {
             throw LoginException.PASSWORD_DISAGREEMENT.getMemberTaskException();
         }
 
-        // JWT 생성 및 반환
-        return jwtUtil.createToken(Map.of("mid", member.getEmail(), "role", ("ROLE_" + member.getRole())), 30);
+        // JWT 생성 및 쿠키 반환
+        String accessToken = jwtUtil.createToken(Map.of("mid", member.getEmail(), "role", ("ROLE_" + member.getRole())), 30);
+        Cookie cookie = new Cookie("Authorization", accessToken);
+        cookie.setMaxAge(60 * 60 * 60); // 60시간
+        cookie.setPath("/"); // 전체 경로에서 접근 가능
+        cookie.setHttpOnly(false); // JavaScript에서 접근 가능
+        cookie.setSecure(false); // 로컬 개발 시 false로 설정
+
+        return cookie;
     }
 }

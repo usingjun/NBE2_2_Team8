@@ -36,4 +36,12 @@ public class MemberSearchImpl implements MemberSearch{
                 .where(qMember.email.eq(email))
                 .fetchOne());
     }
+
+    @Override
+    public Optional<Member> getMemberByNickName(String nickName) {
+        return Optional.ofNullable(queryFactory
+                .selectFrom(qMember)
+                .where(qMember.nickname.eq(nickName))
+                .fetchOne());
+    }
 }
