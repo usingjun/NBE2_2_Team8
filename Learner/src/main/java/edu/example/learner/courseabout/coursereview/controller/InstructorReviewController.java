@@ -2,6 +2,7 @@ package edu.example.learner.courseabout.coursereview.controller;
 
 import edu.example.learner.courseabout.coursereview.dto.ReviewDTO;
 import edu.example.learner.courseabout.coursereview.service.ReviewServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ public class InstructorReviewController {
     private final ReviewServiceImpl reviewService;
 
     @PostMapping("/create")
+    @Operation(summary = "Instructor Review 생성")
     public ResponseEntity<ReviewDTO> create(@RequestBody ReviewDTO reviewDTO) {
 
         log.info("Create review: " + reviewDTO);
@@ -26,13 +28,8 @@ public class InstructorReviewController {
         return ResponseEntity.ok(reviewService.createReview(reviewDTO));
     }
 
-//    @GetMapping
-//    public ResponseEntity<ReviewDTO> read(@RequestParam Long reviewId) {
-//        log.info("Read Review: " + reviewId);
-//        return ResponseEntity.ok(reviewService.getReviewById(reviewId));
-//    }
-
     @PutMapping("/update")
+    @Operation(summary = "Instructor Review 수정")
     public ResponseEntity<ReviewDTO> update(@RequestBody ReviewDTO reviewDTO) {
 
         log.info("update Review: " + reviewDTO);
@@ -40,6 +37,7 @@ public class InstructorReviewController {
     }
 
     @DeleteMapping("/delete")
+    @Operation(summary = "Instructor Review 삭제")
     public ResponseEntity<Map<String, String>> remove(@RequestParam Long reviewId) {
 
         log.info("Delete Review: " + reviewId);
@@ -49,8 +47,9 @@ public class InstructorReviewController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<ReviewDTO>> reviewList(@RequestParam String instructorName,
+    @Operation(summary = "Instructor Review list 조회")
+    public ResponseEntity<List<ReviewDTO>> reviewList(@PathVariable("memberId") Long memberId,
                                       ReviewDTO reviewDTO) {
-        return ResponseEntity.ok(reviewService.getInstructorReviewList(instructorName, reviewDTO));
+        return ResponseEntity.ok(reviewService.getInstructorReviewList(memberId, reviewDTO));
     }
 }

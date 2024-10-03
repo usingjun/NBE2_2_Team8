@@ -13,6 +13,6 @@ public interface ReviewService {
     void deleteReview(Long reviewId);
 
     List<ReviewDTO> getCourseReviewList(Long courseId, ReviewDTO reviewDTO);
-    List<ReviewDTO> getInstructorReviewList(String instructorName, ReviewDTO reviewDTO);
+    List<ReviewDTO> getInstructorReviewList(Long memberId, ReviewDTO reviewDTO);
 }
 

@@ -4,8 +4,6 @@ import edu.example.learner.courseabout.coursereview.dto.ReviewDTO;
 import edu.example.learner.courseabout.coursereview.entity.ReviewType;
 import edu.example.learner.courseabout.coursereview.repository.ReviewRepository;
 import edu.example.learner.courseabout.coursereview.service.ReviewService;
-import edu.example.learner.qna.faq.dto.FAQDTO;
-import edu.example.learner.qna.faq.entity.FAQCategory;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -38,7 +36,7 @@ public class ReviewServiceTest {
                         .reviewName("title"+i)
                         .reviewDetail("content" + i)
                         .courseId(1L)
-                        .writerId(1L)
+                        .instructorId(1L)
                         .rating(5)
                         .reviewType(ReviewType.COURSE)
                         .build();
@@ -46,7 +44,7 @@ public class ReviewServiceTest {
                         .reviewName("title " + i)
                         .reviewDetail("content" + i)
                         .courseId(1L)
-                        .writerId(1L)
+                        .instructorId(1L)
                         .rating(5)
                         .reviewType(ReviewType.INSTRUCTOR)
                         .build();

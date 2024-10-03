@@ -3,6 +3,8 @@ import { useParams , useNavigate } from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
 import CourseNewsList from "./CourseNewsList";
+import InstructorReview from "./InstructorReview";
+import CourseReview from "./CourseReview";
 
 // 기본 이미지 경로
 const defaultImage = "/images/course_default_img.png";
@@ -21,7 +23,7 @@ const CourseDetail = () => {
 
     useEffect(() => {
         // courseId를 이용해서 해당 강의 정보를 가져옴
-        axios.get(`http://localhost:8080/api/v1/course/${courseId}`)
+        axios.get(`http://localhost:8080/course/${courseId}`)
             .then((response) => {
                 setCourse(response.data); // 강의 데이터 설정
             })
@@ -34,7 +36,7 @@ const CourseDetail = () => {
         if (activeTab === "questions") {
             // 강의 문의 탭이 선택될 때 강의 문의 데이터 가져오기
             setLoading(true);
-            axios.get(`http://localhost:8080/api/v1/course-inquiry?courseId=${courseId}`)
+            axios.get(`http://localhost:8080/course-inquiry?courseId=${courseId}`)
                 .then((response) => {
                     setInquiries(response.data); // 문의 데이터를 저장
                     setLoading(false);
@@ -54,11 +56,11 @@ const CourseDetail = () => {
     const handleInquiryClick = (inquiryId) => {
         setLoadingDetail(true);
         // 강의 문의 상세 정보 및 답변 가져오기
-        axios.get(`http://localhost:8080/api/v1/course-inquiry/${inquiryId}`)
+        axios.get(`http://localhost:8080/course-inquiry/${inquiryId}`)
             .then((response) => {
                 setSelectedInquiry(response.data); // 선택된 문의의 상세 데이터 저장
                 // 강의 문의 답변 가져오기
-                return axios.get(`http://localhost:8080/api/v1/course-answer/${inquiryId}`);
+                return axios.get(`http://localhost:8080/course-answer/${inquiryId}`);
             })
             .then((response) => {
                 setAnswers(response.data); // 답변 데이터 저장
@@ -73,13 +75,13 @@ const CourseDetail = () => {
     const handleAnswerSubmit = () => {
         if (!newAnswer.trim()) return;
         // 답변을 POST로 전송
-        axios.post("http://localhost:8080/api/v1/course-answer", {
+        axios.post("http://localhost:8080/course-answer", {
             inquiryId: selectedInquiry.inquiryId,
             answerContent: newAnswer
         })
             .then(() => {
                 // 답변이 성공적으로 등록되면 답변 목록을 업데이트
-                return axios.get(`http://localhost:8080/api/v1/course-answer/${selectedInquiry.inquiryId}`);
+                return axios.get(`http://localhost:8080/course-answer/${selectedInquiry.inquiryId}`);
             })
             .then((response) => {
                 setAnswers(response.data); // 새로운 답변 목록으로 업데이트
@@ -128,7 +130,14 @@ const CourseDetail = () => {
             {/* 탭에 따라 내용 변경 */}
             <TabContent>
                 {activeTab === "curriculum" && <p>커리큘럼 내용이 여기에 표시됩니다.</p>}
-                {activeTab === "reviews" && <p>수강평 내용이 여기에 표시됩니다.</p>}
+                {activeTab === "reviews" && (
+                    <>
+                        <CourseReview courseId={courseId} />
+                        <InstructorReview courseId={courseId} />
+                    </>
+                )}
+
+
                 {activeTab === "questions" && (
                     <>
                         {loading ? (

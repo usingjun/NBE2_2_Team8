@@ -10,6 +10,8 @@ import SignUp from "./pages/SignUp";
 import LoginModal from "./components/LoginModal";
 import PostCourseInquiry from "./pages/PostCourseInquiry"
 import CourseNews from "./pages/CourseNews";
+import ReviewEdit from "./pages/ReviewEdit";
+import ReviewCreate from "./pages/ReviewCreate";
 
 
 function App() {
@@ -37,6 +39,8 @@ function App() {
                 <Route path="/orders/:orderId" component={<OrderDetail/>} />
                 <Route path="/order/create" element={<OrderCreate/>} />
                 <Route path="/courses/:courseId/news/:newsId" element={<CourseNews />} />
+                <Route path="/courses/:courseId/reviews/create" element={<ReviewCreate />} />
+                <Route path="/courses/:courseId/reviews/:reviewId/edit" element={<ReviewEdit />} />
             </Routes>
         </Router>
     );
