@@ -2,8 +2,11 @@ package edu.example.learner.courseabout.courseqna.service;
 
 import edu.example.learner.courseabout.courseqna.dto.CourseAnswerDTO;
 import edu.example.learner.courseabout.courseqna.entity.CourseAnswer;
+import edu.example.learner.courseabout.courseqna.entity.CourseInquiry;
+import edu.example.learner.courseabout.courseqna.repository.CourseInquiryRepository;
 import edu.example.learner.courseabout.exception.CourseAnswerException;
 import edu.example.learner.courseabout.courseqna.repository.CourseAnswerRepository;
+import edu.example.learner.courseabout.exception.CourseInquiryException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -18,11 +21,17 @@ import java.util.Optional;
 @Log4j2
 public class CourseAnswerService {
     private final CourseAnswerRepository courseAnswerRepository;
+    private final CourseInquiryRepository courseInquiryRepository;
 
     //강의 답변 등록
     public CourseAnswerDTO register(CourseAnswerDTO courseAnswerDTO){
         try{
+            CourseInquiry courseInquiry = courseInquiryRepository.findById(courseAnswerDTO.getInquiryId())
+                    .orElseThrow(CourseInquiryException.NOT_FOUND::get);
+
             CourseAnswer courseAnswer = courseAnswerDTO.toEntity();
+            courseAnswer.setCourseInquiry(courseInquiry);
+
             courseAnswerRepository.save(courseAnswer);
             return new CourseAnswerDTO(courseAnswer);
         } catch (Exception e){
