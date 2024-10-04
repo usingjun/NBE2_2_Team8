@@ -6,6 +6,8 @@ import CourseDetail from "./pages/CourseDetail";
 import Orders from "./pages/Orders";
 import OrderDetail from './pages/OrderDetail';
 import OrderCreate from "./pages/OrderCreate";
+import OrderUpdate from "./pages/OrderUpdate";
+import OrderDelete from "./pages/OrderDelete";
 import SignUp from "./pages/SignUp";
 import LoginModal from "./components/LoginModal";
 import PostCourseInquiry from "./pages/PostCourseInquiry";
@@ -44,6 +46,8 @@ function App() {
                 <Route path="/orders" element={<Orders />} />
                 <Route path="/orders/:orderId" element={<OrderDetail />} />
                 <Route path="/order/create" element={<OrderCreate />} />
+                <Route path="/order/update/:orderId" element={<OrderUpdate />} />
+                <Route path="/order/Delete/:orderId" element={<OrderDelete />} />
                 <Route path="/courses/:courseId/news/:newsId" element={<CourseNews />} />
                 <Route path="/내정보" element={<MyPage />} /> {/* MyPage 라우트 추가 */}
                 <Route path="/courses/:courseId/news/create" element={<CreateNews />} />
