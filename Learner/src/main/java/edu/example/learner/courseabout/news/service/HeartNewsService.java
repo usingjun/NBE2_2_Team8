@@ -57,4 +57,14 @@ public class HeartNewsService {
         newsRepository.subLikeCount(news);
     }
 
+    public boolean checkHeart(Long newsId, Long memberId) {
+        NewsEntity news = newsRepository.findById(newsId)
+                .orElseThrow(() -> new NotFoundException("새소식을 찾을 수 없습니다."));
+
+        Member member = memberRepository.findById(Math.toIntExact(memberId))   //임시
+                .orElseThrow(() -> new NotFoundException("멤버아이디를 찾을 수 없습니다."));
+
+        return heartNewsRepository.findByMemberAndNewsEntity(member, news).isPresent();
+    }
+
 }

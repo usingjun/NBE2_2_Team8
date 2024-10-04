@@ -155,4 +155,11 @@ public class MemberService {
 
         return new LoginDTO(cookie, member.getMemberId());
     }
+
+    //이메일로 닉네임 얻기
+    public String getNicknameByEmail(String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일로 회원을 찾을 수 없습니다."));
+        return member.getNickname();
+    }
 }
