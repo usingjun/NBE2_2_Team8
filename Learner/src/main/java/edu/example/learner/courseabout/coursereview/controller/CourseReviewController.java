@@ -1,7 +1,12 @@
 package edu.example.learner.courseabout.coursereview.controller;
 
+import edu.example.learner.courseabout.course.entity.Course;
+import edu.example.learner.courseabout.course.service.CourseServiceImpl;
 import edu.example.learner.courseabout.coursereview.dto.ReviewDTO;
+import edu.example.learner.courseabout.coursereview.entity.ReviewType;
 import edu.example.learner.courseabout.coursereview.service.ReviewServiceImpl;
+//import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -17,30 +22,31 @@ import java.util.Map;
 public class CourseReviewController {
 
     private final ReviewServiceImpl reviewService;
+    private final CourseServiceImpl courseService;
 
     @PostMapping("/create")
+    @Operation(summary = "Course Review 생성")
     public ResponseEntity<ReviewDTO> create(@RequestBody ReviewDTO reviewDTO) {
+        System.out.println(reviewDTO);
+        reviewDTO.setReviewType(ReviewType.COURSE);
 
         log.info("Create review: " + reviewDTO);
 
-        return ResponseEntity.ok(reviewService.createReview(reviewDTO));
+        return ResponseEntity.ok(reviewService.createReview(reviewDTO, reviewDTO.getReviewType()));
     }
 
-//    @GetMapping
-//    public ResponseEntity<ReviewDTO> read(@RequestParam Long reviewId) {
-//        log.info("Read Review: " + reviewId);
-//        return ResponseEntity.ok(reviewService.getReviewById(reviewId));
-//    }
 
-    @PutMapping("/update")
-    public ResponseEntity<ReviewDTO> update(@RequestBody ReviewDTO reviewDTO) {
+    @PutMapping("/{reviewId}")
+    @Operation(summary = "Course Review 수정")
+    public ResponseEntity<ReviewDTO> update(@PathVariable("reviewId") Long reviewId, @RequestBody ReviewDTO reviewDTO) {
 
         log.info("update Review: " + reviewDTO);
-        return ResponseEntity.ok(reviewService.updateReview(reviewDTO));
+        return ResponseEntity.ok(reviewService.updateReview(reviewId, reviewDTO));
     }
 
-    @DeleteMapping("/delete")
-    public ResponseEntity<Map<String, String>> remove(@RequestParam Long reviewId) {
+    @DeleteMapping("/{reviewId}")
+    @Operation(summary = "Course Review 삭제")
+    public ResponseEntity<Map<String, String>> remove(@PathVariable("reviewId") Long reviewId) {
 
         log.info("Delete Review: " + reviewId);
 
@@ -49,7 +55,8 @@ public class CourseReviewController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<List<ReviewDTO>> reviewList(@RequestParam Long courseId,
+    @Operation(summary = "Course Review list 조회")
+    public ResponseEntity<List<ReviewDTO>> reviewList(@PathVariable("courseId") Long courseId,
                                       ReviewDTO reviewDTO) {
 
         return ResponseEntity.ok(reviewService.getCourseReviewList(courseId, reviewDTO));

@@ -100,6 +100,19 @@ public class MemberService {
         }
     }
 
+    //강사 이름 조회
+    public MemberDTO getInstructorInfo(String nickname) {
+        try {
+            Member member = memberRepository.getMemberByNickName(nickname).orElseThrow();
+            MemberDTO memberDTO= new MemberDTO(member);
+
+            return memberDTO;
+        }catch (Exception e){
+            log.error(e);
+            throw MemberException.MEMBER_NOT_FOUND.getMemberTaskException();
+        }
+    }
+
     //회원 정보 수정
     public MemberDTO updateMemberInfo(Long memberId, MemberDTO memberDTO) {
         Member member = memberRepository.getMemberInfo(memberId);
