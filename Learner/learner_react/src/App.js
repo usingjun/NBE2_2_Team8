@@ -12,6 +12,14 @@ import SignUp from "./pages/SignUp";
 import LoginModal from "./components/LoginModal";
 import PostCourseInquiry from "./pages/PostCourseInquiry";
 import CourseNews from "./pages/CourseNews";
+import MyPage from "./pages/MyPage"; // MyPage 컴포넌트 import
+import CreateNews from "./pages/CreateNews";
+import UpdateNews from "./pages/UpdateNews";
+import Instructor from "./pages/Instructor";
+import CourseReviewCreate from "./pages/course-review/CourseReviewCreate";
+import CourseReviewEdit from "./pages/course-review/CourseReviewEdit";
+import InstructorReviewCreate from "./pages/instructor-review/InstructorReviewCreate";
+import InstructorReviewEdit from "./pages/instructor-review/InstructorReviewEdit";
 
 
 function App() {
@@ -41,6 +49,14 @@ function App() {
                 <Route path="/order/update/:orderId" element={<OrderUpdate />} />
                 <Route path="/order/Delete/:orderId" element={<OrderDelete />} />
                 <Route path="/courses/:courseId/news/:newsId" element={<CourseNews />} />
+                <Route path="/내정보" element={<MyPage />} /> {/* MyPage 라우트 추가 */}
+                <Route path="/courses/:courseId/news/create" element={<CreateNews />} />
+                <Route path="/courses/:courseId/news/:newsId/edit" element={<UpdateNews />} />
+                <Route path="/courses/:courseId/reviews/create" element={<CourseReviewCreate />} />
+                <Route path="/courses/:courseId/reviews/:reviewId/edit" element={<CourseReviewEdit />} />
+                <Route path="/members/instructor/:nickname" element={<Instructor />} />
+                <Route path="/members/instructor/:nickname/reviews/create" element={<InstructorReviewCreate />} /> {/* 강사 리뷰 생성 페이지 */}
+                <Route path="/members/instructor/:nickname/reviews/:reviewId" element={<InstructorReviewEdit />} /> {/* 강사 리뷰 수정 페이지 */}
             </Routes>
         </Router>
     );
