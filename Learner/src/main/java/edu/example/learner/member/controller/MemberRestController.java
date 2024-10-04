@@ -1,6 +1,7 @@
 package edu.example.learner.member.controller;
 
 import edu.example.learner.member.dto.MemberDTO;
+import edu.example.learner.member.entity.Member;
 import edu.example.learner.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -46,6 +47,8 @@ public class MemberRestController {
     public ResponseEntity<MemberDTO> myPageRead(@PathVariable Long memberId) {
         log.info("--- myPageRead()");
         log.info(memberId);
+        log.info(memberService.getMemberInfo(memberId));
+
         return ResponseEntity.ok(memberService.getMemberInfo(memberId));
     }
 

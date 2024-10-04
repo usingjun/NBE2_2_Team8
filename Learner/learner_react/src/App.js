@@ -10,6 +10,7 @@ import SignUp from "./pages/SignUp";
 import LoginModal from "./components/LoginModal";
 import PostCourseInquiry from "./pages/PostCourseInquiry";
 import CourseNews from "./pages/CourseNews";
+import MyPage from "./pages/MyPage"; // MyPage 컴포넌트 import
 import CreateNews from "./pages/CreateNews";
 import UpdateNews from "./pages/UpdateNews";
 import Instructor from "./pages/Instructor";
@@ -44,6 +45,7 @@ function App() {
                 <Route path="/orders/:orderId" element={<OrderDetail />} />
                 <Route path="/order/create" element={<OrderCreate />} />
                 <Route path="/courses/:courseId/news/:newsId" element={<CourseNews />} />
+                <Route path="/내정보" element={<MyPage />} /> {/* MyPage 라우트 추가 */}
                 <Route path="/courses/:courseId/news/create" element={<CreateNews />} />
                 <Route path="/courses/:courseId/news/:newsId/edit" element={<UpdateNews />} />
                 <Route path="/courses/:courseId/reviews/create" element={<CourseReviewCreate />} />
