@@ -39,7 +39,7 @@ public class CourseController {
         return ResponseEntity.ok(courseService.readAll());
     }
 
-    @PutMapping("")
+    @PutMapping()
     public ResponseEntity<CourseDTO> updateCourse(@RequestBody CourseDTO courseDTO) {
         log.info("Updating course {}", courseDTO);
         return ResponseEntity.ok(courseService.updateCourse(courseDTO));

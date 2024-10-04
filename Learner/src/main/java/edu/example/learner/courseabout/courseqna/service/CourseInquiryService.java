@@ -31,10 +31,10 @@ public class CourseInquiryService {
         }
     }
 
-    //전체 문의 조회
-    public List<CourseInquiry> readAll(){
+    //강의 문의 리스트 조회
+    public List<CourseInquiry> readAll(Long courseId){
         try{
-            return courseInquiryRepository.findAll();
+            return courseInquiryRepository.getCourseInquirys(courseId).orElse(null);
         } catch (Exception e){
             log.error("--- " + e.getMessage());
             throw CourseInquiryException.NOT_FETCHED.get();
