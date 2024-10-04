@@ -103,17 +103,24 @@ public class NewsController {
 
     //좋아요 처리
     // courseId 처리는 고려
-    @PatchMapping
+    @PatchMapping("/{newsId}/like")
     @Operation(summary = "좋아요", description = "좋아요를 처리합니다.")
     public ResponseEntity<?> increaseHeart(@RequestBody @Validated HeartNewsReqDTO heartNewsReqDTO) throws Exception {
         heartNewsService.insert(heartNewsReqDTO);
         return ResponseEntity.ok().build();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/{newsId}/like")
     @Operation(summary = "좋아요 취소", description = "좋아요를 취소합니다.")
     public ResponseEntity<?> decreaseHeart(@RequestBody @Validated HeartNewsReqDTO heartNewsReqDTO) {
         heartNewsService.delete(heartNewsReqDTO);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{newsId}/like")
+    @Operation(summary = "좋아요 여부 확인", description = "좋아요 여부를 확인합니다.")
+    public ResponseEntity<Boolean> checkHeart(@PathVariable Long newsId, @RequestParam Long memberId) {
+        boolean isHeart = heartNewsService.checkHeart(newsId, memberId);
+        return ResponseEntity.ok().body(isHeart);
     }
 }

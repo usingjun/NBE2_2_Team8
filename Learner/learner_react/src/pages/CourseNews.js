@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { jwtDecode } from "jwt-decode";
 
+
 export default function CourseNews() {
     const { courseId, newsId } = useParams();
     const navigate = useNavigate();
@@ -56,7 +57,6 @@ export default function CourseNews() {
             .then(data => {
                 console.log("Fetched news:", data);
                 setNews(data);
-                setLiked(data.liked);
             })
             .catch(err => {
                 console.error("새소식 가져오기 실패:", err);
@@ -65,29 +65,56 @@ export default function CourseNews() {
             });
     };
 
-    const likeNews = () => {
-        const method = liked ? 'DELETE' : 'POST';
-        fetch(`http://localhost:8080/course/${courseId}/news/${newsId}/like`, {
-            method: method,
-            credentials: 'include',
-        })
-            .then(res => {
-                if (!res.ok) throw new Error('Failed to update like status');
-                return res.json();
-            })
-            .then(data => {
-                console.log(`${liked ? 'Unliked' : 'Liked'} news:`, data);
-                setLiked(!liked);
-                setNews(prev => ({
-                    ...prev,
-                    likeCount: liked ? prev.likeCount - 1 : prev.likeCount + 1
-                }));
-            })
-            .catch(err => {
-                console.error(`${liked ? '좋아요 취소 실패' : '좋아요 실패'}:`, err);
-                alert('좋아요 처리 중 오류가 발생했습니다.');
+    const likeNews = async () => {
+        const memberId = localStorage.getItem('memberId');
+        const requestData = {
+            memberId: parseInt(memberId),
+            newsId: parseInt(newsId)
+        };
+
+        try {
+            // 먼저 좋아요 여부 확인
+            const res = await fetch(`http://localhost:8080/course/${courseId}/news/${newsId}/like?memberId=${memberId}`, {
+                credentials: 'include',
             });
+
+            if (!res.ok) throw new Error('Failed to fetch like status');
+
+            const data = await res.json();
+            console.log("Fetched like status:", data);
+            setLiked(data);
+
+            // 좋아요 추가 또는 삭제 처리
+            const method = data ? 'DELETE' : 'PATCH';
+
+            const likeRes = await fetch(`http://localhost:8080/course/${courseId}/news/${newsId}/like`, {
+                method: method,
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(requestData)
+            });
+
+            if (!likeRes.ok) throw new Error('Failed to update like status');
+
+            // 빈 응답 처리: text() 메서드로 응답을 읽되, JSON 파싱은 시도하지 않음
+            await likeRes.text();
+
+            setLiked(!data);
+            setNews(prev => ({
+                ...prev,
+                likeCount: data ? prev.likeCount - 1 : prev.likeCount + 1
+            }));
+
+            // 좋아요 상태 업데이트 후 새소식 데이터 다시 가져오기
+            fetchNewsData();
+        } catch (err) {
+            console.error(`${liked ? '좋아요 취소 실패' : '좋아요 실패'}:`, err);
+            alert('좋아요 처리 중 오류가 발생했습니다.');
+        }
     };
+
 
     const deleteNews = () => {
         if (!window.confirm('정말로 이 새소식을 삭제하시겠습니까?')) {
