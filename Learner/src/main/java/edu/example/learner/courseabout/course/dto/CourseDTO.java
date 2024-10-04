@@ -26,7 +26,7 @@ public class CourseDTO {
 
     private String courseAttribute;
     private boolean sale;
-    private String instructorName;
+    private Long memberId;
 
     public Course toEntity() {
         return Course.builder().courseId(courseId)
@@ -49,6 +49,6 @@ public class CourseDTO {
         this.courseLevel = course.getCourseLevel();
         this.courseAttribute = course.getCourseAttribute().name();
         this.sale = course.isSale();
-        this.instructorName = course.getMember().getNickname();
+        this.memberId = course.getMember().getMemberId();
     }
 }
