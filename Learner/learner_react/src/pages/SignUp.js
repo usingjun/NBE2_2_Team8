@@ -1,158 +1,141 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-const SignUp = () => {
-    const [form, setForm] = useState({
-        email: "", // 이메일 추가
-        password: "",
-        confirmPassword: "",
-        nickname: "", // 닉네임 필드
-        phoneNumber: "", // 전화번호 필드
-        profileImage: "",
-        introduction: "",
-    });
+const LoginModal = ({ closeModal }) => {
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
-    const [errorMessage, setErrorMessage] = useState(""); // 에러 메시지 상태 추가
+    const handleLogin = async (event) => {
+        event.preventDefault(); // 기본 동작 방지
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setForm({
-            ...form,
-            [name]: value,
-        });
-    };
-
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setErrorMessage(""); // 이전 에러 메시지 초기화
         try {
-            const response = await fetch("http://localhost:8080/join/register", {
+            const response = await fetch("http://localhost:8080/join/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(form), // form 데이터를 JSON 문자열로 변환
+                body: JSON.stringify({
+                    email: email,
+                    password: password,
+                }),
+                credentials: "include", // 쿠키를 포함하려면 이 옵션을 추가해야 함
             });
 
-            // 응답 상태가 2xx가 아닐 경우 처리
-            if (!response.ok) {
-                const errorData = await response.json(); // JSON 응답 파싱
-                throw new Error(errorData.error); // 에러 메시지 추출
+            // 상태 코드 확인
+            if (response.ok) {
+                // 로그인 성공 처리
+                console.log("로그인 성공");
+                alert("로그인에 성공하셨습니다."); // 알림창 표시
+                closeModal(); // 로그인 성공 시 모달 닫기
+
+                // 자동으로 새로고침
+                window.location.reload(); // 페이지 새로고침
+            } else {
+                // 오류 상태 코드와 메시지 처리
+                const errorMessage = await response.text(); // 서버가 반환하는 오류 메시지
+                console.error(`오류 발생: ${response.status} - ${errorMessage}`);
+
+                // 서버에서 반환한 오류 메시지를 사용자에게 알림
+                alert(`로그인 실패: ${errorMessage}`); // 오류 메시지를 사용자에게 알림
             }
-
-            // 성공적으로 회원가입이 완료된 경우
-            alert("회원가입에 성공하셨습니다."); // 알림창 표시
-            window.location.href = "http://localhost:3000/courses"; // 리다이렉트
-
         } catch (error) {
-            console.error("Error:", error);
-            setErrorMessage(error.message); // 에러 메시지를 상태에 저장
+            console.error("로그인 요청 실패:", error);
+            alert("로그인 요청 중 오류가 발생했습니다."); // 오류 알림
         }
     };
 
-
-
+    // 네이버 로그인 클릭 핸들러
     const handleNaverClick = () => {
         window.location.href = "http://localhost:8080/oauth2/authorization/naver";
     };
 
+    // 구글 로그인 클릭 핸들러
     const handleGoogleClick = () => {
         window.location.href = "http://localhost:8080/oauth2/authorization/google";
     };
 
     return (
-        <SignUpContainer>
-            <Title>회원가입</Title>
-            <Form onSubmit={handleSubmit}>
-                <Label>이메일</Label>
-                <Input
-                    type="email" // 이메일 형식
-                    name="email"
-                    value={form.email}
-                    onChange={handleChange}
-                    placeholder="이메일을 입력하세요"
-                    required // 필수 입력
-                />
+        <ModalBackground>
+            <ModalContainer>
+                <CloseButton onClick={closeModal}>X</CloseButton>
+                <Logo>Learner</Logo>
+                <Form onSubmit={handleLogin}>
+                    <Input
+                        type="email"
+                        placeholder="이메일"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
+                    <Input
+                        type="password"
+                        placeholder="비밀번호"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
+                    <LoginButton type="submit">로그인</LoginButton>
+                </Form>
+                <PasswordOptions>
+                    <ButtonLink>아이디(이메일) 찾기</ButtonLink> |
+                    <ButtonLink>비밀번호 찾기</ButtonLink> |
+                    <ButtonLink>회원가입</ButtonLink>
+                </PasswordOptions>
 
-                <Label>비밀번호</Label>
-                <Input
-                    type="password"
-                    name="password"
-                    value={form.password}
-                    onChange={handleChange}
-                    placeholder="비밀번호를 입력하세요"
-                    required // 필수 입력
-                />
-
-                <Label>비밀번호 확인</Label>
-                <Input
-                    type="password"
-                    name="confirmPassword"
-                    value={form.confirmPassword}
-                    onChange={handleChange}
-                    placeholder="비밀번호를 다시 입력하세요"
-                    required // 필수 입력
-                />
-
-                <Label>닉네임</Label>
-                <Input
-                    type="text"
-                    name="nickname"
-                    value={form.nickname}
-                    onChange={handleChange}
-                    placeholder="닉네임을 입력하세요"
-                    required // 필수 입력
-                />
-
-                <Label>전화번호</Label>
-                <Input
-                    type="text"
-                    name="phoneNumber"
-                    value={form.phoneNumber}
-                    onChange={handleChange}
-                    placeholder="전화번호를 입력하세요"
-                    required // 필수 입력
-                />
-
-                <SubmitButton type="submit">가입하기</SubmitButton>
-            </Form>
-
-            {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>} {/* 에러 메시지 표시 */}
-
-            <SimpleSignUp>
-                <span>간편 회원가입</span>
-                <SocialButtons>
-                    <SocialButton onClick={handleNaverClick}>네이버</SocialButton>
-                    <SocialButton onClick={handleGoogleClick}>구글</SocialButton>
-                </SocialButtons>
-            </SimpleSignUp>
-        </SignUpContainer>
+                {/* 소셜 로그인 버튼 */}
+                <SocialLoginContainer>
+                    <SocialLoginButton onClick={handleGoogleClick}>
+                        <GoogleIcon>G</GoogleIcon> {/* 구글 아이콘 */}
+                    </SocialLoginButton>
+                    <SocialLoginButton onClick={handleNaverClick}>
+                        <NaverIcon>N</NaverIcon> {/* 네이버 아이콘 */}
+                    </SocialLoginButton>
+                </SocialLoginContainer>
+            </ModalContainer>
+        </ModalBackground>
     );
 };
 
-export default SignUp;
+export default LoginModal;
 
-const SignUpContainer = styled.div`
+// 스타일 코드
+const ModalBackground = styled.div`
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
-    flex-direction: column;
+    justify-content: center;
     align-items: center;
-    margin-top: 2rem;
 `;
 
-const Title = styled.h2`
-    font-size: 2rem;
-    margin-bottom: 2rem;
+const ModalContainer = styled.div`
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    width: 400px;
+    text-align: center;
+    position: relative;
+`;
+
+const CloseButton = styled.button`
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+`;
+
+const Logo = styled.h1`
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
 `;
 
 const Form = styled.form`
     display: flex;
     flex-direction: column;
-    width: 300px;
-`;
-
-const Label = styled.label`
-    font-size: 1rem;
-    margin-bottom: 0.5rem;
 `;
 
 const Input = styled.input`
@@ -163,7 +146,7 @@ const Input = styled.input`
     font-size: 1rem;
 `;
 
-const SubmitButton = styled.button`
+const LoginButton = styled.button`
     padding: 0.75rem;
     background-color: #28a745;
     color: white;
@@ -176,34 +159,46 @@ const SubmitButton = styled.button`
     }
 `;
 
-const SimpleSignUp = styled.div`
-    margin-top: 2rem;
-    text-align: center;
-    span {
-        margin-bottom: 1rem;
-        display: block;
-    }
+const PasswordOptions = styled.div`
+    margin-top: 1rem;
+    font-size: 0.875rem;
 `;
 
-const SocialButtons = styled.div`
-    display: flex;
-    justify-content: center;
-    gap: 1rem;
-`;
-
-const SocialButton = styled.button`
-    background-color: #f9f9f9;
-    border: 1px solid #ddd;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
+const ButtonLink = styled.button`
+    background: none;
+    border: none;
+    color: #555;
+    font-size: 0.875rem;
+    text-decoration: underline;
     cursor: pointer;
     &:hover {
-        background-color: #f1f1f1;
+        color: #28a745;
     }
 `;
 
-const ErrorMessage = styled.div`
-    color: red; /* 에러 메시지 색상 */
+const SocialLoginContainer = styled.div`
     margin-top: 1rem;
-    font-size: 0.9rem;
+    display: flex;
+    justify-content: space-around;
+`;
+
+const SocialLoginButton = styled.div`
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 50%;
+  cursor: pointer;
+`;
+
+const GoogleIcon = styled(SocialLoginButton)`
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+`;
+
+const NaverIcon = styled(SocialLoginButton)`
+  background-color: #03c75a;
+  color: white;
+  font-weight: bold;
 `;
