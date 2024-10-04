@@ -29,7 +29,7 @@ const CreateNews = () => {
             const decodedToken = jwtDecode(token); // jwtDecode 사용
             const userRole = decodedToken.role;
 
-            if (userRole !== 'Role_INSTRUCTOR' && userRole !== 'Role_ADMIN') {
+            if (userRole !== 'ROLE_INSTRUCTOR' && userRole !== 'ROLE_ADMIN') {
                 alert('새소식 등록 권한이 없습니다.');
                 navigate(`/courses/${courseId}`);
             }

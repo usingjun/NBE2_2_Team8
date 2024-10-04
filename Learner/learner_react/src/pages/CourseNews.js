@@ -3,7 +3,6 @@ import { useEffect, useState } from "react";
 import styled from "styled-components";
 import { jwtDecode } from "jwt-decode";
 
-
 export default function CourseNews() {
     const { courseId, newsId } = useParams();
     const navigate = useNavigate();
@@ -12,33 +11,54 @@ export default function CourseNews() {
     const [userRole, setUserRole] = useState(null);
     const [userName, setUserName] = useState(null);
     const [instructorName, setInstructorName] = useState(null);
+    const [isLoading, setIsLoading] = useState(true); // Loading state
 
     useEffect(() => {
         checkUserRole();
         fetchNewsData();
+        fetchInstructorName();
     }, [courseId, newsId]);
 
-    const checkUserRole = async () => {  // async로 변경
+    const fetchInstructorName = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/course/${courseId}/member-nickname`, {
+                credentials: 'include',
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const nickname = await response.text();
+            // console.log("Instructor Nickname:", nickname);
+            setInstructorName(nickname);
+        } catch (err) {
+            console.error("Failed to fetch instructor nickname:", err);
+        } finally {
+            setIsLoading(false); // Set loading to false
+        }
+    };
+
+    const checkUserRole = async () => {
         try {
             const token = document.cookie
                 .split('; ')
                 .find(row => row.startsWith('Authorization='))
                 ?.split('=')[1];
 
-            console.log("토큰:", token);
+            // console.log("토큰:", token);
             if (token) {
                 const decodedToken = jwtDecode(token);
                 setUserRole(decodedToken.role);
                 const email = decodedToken.mid;
-                console.log("디코딩된 토큰:", decodedToken);
+                // console.log("디코딩된 토큰:", decodedToken);
 
-                // 이메일로 닉네임 가져오기
                 const response = await fetch(`http://localhost:8080/member/nickname?email=${email}`);
                 if (!response.ok) {
                     throw new Error("닉네임을 가져오는 데 실패했습니다.");
                 }
                 const nickname = await response.text(); // JSON이 아닌 문자열 반환
-                console.log("닉네임:", nickname);
+                // console.log("닉네임:", nickname);
                 setUserName(nickname); // 닉네임을 상태에 설정
             }
         } catch (error) {
@@ -46,23 +66,21 @@ export default function CourseNews() {
         }
     };
 
-    const fetchNewsData = () => {
-        fetch(`http://localhost:8080/course/${courseId}/news/${newsId}`, {
-            credentials: 'include',
-        })
-            .then(res => {
-                if (!res.ok) throw new Error('Failed to fetch news');
-                return res.json();
-            })
-            .then(data => {
-                console.log("Fetched news:", data);
-                setNews(data);
-            })
-            .catch(err => {
-                console.error("새소식 가져오기 실패:", err);
-                alert('새소식을 불러오는데 실패했습니다.');
-                navigate(`/courses/${courseId}`);
+    const fetchNewsData = async () => {
+        try {
+            const res = await fetch(`http://localhost:8080/course/${courseId}/news/${newsId}`, {
+                credentials: 'include',
             });
+            if (!res.ok) throw new Error('Failed to fetch news');
+            const data = await res.json();
+            // console.log("Fetched news:", data);
+            setNews(data);
+            setLiked(data.liked); // Initialize liked based on fetched news data
+        } catch (err) {
+            console.error("새소식 가져오기 실패:", err);
+            alert('새소식을 불러오는데 실패했습니다.');
+            navigate(`/courses/${courseId}`);
+        }
     };
 
     const likeNews = async () => {
@@ -73,7 +91,6 @@ export default function CourseNews() {
         };
 
         try {
-            // 먼저 좋아요 여부 확인
             const res = await fetch(`http://localhost:8080/course/${courseId}/news/${newsId}/like?memberId=${memberId}`, {
                 credentials: 'include',
             });
@@ -81,10 +98,9 @@ export default function CourseNews() {
             if (!res.ok) throw new Error('Failed to fetch like status');
 
             const data = await res.json();
-            console.log("Fetched like status:", data);
+            // console.log("Fetched like status:", data);
             setLiked(data);
 
-            // 좋아요 추가 또는 삭제 처리
             const method = data ? 'DELETE' : 'PATCH';
 
             const likeRes = await fetch(`http://localhost:8080/course/${courseId}/news/${newsId}/like`, {
@@ -98,7 +114,6 @@ export default function CourseNews() {
 
             if (!likeRes.ok) throw new Error('Failed to update like status');
 
-            // 빈 응답 처리: text() 메서드로 응답을 읽되, JSON 파싱은 시도하지 않음
             await likeRes.text();
 
             setLiked(!data);
@@ -107,14 +122,12 @@ export default function CourseNews() {
                 likeCount: data ? prev.likeCount - 1 : prev.likeCount + 1
             }));
 
-            // 좋아요 상태 업데이트 후 새소식 데이터 다시 가져오기
             fetchNewsData();
         } catch (err) {
             console.error(`${liked ? '좋아요 취소 실패' : '좋아요 실패'}:`, err);
             alert('좋아요 처리 중 오류가 발생했습니다.');
         }
     };
-
 
     const deleteNews = () => {
         if (!window.confirm('정말로 이 새소식을 삭제하시겠습니까?')) {
@@ -136,37 +149,31 @@ export default function CourseNews() {
             });
     };
 
-    const canEdit = () => {
-        // courseId를 이용해 member_nickname 확인
-        fetch(`http://localhost:8080/course/${courseId}/member-nickname`, {
-            credentials: 'include',
-        })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return res.text(); // 응답을 텍스트로 처리
-            })
-            .then(nickname => {
-                console.log("Member Nickname:", nickname);
-                setInstructorName(nickname); // 직접 문자열로 설정
-            })
-            .catch(err => console.error("Failed to fetch member nickname:", err));
+    const canCreateNews = () => {
+        // console.log("Current state:", {
+        //     userRole,
+        //     userName,
+        //     instructorName
+        // });
 
-        return (userRole === 'Role_INSTRUCTOR' && userName===instructorName ) || userRole === 'Role_ADMIN';
+        return (userRole === 'ROLE_INSTRUCTOR' && userName === instructorName) ||
+            userRole === 'ROLE_ADMIN';
     };
 
     const handleUpdateNews = () => {
-        if (canEdit()) {
+        if (canCreateNews()) { // Use canCreateNews instead of canEdit
             navigate(`/courses/${courseId}/news/${newsId}/edit`);
         } else {
             alert('새소식 수정은 강사 또는 관리자만 가능합니다.');
         }
     };
 
+    if (isLoading) {
+        return <div>로딩 중...</div>; // Show loading state
+    }
 
     if (!news) {
-        return <div>로딩 중...</div>;
+        return <div>뉴스를 찾을 수 없습니다.</div>; // Handle the case where news is not found
     }
 
     return (
@@ -184,7 +191,7 @@ export default function CourseNews() {
                     <LikeButton onClick={likeNews} $liked={liked}>
                         {liked ? '좋아요 취소' : '좋아요'}
                     </LikeButton>
-                    {canEdit() && (
+                    {canCreateNews() && (
                         <>
                             <EditButton onClick={handleUpdateNews}>
                                 수정하기

@@ -9,61 +9,69 @@ const CourseNewsList = ({ courseId }) => {
     const [userRole, setUserRole] = useState(null);
     const [userName, setUserName] = useState(null);
     const [instructorName, setInstructorName] = useState(null);
+    const [isLoading, setIsLoading] = useState(true);
     const newsPerPage = 5;
     const navigate = useNavigate();
 
     useEffect(() => {
-        // 컴포넌트 마운트 시 사용자 권한 확인
         checkUserRole();
-    }, []);
+        fetchInstructorName();
+    }, [courseId]); // courseId가 변경될 때마다 실행
 
-    const checkUserRole = async () => {  // async로 변경
+    const fetchInstructorName = async () => {
+        try {
+            const response = await fetch(`http://localhost:8080/course/${courseId}/member-nickname`, {
+                credentials: 'include',
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const nickname = await response.text();
+            // console.log("Instructor Nickname:", nickname);
+            setInstructorName(nickname);
+        } catch (err) {
+            console.error("Failed to fetch instructor nickname:", err);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const checkUserRole = async () => {
         try {
             const token = document.cookie
                 .split('; ')
                 .find(row => row.startsWith('Authorization='))
                 ?.split('=')[1];
 
-            console.log("토큰:", token);
             if (token) {
                 const decodedToken = jwtDecode(token);
                 setUserRole(decodedToken.role);
                 const email = decodedToken.mid;
-                console.log("디코딩된 토큰:", decodedToken);
 
-                // 이메일로 닉네임 가져오기
                 const response = await fetch(`http://localhost:8080/member/nickname?email=${email}`);
                 if (!response.ok) {
                     throw new Error("닉네임을 가져오는 데 실패했습니다.");
                 }
-                const nickname = await response.text(); // JSON이 아닌 문자열 반환
-                console.log("닉네임:", nickname);
-                setUserName(nickname); // 닉네임을 상태에 설정
+                const nickname = await response.text();
+                // console.log("User Nickname:", nickname);
+                setUserName(nickname);
             }
         } catch (error) {
             console.error("토큰 확인 중 오류 발생:", error);
         }
     };
 
-
     const canCreateNews = () => {
-        // courseId를 이용해 member_nickname 확인
-        fetch(`http://localhost:8080/course/${courseId}/member-nickname`, {
-            credentials: 'include',
-        })
-            .then(res => {
-                if (!res.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                return res.text(); // 응답을 텍스트로 처리
-            })
-            .then(nickname => {
-                console.log("Member Nickname:", nickname);
-                setInstructorName(nickname); // 직접 문자열로 설정
-            })
-            .catch(err => console.error("Failed to fetch member nickname:", err));
+        // console.log("Current state:", {
+        //     userRole,
+        //     userName,
+        //     instructorName
+        // });
 
-        return (userRole === 'Role_INSTRUCTOR' && userName===instructorName ) || userRole === 'Role_ADMIN';
+        return (userRole === 'ROLE_INSTRUCTOR' && userName === instructorName) ||
+            userRole === 'ROLE_ADMIN';
     };
 
 
@@ -73,7 +81,7 @@ const CourseNewsList = ({ courseId }) => {
         })
             .then(res => res.json())
             .then(data => {
-                console.log("Fetched news:", data);
+                // console.log("Fetched news:", data);
                 setNewsList(data.content);
                 setTotalPages(data.totalPages);
             })
@@ -97,6 +105,10 @@ const CourseNewsList = ({ courseId }) => {
     };
 
     const handleCreateNews = () => {
+        if (isLoading) {
+            return; // 로딩 중일 때는 처리하지 않음
+        }
+        // console.log("Can create news?", canCreateNews());
         if (canCreateNews()) {
             navigate(`/courses/${courseId}/news/create`);
         } else {
@@ -148,71 +160,107 @@ const CourseNewsList = ({ courseId }) => {
 
 const styles = {
     newsContainer: {
-        maxWidth: '800px',
-        margin: '0 auto',
-        padding: '20px',
-        backgroundColor: '#f8f9fa',
-        borderRadius: '8px',
-        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
+        maxWidth: '900px',
+        margin: '40px auto',
+        padding: '30px',
+        backgroundColor: '#fff',
+        borderRadius: '16px',
+        boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
+        transition: 'transform 0.3s ease',
     },
     newsHeader: {
-        fontSize: '24px',
+        fontSize: '32px',
         color: '#333',
-        marginBottom: '20px',
-        borderBottom: '2px solid #007bff',
-        paddingBottom: '10px',
+        marginBottom: '30px',
+        borderBottom: '3px solid #007bff',
+        paddingBottom: '15px',
+        fontWeight: 'bold',
     },
     createNewsButton: {
-        padding: '10px 15px',
+        padding: '12px 20px',
         backgroundColor: '#007bff',
         color: 'white',
         border: 'none',
-        borderRadius: '4px',
+        borderRadius: '30px',
         cursor: 'pointer',
-        marginBottom: '20px',
+        fontSize: '16px',
+        fontWeight: 'bold',
+        letterSpacing: '1px',
+        transition: 'background-color 0.3s ease, transform 0.2s ease',
+        marginBottom: '30px',
+    },
+    createNewsButtonHover: {
+        backgroundColor: '#0056b3',
+        transform: 'scale(1.05)',
     },
     newsList: {
         listStyleType: 'none',
         padding: 0,
+        marginBottom: '20px',
     },
     newsItem: {
-        marginBottom: '10px',
-        transition: 'transform 0.2s',
+        marginBottom: '20px',
+        transition: 'transform 0.3s ease',
+    },
+    newsItemHover: {
+        transform: 'translateY(-5px)',
     },
     newsLink: {
         display: 'flex',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: '15px',
-        backgroundColor: 'white',
-        borderRadius: '4px',
+        padding: '20px',
+        backgroundColor: '#f9f9f9',
+        borderRadius: '10px',
         color: '#333',
         textDecoration: 'none',
-        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.1)',
+        boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
+        transition: 'box-shadow 0.3s ease, transform 0.3s ease',
+    },
+    newsLinkHover: {
+        boxShadow: '0 6px 12px rgba(0, 0, 0, 0.1)',
+        transform: 'translateY(-5px)',
     },
     newsTitle: {
-        fontWeight: 500,
+        fontWeight: 'bold',
+        fontSize: '18px',
     },
     newsArrow: {
+        fontSize: '20px',
         color: '#007bff',
+        transition: 'transform 0.3s ease',
     },
     pagination: {
         display: 'flex',
         justifyContent: 'space-between',
-        marginTop: '20px',
+        alignItems: 'center',
+        marginTop: '30px',
     },
     paginationButton: {
-        padding: '10px 15px',
+        padding: '12px 20px',
         backgroundColor: '#007bff',
         color: 'white',
         border: 'none',
-        borderRadius: '4px',
+        borderRadius: '30px',
         cursor: 'pointer',
+        fontSize: '16px',
+        transition: 'background-color 0.3s ease, transform 0.3s ease',
+        fontWeight: 'bold',
+    },
+    paginationButtonHover: {
+        backgroundColor: '#0056b3',
+        transform: 'scale(1.05)',
     },
     disabledButton: {
         backgroundColor: '#ccc',
         cursor: 'not-allowed',
     },
+    paginationText: {
+        fontSize: '16px',
+        fontWeight: 'bold',
+        color: '#333',
+    },
 };
+
 
 export default CourseNewsList;
