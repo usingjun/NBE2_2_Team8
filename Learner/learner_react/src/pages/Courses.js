@@ -1,18 +1,30 @@
-import React, {useEffect, useState} from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
-import {useNavigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
-// 기본 배너 이미지 경로 설정
-const defaultImage = "/images/course_default_img.png"; // public 폴더에 있는 이미지 사용
+const defaultImage = "/images/course_default_img.png";
+
 const Courses = () => {
     const [courses, setCourses] = useState([]);
-    const [searchId, setSearchId] = useState("");  // 검색할 courseId 상태
-    const [searchedCourse, setSearchedCourse] = useState(null); // 검색된 강의 상태
+    const [searchId, setSearchId] = useState("");
+    const [searchedCourse, setSearchedCourse] = useState(null);
     const navigate = useNavigate();
-    const role = localStorage.getItem("role"); // localStorage에서 role 가져오기
 
+    // memberId를 로컬 저장소에 저장하는 useEffect
     useEffect(() => {
+        const query = new URLSearchParams(window.location.search);
+        const memberId = query.get('memberId');
+
+        if (memberId) {
+            localStorage.setItem('memberId', memberId);
+            console.log('Member ID stored in local storage:', memberId);
+
+            // 페이지 리디렉션
+            window.location.href = "http://localhost:3000/courses";
+        }
+
+        // 강의 목록 가져오기
         axios.get("http://localhost:8080/course/list")
             .then((response) => {
                 setCourses(response.data);
@@ -20,13 +32,12 @@ const Courses = () => {
             .catch((error) => {
                 console.error("Error fetching the courses:", error);
             });
-    }, []);
+    }, []); // 컴포넌트가 마운트될 때 실행
 
-    // 검색 요청을 처리하는 함수
     const handleSearch = () => {
         axios.get(`http://localhost:8080/course/${searchId}`)
             .then((response) => {
-                setSearchedCourse(response.data);  // 검색된 강의 결과를 저장
+                setSearchedCourse(response.data);
             })
             .catch((error) => {
                 console.error("Error fetching the course:", error);
@@ -58,7 +69,6 @@ const Courses = () => {
             )}
 
             <CourseList>
-                {/* 검색된 강의가 있으면 해당 강의만 표시 */}
                 {searchedCourse ? (
                     <CourseItem key={searchedCourse.courseId} course={searchedCourse} navigate={navigate}/>
                 ) : (
@@ -82,7 +92,7 @@ const CourseItem = ({course, navigate}) => {
 
     return (
         <StyledCourseItem onClick={handleClick}>
-            <CourseImage src={defaultImage} alt="Course Banner"/> {/* 기본 이미지 */}
+            <CourseImage src={defaultImage} alt="Course Banner"/>
             <h3>{course.courseName}</h3>
             <p>{course.instructorName}</p>
             <p>{course.coursePrice}원</p>
@@ -92,6 +102,7 @@ const CourseItem = ({course, navigate}) => {
 
 export default Courses;
 
+// 스타일 코드
 const CoursePage = styled.div`
     display: flex;
     justify-content: center;

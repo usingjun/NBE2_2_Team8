@@ -1,33 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react"; // useEffect 추가
 import styled from "styled-components";
 
 const LoginModal = ({ closeModal }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-
-    // JWT 토큰에서 memberId를 추출하는 함수
-    const getUserInfoFromToken = (token) => {
-        try {
-            const payload = token.split('.')[1]; // JWT의 두 번째 부분이 payload
-            const decodedPayload = atob(payload); // Base64 디코딩
-            const parsedPayload = JSON.parse(decodedPayload);
-            return {
-                memberId : parsedPayload.memberId,
-                nickname : parsedPayload.nickname,
-                role : parsedPayload.role
-            }; // memberId 추출
-        } catch (error) {
-            console.error("토큰에서 memberId 추출 중 오류 발생:", error);
-            return null;
-        }
-    };
-
-    // 쿠키에서 Authorization 토큰 추출 함수
-    const getAuthorizationTokenFromCookies = () => {
-        const cookies = document.cookie.split('; ');
-        const authorizationCookie = cookies.find(row => row.startsWith('Authorization='));
-        return authorizationCookie ? authorizationCookie.split('=')[1] : null;
-    };
 
     const handleLogin = async (event) => {
         event.preventDefault(); // 기본 동작 방지
@@ -47,56 +23,41 @@ const LoginModal = ({ closeModal }) => {
 
             // 상태 코드 확인
             if (response.ok) {
-                // 로그인 성공 시 쿠키에서 Authorization 토큰을 가져옴
-                const token = getAuthorizationTokenFromCookies();
-
-                if (token) {
-                    const userInfo = getUserInfoFromToken(token);
-
-                    if (userInfo && userInfo.memberId && userInfo.role && userInfo.nickname) {
-                        localStorage.setItem("memberId", userInfo.memberId); // localStorage에 memberId 저장
-                        localStorage.setItem("role", userInfo.role); // localStorage에 role 저장
-                        localStorage.setItem("nickname", userInfo.nickname); // localStorage에 nickname 저장
-                        closeModal(); // 로그인 성공 시 모달 닫기
-                        alert("로그인에 성공하셨습니다.");
-                    } else {
-                        console.error("memberId를 토큰에서 찾을 수 없습니다.");
-                        alert("로그인에 성공했으나, 사용자 정보를 불러오지 못했습니다.");
-                    }
-                } else {
-                    console.error("Authorization 토큰을 쿠키에서 찾을 수 없습니다.");
-                    alert("로그인에 성공했으나, 토큰을 찾을 수 없습니다.");
-                }
-
-                // 로그인 성공 처리
-                closeModal(); // 로그인 성공 시 모달 닫기
-                console.log("로그인 성공");
-                alert("로그인에 성공하셨습니다."); // 알림창 표시
-
-                // 쿠키가 있는지 확인
-                const cookies = document.cookie;
-                console.log("받은 쿠키:", cookies);
+                const { memberId } = await response.json();
+                console.log("로그인 성공, memberId:", memberId);
+                localStorage.setItem("memberId", memberId);
+                alert("로그인에 성공하셨습니다.");
+                closeModal();
+                // 여기서 원하는 페이지로 리디렉션
+                window.location.href = "http://localhost:3000/courses"; // 로그인 후 이동할 페이지
             } else {
-                // 오류 상태 코드와 메시지 처리
-                const errorMessage = await response.text(); // 서버가 반환하는 오류 메시지
+                const errorMessage = await response.text();
                 console.error(`오류 발생: ${response.status} - ${errorMessage}`);
-
-                // 서버에서 반환한 오류 메시지를 사용자에게 알림
-                alert(`로그인 실패: ${errorMessage}`); // 오류 메시지를 사용자에게 알림
+                alert(`로그인 실패: ${errorMessage}`);
             }
         } catch (error) {
             console.error("로그인 요청 실패:", error);
-            alert("로그인 요청 중 오류가 발생했습니다."); // 오류 알림
+            alert("로그인 요청 중 오류가 발생했습니다.");
         }
     };
 
+
+    // 네이버 로그인 클릭 핸들러
+    const handleNaverClick = () => {
+        window.location.href = "http://localhost:8080/oauth2/authorization/naver"; // 네이버 로그인 페이지로 리디렉션
+    };
+
+    // 구글 로그인 클릭 핸들러
+    const handleGoogleClick = () => {
+        window.location.href = "http://localhost:8080/oauth2/authorization/google"; // 구글 로그인 페이지로 리디렉션
+    };
 
     return (
         <ModalBackground>
             <ModalContainer>
                 <CloseButton onClick={closeModal}>X</CloseButton>
                 <Logo>Learner</Logo>
-                <Form onSubmit={handleLogin}> {/* onSubmit 추가 */}
+                <Form onSubmit={handleLogin}>
                     <Input
                         type="email"
                         placeholder="이메일"
@@ -109,13 +70,23 @@ const LoginModal = ({ closeModal }) => {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
-                    <LoginButton type="submit">로그인</LoginButton> {/* type="submit" 설정 */}
+                    <LoginButton type="submit">로그인</LoginButton>
                 </Form>
                 <PasswordOptions>
                     <ButtonLink>아이디(이메일) 찾기</ButtonLink> |
                     <ButtonLink>비밀번호 찾기</ButtonLink> |
                     <ButtonLink>회원가입</ButtonLink>
                 </PasswordOptions>
+
+                {/* 소셜 로그인 버튼 */}
+                <SocialLoginContainer>
+                    <SocialLoginButton onClick={handleGoogleClick}>
+                        <GoogleIcon>G</GoogleIcon> {/* 구글 아이콘 */}
+                    </SocialLoginButton>
+                    <SocialLoginButton onClick={handleNaverClick}>
+                        <NaverIcon>N</NaverIcon> {/* 네이버 아이콘 */}
+                    </SocialLoginButton>
+                </SocialLoginContainer>
             </ModalContainer>
         </ModalBackground>
     );
@@ -123,131 +94,109 @@ const LoginModal = ({ closeModal }) => {
 
 export default LoginModal;
 
-// 스타일 코드 동일
-
-
-// 스타일 코드 동일
+// 스타일 코드
 const ModalBackground = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgba(0, 0, 0, 0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
 `;
 
 const ModalContainer = styled.div`
-  background-color: white;
-  padding: 2rem;
-  border-radius: 10px;
-  width: 400px;
-  text-align: center;
-  position: relative;
+    background-color: white;
+    padding: 2rem;
+    border-radius: 10px;
+    width: 400px;
+    text-align: center;
+    position: relative;
 `;
 
 const CloseButton = styled.button`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
-  cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
 `;
 
 const Logo = styled.h1`
-  font-size: 1.8rem;
-  margin-bottom: 1rem;
+    font-size: 1.8rem;
+    margin-bottom: 1rem;
 `;
 
 const Form = styled.form`
-  display: flex;
-  flex-direction: column;
+    display: flex;
+    flex-direction: column;
 `;
 
 const Input = styled.input`
-  padding: 0.75rem;
-  margin-bottom: 1rem;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  font-size: 1rem;
+    padding: 0.75rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
 `;
 
 const LoginButton = styled.button`
-  padding: 0.75rem;
-  background-color: #28a745;
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 1.1rem;
-  cursor: pointer;
-  &:hover {
-    background-color: #218838;
-  }
+    padding: 0.75rem;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    &:hover {
+        background-color: #218838;
+    }
 `;
 
 const PasswordOptions = styled.div`
-  margin-top: 1rem;
-  font-size: 0.875rem;
-  a {
-    text-decoration: none;
-    color: #555;
-    &:hover {
-      color: #28a745;
-    }
-  }
+    margin-top: 1rem;
+    font-size: 0.875rem;
 `;
 
-const SimpleLogin = styled.div`
-  margin-top: 2rem;
-  text-align: center;
-  p {
-    margin-bottom: 0.5rem;
-    font-weight: bold;
-  }
+const ButtonLink = styled.button`
+    background: none;
+    border: none;
+    color: #555;
+    font-size: 0.875rem;
+    text-decoration: underline;
+    cursor: pointer;
+    &:hover {
+        color: #28a745;
+    }
+`;
+
+const SocialLoginContainer = styled.div`
+    margin-top: 1rem;
+    display: flex;
+    justify-content: space-around;
 `;
 
 const SocialLoginButton = styled.div`
-  display: flex;
-  justify-content: center;
-  gap: 1rem;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    cursor: pointer;
 `;
 
-const KakaoIcon = styled.div`
-  width: 50px;
-  height: 50px;
-  background-color: #fddc3f;
-  border-radius: 50%;
+const GoogleIcon = styled(SocialLoginButton)`
+    background-color: #ffffff;
+    border: 1px solid #ddd;
 `;
 
-const GoogleIcon = styled.div`
-  width: 50px;
-  height: 50px;
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 50%;
-`;
-
-const GithubIcon = styled.div`
-  width: 50px;
-  height: 50px;
-  background-color: #000000;
-  border-radius: 50%;
-  color: white;
-`;
-
-
-const ButtonLink = styled.button`
-  background: none;
-  border: none;
-  color: #555;
-  font-size: 0.875rem;
-  text-decoration: underline;
-  cursor: pointer;
-  &:hover {
-    color: #28a745;
-  }
+const NaverIcon = styled(SocialLoginButton)`
+    background-color: #03c75a;
+    color: white;
+    font-weight: bold;
 `;

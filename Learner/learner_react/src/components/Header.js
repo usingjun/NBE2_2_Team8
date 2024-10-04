@@ -21,7 +21,12 @@ const Header = ({ openModal }) => {
 
     // 로그아웃 처리 함수
     const handleLogout = () => {
+        // 쿠키에서 Authorization 제거
         document.cookie = "Authorization=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
+
+        // localStorage에서 memberId 제거
+        localStorage.removeItem("memberId");
+
         setIsLoggedIn(false);
         navigate('/courses');
     };
@@ -77,7 +82,7 @@ const Header = ({ openModal }) => {
 
 export default Header;
 
-// 스타일 컴포넌트들 그대로 유지
+// 나머지 스타일 컴포넌트는 그대로 두세요.
 
 const NavBar = styled.nav`
     display: flex;
