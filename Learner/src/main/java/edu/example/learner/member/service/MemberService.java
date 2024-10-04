@@ -66,12 +66,30 @@ public class MemberService {
             }
             member.changeProfileImage(file.getBytes());
             member.changeImageType(file.getContentType());
-
+            log.info("change profile image");
             return new MemberDTO(memberRepository.save(member));
         }catch (Exception e){
             log.error(e);
             throw MemberException.NOT_UPLOAD_IMAGE.getMemberTaskException();
         }
+    }
+
+    //사진 삭제
+    public void removeImage(Long memberId) {
+        Member member = memberRepository.getMemberInfo(memberId);
+        if(member == null){
+            throw MemberException.MEMBER_NOT_FOUND.getMemberTaskException();
+        }
+    try {
+        // 프로필 이미지를 null로 설정합니다.
+        member.setProfileImage(null);
+
+        // 변경된 회원 정보를 저장합니다.
+        memberRepository.save(member);
+    }catch (Exception e){
+        throw MemberException.NOT_REMOVE_IMAGE.getMemberTaskException();
+    }
+
     }
 
     //회원 정보 조회
@@ -107,11 +125,16 @@ public class MemberService {
             throw MemberException.MEMBER_NOT_FOUND.getMemberTaskException();
         }
 
-        try{
+        //닉네임 수정
+        try {
             member.changeNickname(memberDTO.getNickname());
+        }catch (Exception e){
+            throw MemberException.NICKNAME_ALREADY_EXISTS.getMemberTaskException();
+        }
+
+        try{
             member.changeIntroduction(memberDTO.getIntroduction());
             member.changePassword(passwordEncoder.encode(memberDTO.getPassword()));
-            member.changeEmail(memberDTO.getEmail());
 
             MemberDTO modifyMemberDTO = new MemberDTO(memberRepository.save(member));
 
@@ -161,5 +184,17 @@ public class MemberService {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("해당 이메일로 회원을 찾을 수 없습니다."));
         return member.getNickname();
+    }
+
+    //비밀번호 인증
+    public boolean verifyPassword(Long memberId, String rawPassword) {
+        Member member = memberRepository.getMemberInfo(memberId);
+         if(member == null){
+              throw MemberException.MEMBER_NOT_FOUND.getMemberTaskException();
+         }
+         log.info("인증 비밀번호 " + rawPassword);
+         log.info("본래 비밀번호 " + member.getPassword());
+        // 저장된 비밀번호와 입력된 비밀번호를 비교합니다.
+        return passwordEncoder.matches(rawPassword, member.getPassword());
     }
 }

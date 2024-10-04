@@ -20,8 +20,8 @@ public class HeartNews {
     @Column(name = "heart_news_id")
     private Long id;
 
-    @ManyToOne(fetch = LAZY)
-    @JoinColumn(name = "member_id")
+    @ManyToOne(fetch = LAZY, cascade = CascadeType.REMOVE) // 삭제 시 관련 HeartNews도 삭제됨
+    @JoinColumn(name = "member_id", nullable = false) // member_id는 필수
     private Member member;
 
     @ManyToOne(fetch = LAZY)

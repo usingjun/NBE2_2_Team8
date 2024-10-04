@@ -13,6 +13,7 @@ import CourseNews from "./pages/CourseNews";
 import MyPage from "./pages/MyPage"; // MyPage 컴포넌트 import
 import CreateNews from "./pages/CreateNews";
 import UpdateNews from "./pages/UpdateNews";
+import EditProfile from './components/EditProfile';
 
 
 function App() {
@@ -43,6 +44,7 @@ function App() {
                 <Route path="/내정보" element={<MyPage />} /> {/* MyPage 라우트 추가 */}
                 <Route path="/courses/:courseId/news/create" element={<CreateNews />} />
                 <Route path="/courses/:courseId/news/:newsId/edit" element={<UpdateNews />} />
+                <Route path="/edit-profile" element={<EditProfile />} />
             </Routes>
         </Router>
     );
