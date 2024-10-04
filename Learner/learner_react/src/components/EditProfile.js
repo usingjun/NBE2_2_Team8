@@ -121,38 +121,6 @@ const EditProfile = () => {
         }
     };
 
-    const handleWithdraw = async () => {
-        const confirmWithdraw = window.confirm("회원탈퇴를 하시겠습니까?"); // 회원 탈퇴 확인 창
-        if (confirmWithdraw) {
-            const memberId = localStorage.getItem("memberId");
-
-            try {
-                const response = await fetch(`http://localhost:8080/members/${memberId}`, {
-                    method: "DELETE",
-                    credentials: "include",
-                });
-
-                if (response.ok) {
-                    // 성공적으로 회원 탈퇴 후 쿠키 및 로컬 저장소 삭제
-                    localStorage.removeItem("memberId");
-                    // 쿠키 삭제를 위한 로직 추가 (필요한 경우)
-                    navigate("/"); // 메인 화면으로 리다이렉트
-                    setSuccessMessage("회원탈퇴가 완료되었습니다."); // 회원탈퇴 완료 메시지
-                } else {
-                    const errorBody = await response.text();
-                    setErrorMessage(`회원 탈퇴 실패: ${errorBody || "알 수 없는 오류 발생"}`);
-                }
-            } catch (error) {
-                console.error("회원 탈퇴 중 오류 발생:", error);
-                setErrorMessage("회원 탈퇴 중 오류 발생");
-            }
-        } else {
-            // 사용자가 확인 창에서 '취소'를 클릭했을 때
-            setErrorMessage("회원탈퇴가 취소되었습니다."); // 탈퇴 취소 메시지 (선택사항)
-        }
-    };
-
-
     return (
         <Container>
             <Title>회원정보 수정</Title>
@@ -186,7 +154,7 @@ const EditProfile = () => {
                             <Input
                                 type="text"
                                 name="password"
-                                value={userInfo.password}
+                                value={""}
                                 onChange={handleChange}
                                 placeholder="변경할 비밀번호를 입력하세요."
                             />
@@ -195,7 +163,6 @@ const EditProfile = () => {
                 )}
                 <Button type="submit">수정하기</Button>
             </Form>
-            <WithdrawButton onClick={handleWithdraw}>회원탈퇴하기</WithdrawButton>
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
             {successMessage && <SuccessMessage>{successMessage}</SuccessMessage>}
         </Container>
@@ -252,20 +219,6 @@ const Button = styled.button`
     font-size: 1.2rem;
     &:hover {
         background-color: #218838;
-    }
-`;
-
-const WithdrawButton = styled.button`
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 0.5rem 1rem;
-    cursor: pointer;
-    font-size: 1.2rem;
-    margin-top: 1rem;
-    &:hover {
-        background-color: #c82333;
     }
 `;
 
