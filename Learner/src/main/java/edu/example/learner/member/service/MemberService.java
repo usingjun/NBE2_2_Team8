@@ -106,12 +106,6 @@ public class MemberService {
             Member member = memberRepository.getMemberByNickName(nickname).orElseThrow();
             MemberDTO memberDTO= new MemberDTO(member);
 
-            // 이미지가 null인지 확인
-            if (memberDTO.getProfileImage() == null || memberDTO.getProfileImage().isEmpty()) {
-                // 기본 이미지 경로 설정
-                String defaultImagePath = "/images/default_profile.png";
-                memberDTO.setProfileImage(defaultImagePath);
-            }
             return memberDTO;
         }catch (Exception e){
             log.error(e);
