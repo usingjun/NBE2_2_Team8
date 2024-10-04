@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
 
 const OrderDetail = () => {
-    const { orderId } = useParams(); // URL에서 orderId 가져오기
-    console.log(orderId);
+    const { orderId } = useParams();
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -18,7 +17,7 @@ const OrderDetail = () => {
                 setOrder(response.data);
             } catch (error) {
                 console.error("Error fetching order details:", error);
-                setError("장바구니 세부정보를 가져오는 데 실패했습니다.");
+                setError("주문 세부정보를 가져오는 데 실패했습니다.");
             } finally {
                 setLoading(false);
             }
@@ -27,17 +26,17 @@ const OrderDetail = () => {
         fetchOrderDetail();
     }, [orderId]);
 
-
     if (loading) return <p>로딩 중...</p>;
     if (error) return <p>{error}</p>;
-    if (!order) return <p>장바구니이 없습니다.</p>;
+    if (!order) return <p>주문이 없습니다.</p>;
 
     return (
         <OrderDetailContainer>
-            <h2>장바구니 상세보기</h2>
-            <p>장바구니 ID: {order.oId}</p>
-            <p>장바구니 상태: {order.orderStatus}</p>
-            <p>장바구니 항목:</p>
+            <h2>주문 상세보기</h2>
+            <p>주문 ID: {order.orderId}</p>
+            <p>주문 상태: {order.orderStatus}</p>
+            <p>총 금액: {order.totalPrice} 원</p>
+            <p>주문 항목:</p>
             <ul>
                 {order.orderItemDTOList.map((item, index) => (
                     <li key={index}>
@@ -45,6 +44,9 @@ const OrderDetail = () => {
                     </li>
                 ))}
             </ul>
+            <Link to="/orders">
+                <BackButton>뒤로가기</BackButton>
+            </Link>
         </OrderDetailContainer>
     );
 };
@@ -55,4 +57,18 @@ const OrderDetailContainer = styled.div`
     max-width: 600px;
     margin: 0 auto;
     padding: 1rem;
+`;
+
+const BackButton = styled.button`
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #0056b3;
+    }
 `;

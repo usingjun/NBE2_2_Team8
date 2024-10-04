@@ -4,8 +4,6 @@ import edu.example.learner.courseabout.coursereview.dto.ReviewDTO;
 import edu.example.learner.courseabout.coursereview.entity.ReviewType;
 import edu.example.learner.courseabout.coursereview.repository.ReviewRepository;
 import edu.example.learner.courseabout.coursereview.service.ReviewService;
-import edu.example.learner.qna.faq.dto.FAQDTO;
-import edu.example.learner.qna.faq.entity.FAQCategory;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
@@ -52,8 +50,8 @@ public class ReviewServiceTest {
                         .build();
 
                 //WHEN
-                ReviewDTO registeredReviewDTO1 = reviewService.createReview(reviewDTO);
-                ReviewDTO registeredReviewDTO2 = reviewService.createReview(reviewDTO2);
+                ReviewDTO registeredReviewDTO1 = reviewService.createReview(reviewDTO, reviewDTO.getReviewType());
+                ReviewDTO registeredReviewDTO2 = reviewService.createReview(reviewDTO2, reviewDTO2.getReviewType());
 
                 //THEN
                 assertNotNull(registeredReviewDTO1);
@@ -109,7 +107,7 @@ public class ReviewServiceTest {
                     .build();
 
             //WHEN
-            ReviewDTO updatedReviewDTO = reviewService.updateReview(reviewDTO);
+            ReviewDTO updatedReviewDTO = reviewService.updateReview(10L, reviewDTO);
 
             //THEN
             assertNotNull(updatedReviewDTO);

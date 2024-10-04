@@ -22,7 +22,7 @@ public class HeartNewsService {
 
     @Transactional
     public void insert(HeartNewsReqDTO heartNewsReqDTO) throws Exception {
-        Member member = memberRepository.findById(Math.toIntExact(heartNewsReqDTO.getMemberId()))   //임시
+        Member member = memberRepository.findById(heartNewsReqDTO.getMemberId())   //임시
                 .orElseThrow(() -> new NotFoundException("멤버아이디를 찾을 수 없습니다."));
 
         NewsEntity news = newsRepository.findById(heartNewsReqDTO.getNewsId())
@@ -44,7 +44,7 @@ public class HeartNewsService {
 
     @Transactional
     public void delete(HeartNewsReqDTO heartNewsReqDTO) {
-        Member member = memberRepository.findById(Math.toIntExact(heartNewsReqDTO.getMemberId()))   //임시
+        Member member = memberRepository.findById(heartNewsReqDTO.getMemberId())   //임시
                 .orElseThrow(() -> new NotFoundException("멤버아이디를 찾을 수 없습니다."));
 
         NewsEntity news = newsRepository.findById(heartNewsReqDTO.getNewsId())
@@ -55,6 +55,16 @@ public class HeartNewsService {
 
         heartNewsRepository.delete(heartNews);
         newsRepository.subLikeCount(news);
+    }
+
+    public boolean checkHeart(Long newsId, Long memberId) {
+        NewsEntity news = newsRepository.findById(newsId)
+                .orElseThrow(() -> new NotFoundException("새소식을 찾을 수 없습니다."));
+
+        Member member = memberRepository.findById(Math.toIntExact(memberId))   //임시
+                .orElseThrow(() -> new NotFoundException("멤버아이디를 찾을 수 없습니다."));
+
+        return heartNewsRepository.findByMemberAndNewsEntity(member, news).isPresent();
     }
 
 }
