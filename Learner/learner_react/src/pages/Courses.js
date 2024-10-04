@@ -10,6 +10,7 @@ const Courses = () => {
     const [searchId, setSearchId] = useState("");  // 검색할 courseId 상태
     const [searchedCourse, setSearchedCourse] = useState(null); // 검색된 강의 상태
     const navigate = useNavigate();
+    const role = localStorage.getItem("role"); // localStorage에서 role 가져오기
 
     useEffect(() => {
         axios.get("http://localhost:8080/course/list")
@@ -48,6 +49,13 @@ const Courses = () => {
                     </SearchButton>
                 </SearchInputContainer>
             </SearchContainer>
+
+            {/* 관리자일 때만 강의 생성 버튼 표시*/}
+            {role === "admin" && (
+                <CreateCourseButton onClick={() => navigate("/post-course")}>
+                    강의 생성
+                </CreateCourseButton>
+            )}
 
             <CourseList>
                 {/* 검색된 강의가 있으면 해당 강의만 표시 */}
@@ -151,4 +159,17 @@ const CourseImage = styled.img`
     object-fit: cover;
     border-radius: 10px;
     margin-bottom: 1rem;
+`;
+
+const CreateCourseButton = styled.button`
+    margin-bottom: 20px;
+    background-color: #3cb371;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    &:hover {
+        background-color: #2a9d63;
+    }
 `;

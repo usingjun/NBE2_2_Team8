@@ -5,6 +5,30 @@ const LoginModal = ({ closeModal }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
+    // JWT 토큰에서 memberId를 추출하는 함수
+    const getUserInfoFromToken = (token) => {
+        try {
+            const payload = token.split('.')[1]; // JWT의 두 번째 부분이 payload
+            const decodedPayload = atob(payload); // Base64 디코딩
+            const parsedPayload = JSON.parse(decodedPayload);
+            return {
+                memberId : parsedPayload.memberId,
+                nickname : parsedPayload.nickname,
+                role : parsedPayload.role
+            }; // memberId 추출
+        } catch (error) {
+            console.error("토큰에서 memberId 추출 중 오류 발생:", error);
+            return null;
+        }
+    };
+
+    // 쿠키에서 Authorization 토큰 추출 함수
+    const getAuthorizationTokenFromCookies = () => {
+        const cookies = document.cookie.split('; ');
+        const authorizationCookie = cookies.find(row => row.startsWith('Authorization='));
+        return authorizationCookie ? authorizationCookie.split('=')[1] : null;
+    };
+
     const handleLogin = async (event) => {
         event.preventDefault(); // 기본 동작 방지
 
@@ -23,6 +47,27 @@ const LoginModal = ({ closeModal }) => {
 
             // 상태 코드 확인
             if (response.ok) {
+                // 로그인 성공 시 쿠키에서 Authorization 토큰을 가져옴
+                const token = getAuthorizationTokenFromCookies();
+
+                if (token) {
+                    const userInfo = getUserInfoFromToken(token);
+
+                    if (userInfo && userInfo.memberId && userInfo.role && userInfo.nickname) {
+                        localStorage.setItem("memberId", userInfo.memberId); // localStorage에 memberId 저장
+                        localStorage.setItem("role", userInfo.role); // localStorage에 role 저장
+                        localStorage.setItem("nickname", userInfo.nickname); // localStorage에 nickname 저장
+                        closeModal(); // 로그인 성공 시 모달 닫기
+                        alert("로그인에 성공하셨습니다.");
+                    } else {
+                        console.error("memberId를 토큰에서 찾을 수 없습니다.");
+                        alert("로그인에 성공했으나, 사용자 정보를 불러오지 못했습니다.");
+                    }
+                } else {
+                    console.error("Authorization 토큰을 쿠키에서 찾을 수 없습니다.");
+                    alert("로그인에 성공했으나, 토큰을 찾을 수 없습니다.");
+                }
+
                 // 로그인 성공 처리
                 closeModal(); // 로그인 성공 시 모달 닫기
                 console.log("로그인 성공");

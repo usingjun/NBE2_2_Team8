@@ -33,13 +33,13 @@ const Header = ({ openModal }) => {
     return (
         <NavBar>
             <HeaderContent $isCoursesPage={isCoursesPage}>
-                <LogoWrapper isCoursesPage={isCoursesPage}>
+                <LogoWrapper $isCoursesPage={isCoursesPage}>
                     <Logo onClick={() => navigate("/courses")}>Learner</Logo>
                 </LogoWrapper>
 
                 {isCourseDetailPage && (
                     <LeftSection>
-                        <NavItem>강의</NavItem>
+                        <NavItem onClick={() => navigate("/courses")}>강의</NavItem>
                         <NavItem>문의</NavItem>
                         <SearchBar>
                             <input type="text" placeholder="검색해보세요" />
@@ -77,8 +77,7 @@ const Header = ({ openModal }) => {
 
 export default Header;
 
-// 나머지 스타일 컴포넌트는 그대로 두세요.
-
+// 스타일 컴포넌트들 그대로 유지
 
 const NavBar = styled.nav`
     display: flex;
@@ -105,7 +104,7 @@ const HeaderContent = styled.div`
 
 const LogoWrapper = styled.div`
     display: flex;
-    justify-content: ${({ isCoursesPage }) => (isCoursesPage ? "center" : "flex-start")};
+    justify-content: ${({ $isCoursesPage }) => ($isCoursesPage ? "center" : "flex-start")};
     flex-grow: 1;
 `;
 
