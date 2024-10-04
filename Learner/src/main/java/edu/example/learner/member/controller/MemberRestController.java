@@ -50,7 +50,7 @@ public class MemberRestController {
     }
 
     //다른 사용자 조회
-    @GetMapping("/other")
+    @GetMapping("/{memberId}/other")
     public ResponseEntity<MemberDTO> memberRead(@RequestParam Long memberId) {
         log.info("--- memberRead()");
         MemberDTO memberDTO = memberService.getMemberInfo(memberId);
