@@ -42,8 +42,8 @@ const Header = ({ openModal }) => {
                         </SearchBar>
                     </>
                 )}
-            </LeftSection>
 
+            </LeftSection>
             <LogoWrapper onClick={() => navigate("/courses")}>
                 <Logo>Learner</Logo>
             </LogoWrapper>

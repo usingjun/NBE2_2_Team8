@@ -154,7 +154,7 @@ public class OrderRepositoryTests {
         OrderDTO orderDTO =new OrderDTO();
         orderDTO.setOrderStatus(String.valueOf(OrderStatus.FAILED));
 
-        orderDTO.setOId(orderId);
+        orderDTO.setOrderId(orderId);
         orderDTO.getOrderItemDTOList().clear();
 
         OrderItemDTO orderItemDTO = OrderItemDTO.builder().orderId(orderId)
@@ -166,7 +166,7 @@ public class OrderRepositoryTests {
         orderDTO.getOrderItemDTOList().add(orderItemDTO);
 
 
-        Order order = orderRepository.findById(orderDTO.getOId()).orElseThrow();
+        Order order = orderRepository.findById(orderDTO.getOrderId()).orElseThrow();
         order.changeOrderStatus(OrderStatus.valueOf(orderDTO.getOrderStatus()));
         order.getOrderItems().clear();
 

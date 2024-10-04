@@ -1,16 +1,11 @@
 package edu.example.learner.member.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import edu.example.learner.alarm.entity.Alarm;
 import jakarta.persistence.*;
 import lombok.*;
-import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Table(name = "member", indexes = @Index(columnList = "email"))
@@ -52,6 +47,8 @@ public class Member{
 
     @CreatedDate
     private LocalDateTime createDate;
+
+
 
     public void changeEmail(String email) {
         this.email = email;
