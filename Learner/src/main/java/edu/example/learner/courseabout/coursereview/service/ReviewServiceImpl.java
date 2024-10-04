@@ -1,9 +1,13 @@
 package edu.example.learner.courseabout.coursereview.service;
 
+import edu.example.learner.courseabout.course.entity.Course;
+import edu.example.learner.courseabout.course.service.CourseServiceImpl;
 import edu.example.learner.courseabout.coursereview.dto.ReviewDTO;
 import edu.example.learner.courseabout.coursereview.entity.Review;
+import edu.example.learner.courseabout.coursereview.entity.ReviewType;
 import edu.example.learner.courseabout.exception.ReviewException;
 import edu.example.learner.courseabout.coursereview.repository.ReviewRepository;
+import edu.example.learner.member.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -17,11 +21,17 @@ import java.util.List;
 public class ReviewServiceImpl implements ReviewService {
 
     private final ReviewRepository reviewRepository;
+    private final CourseServiceImpl courseService;
+    private final MemberService memberService;
 
     @Override
-    public ReviewDTO createReview(ReviewDTO reviewDTO) {
+    public ReviewDTO createReview(ReviewDTO reviewDTO, ReviewType reviewType) {
         try {
-            Review review = reviewDTO.toEntity();
+            Course course = courseService.read(reviewDTO.getCourseId()).toEntity();
+            reviewDTO.setWriterId(1L);
+            reviewDTO.setReviewType(reviewType);
+
+            Review review = reviewDTO.toEntity(course);
             System.out.println(review);
             reviewRepository.save(review);
             return new ReviewDTO(review);
@@ -39,14 +49,19 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public ReviewDTO updateReview(ReviewDTO reviewDTO) {
-        Review review = reviewRepository.findById(reviewDTO.toEntity().getReviewId()).orElseThrow(ReviewException.NOT_FOUND::get);
+    public ReviewDTO updateReview(Long reviewId, ReviewDTO reviewDTO) {
+        Course course = courseService.read(reviewDTO.getCourseId()).toEntity();
 
-        Review newReview = reviewDTO.toEntity();
+        Review review = reviewRepository.findById(reviewId).orElseThrow(ReviewException.NOT_FOUND::get);
+        reviewDTO.setWriterId(1L);
+
+        Review newReview = reviewDTO.toEntity(course);
         try {
             review.changeReviewName(newReview.getReviewName());
             review.changeReviewDetail(newReview.getReviewDetail());
             review.changeRating(newReview.getRating());
+
+            reviewRepository.save(review);
             return new ReviewDTO(review);
         } catch (Exception e) {
             log.error(e.getMessage());
@@ -69,53 +84,59 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public List<ReviewDTO> getCourseReviewList(Long courseId, ReviewDTO reviewDTO) {
         System.out.println("service");
-        List<Review> reveiewList = reviewRepository.getCourseReview(courseId).orElse(null);
 
+        // COURSE인 리뷰만 가져오기 위해 필터링
+        List<Review> reviewList = reviewRepository.getCourseReview(courseId).orElse(null);
         List<ReviewDTO> reviewDTOList = new ArrayList<>();
-        if (reveiewList.isEmpty()) {
+
+        if (reviewList == null || reviewList.isEmpty()) {
             return reviewDTOList;
         }
 
-        reveiewList.forEach(review -> {
-            reviewDTOList.add(ReviewDTO.builder()
-                    .reviewId(review.getReviewId())
-                    .reviewName(review.getReviewName())
-                    .reviewDetail(review.getReviewDetail())
-                    .rating(review.getRating())
-                    .reviewType(review.getReviewType())
-                    .writerId(review.getMember().getMemberId())
-                    .courseId(review.getCourse().getCourseId())
-                    .build());
-
-        });
+        // 리뷰 타입이 COURSE인 것만 필터링
+        reviewList.stream()
+                .filter(review -> review.getReviewType() == ReviewType.COURSE)
+                .forEach(review -> {
+                    reviewDTOList.add(ReviewDTO.builder()
+                            .reviewId(review.getReviewId())
+                            .reviewName(review.getReviewName())
+                            .reviewDetail(review.getReviewDetail())
+                            .rating(review.getRating())
+                            .reviewType(review.getReviewType())
+                            .writerId(review.getMember().getMemberId())
+                            .courseId(review.getCourse().getCourseId())
+                            .build());
+                });
 
         return reviewDTOList;
     }
+
 
     @Override
-    public List<ReviewDTO> getInstructorReviewList(String instructorName, ReviewDTO reviewDTO) {
-        System.out.println("service");
-        List<Review> reveiewList = reviewRepository.getInstructorReview(instructorName).orElse(null);
+    public List<ReviewDTO> getInstructorReviewList(Long courseId, String nickname, ReviewDTO reviewDTO) {
+        List<Review> reviewList = reviewRepository.getInstructorReview(reviewDTO.getNickname()).orElse(null);
 
         List<ReviewDTO> reviewDTOList = new ArrayList<>();
-        if (reveiewList.isEmpty()) {
+        if (reviewList == null || reviewList.isEmpty()) {
             return reviewDTOList;
         }
 
-        reveiewList.forEach(review -> {
-            reviewDTOList.add(ReviewDTO.builder()
-                    .reviewId(review.getReviewId())
-                    .reviewName(review.getReviewName())
-                    .reviewDetail(review.getReviewDetail())
-                    .rating(review.getRating())
-                    .reviewType(review.getReviewType())
-                    .writerId(review.getMember().getMemberId())
-                    .courseId(review.getCourse().getCourseId())
-                    .build());
-
-        });
+        // 리뷰 타입이 INSTRUCTOR인 것만 필터링
+        reviewList.stream()
+                .filter(review -> review.getReviewType() == ReviewType.INSTRUCTOR)
+                .forEach(review -> {
+                    reviewDTOList.add(ReviewDTO.builder()
+                            .reviewId(review.getReviewId())
+                            .reviewName(review.getReviewName())
+                            .reviewDetail(review.getReviewDetail())
+                            .rating(review.getRating())
+                            .reviewType(review.getReviewType())
+                            .writerId(review.getMember().getMemberId())
+                            .courseId(courseId)
+                            .nickname(nickname)
+                            .build());
+                });
 
         return reviewDTOList;
     }
-
 }

@@ -16,6 +16,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/join")
@@ -37,11 +39,17 @@ public class JoinRestController {
 
     //로그인
     @PostMapping("/login")
-    public ResponseEntity<Void> login(@RequestBody @Validated LoginDTO loginDTO, HttpServletResponse response) throws IOException {
+    public ResponseEntity<Map<String, Long>> login(@RequestBody @Validated LoginDTO loginDTO, HttpServletResponse response) throws IOException {
         log.info("--- login()");
 
-        response.addCookie(memberService.login(loginDTO.getEmail(), loginDTO.getPassword()));
-        return ResponseEntity.ok().build();
+        LoginDTO readInfo = memberService.login(loginDTO.getEmail(), loginDTO.getPassword());
+
+        response.addCookie(readInfo.getCookie());
+
+        Map<String, Long> responseBody = new HashMap<>();
+        responseBody.put("memberId", readInfo.getMemberId());
+
+        return ResponseEntity.ok(responseBody);
     }
 }
 

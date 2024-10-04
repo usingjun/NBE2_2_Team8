@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useParams , useNavigate } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
 import CourseNewsList from "./CourseNewsList";
+import CourseReview from "./course-review/CourseReview";
 
 // 기본 이미지 경로
 const defaultImage = "/images/course_default_img.png";
@@ -21,7 +22,7 @@ const CourseDetail = () => {
 
     useEffect(() => {
         // courseId를 이용해서 해당 강의 정보를 가져옴
-        axios.get(`http://localhost:8080/api/v1/course/${courseId}`)
+        axios.get(`http://localhost:8080/course/${courseId}`)
             .then((response) => {
                 setCourse(response.data); // 강의 데이터 설정
             })
@@ -34,7 +35,7 @@ const CourseDetail = () => {
         if (activeTab === "questions") {
             // 강의 문의 탭이 선택될 때 강의 문의 데이터 가져오기
             setLoading(true);
-            axios.get(`http://localhost:8080/api/v1/course-inquiry?courseId=${courseId}`)
+            axios.get(`http://localhost:8080/course-inquiry?courseId=${courseId}`)
                 .then((response) => {
                     setInquiries(response.data); // 문의 데이터를 저장
                     setLoading(false);
@@ -54,11 +55,11 @@ const CourseDetail = () => {
     const handleInquiryClick = (inquiryId) => {
         setLoadingDetail(true);
         // 강의 문의 상세 정보 및 답변 가져오기
-        axios.get(`http://localhost:8080/api/v1/course-inquiry/${inquiryId}`)
+        axios.get(`http://localhost:8080/course-inquiry/${inquiryId}`)
             .then((response) => {
                 setSelectedInquiry(response.data); // 선택된 문의의 상세 데이터 저장
                 // 강의 문의 답변 가져오기
-                return axios.get(`http://localhost:8080/api/v1/course-answer/${inquiryId}`);
+                return axios.get(`http://localhost:8080/course-answer/${inquiryId}`);
             })
             .then((response) => {
                 setAnswers(response.data); // 답변 데이터 저장
@@ -73,13 +74,13 @@ const CourseDetail = () => {
     const handleAnswerSubmit = () => {
         if (!newAnswer.trim()) return;
         // 답변을 POST로 전송
-        axios.post("http://localhost:8080/api/v1/course-answer", {
+        axios.post("http://localhost:8080/course-answer", {
             inquiryId: selectedInquiry.inquiryId,
             answerContent: newAnswer
         })
             .then(() => {
                 // 답변이 성공적으로 등록되면 답변 목록을 업데이트
-                return axios.get(`http://localhost:8080/api/v1/course-answer/${selectedInquiry.inquiryId}`);
+                return axios.get(`http://localhost:8080/course-answer/${selectedInquiry.inquiryId}`);
             })
             .then((response) => {
                 setAnswers(response.data); // 새로운 답변 목록으로 업데이트
@@ -95,17 +96,19 @@ const CourseDetail = () => {
             {/* 강의 상세 정보 */}
             {course && (
                 <CourseInfo>
-                    <CourseImage src={defaultImage} alt="Course Image" />
+                    <CourseImage src={defaultImage} alt="Course Image"/>
                     <CourseDetails>
                         <CourseTitle>{course.courseName}</CourseTitle>
                         <CourseDescription>{course.courseDescription}</CourseDescription>
-                        <Instructor>강사 : {course.instructorName}</Instructor>
+                        <Instructor onClick={() => navigate(`/members/instructor/${course.memberNickname}`)}>
+                            강사 : {course.memberNickname}
+                        </Instructor>
                     </CourseDetails>
                 </CourseInfo>
             )}
 
             {/* 구분선 */}
-            <Separator />
+            <Separator/>
 
             {/* 탭 메뉴 */}
             <TabMenu>
@@ -123,12 +126,17 @@ const CourseDetail = () => {
                 </Tab>
             </TabMenu>
 
-            <Separator />
+            <Separator/>
 
             {/* 탭에 따라 내용 변경 */}
             <TabContent>
                 {activeTab === "curriculum" && <p>커리큘럼 내용이 여기에 표시됩니다.</p>}
-                {activeTab === "reviews" && <p>수강평 내용이 여기에 표시됩니다.</p>}
+                {activeTab === "reviews" && (
+                    <>
+                        <CourseReview courseId={courseId}/>
+                    </>
+                )}
+
                 {activeTab === "questions" && (
                     <>
                         {loading ? (
@@ -139,7 +147,8 @@ const CourseDetail = () => {
                                     {selectedInquiry ? (
                                         <WriteButton onClick={() => setSelectedInquiry(null)}>이전 목록으로</WriteButton> // 이전 목록으로 버튼
                                     ) : (
-                                        <WriteButton onClick={() => navigate(`/courses/${courseId}/post`)}>글 작성하기</WriteButton> // 글 작성하기 버튼
+                                        <WriteButton onClick={() => navigate(`/courses/${courseId}/post`)}>글
+                                            작성하기</WriteButton> // 글 작성하기 버튼
                                     )}
                                 </ButtonContainer>
 
@@ -152,7 +161,9 @@ const CourseDetail = () => {
                                                 <h3>{selectedInquiry.inquiryTitle}</h3>
                                                 <p><strong>문의 내용:</strong> {selectedInquiry.inquiryContent}</p>
                                                 <p><strong>작성자:</strong> {selectedInquiry.memberId}</p>
-                                                <p><strong>작성일:</strong> {new Date(selectedInquiry.createdDate).toLocaleDateString()}</p>
+                                                <p>
+                                                    <strong>작성일:</strong> {new Date(selectedInquiry.createdDate).toLocaleDateString()}
+                                                </p>
                                             </InquiryDetail>
 
                                             {/* 답변 목록 */}
@@ -162,7 +173,9 @@ const CourseDetail = () => {
                                                     answers.map((answer) => (
                                                         <AnswerItem key={answer.answerId}>
                                                             <p><strong>답변 내용:</strong> {answer.answerContent}</p>
-                                                            <p><strong>작성일:</strong> {new Date(answer.createdDate).toLocaleDateString()}</p>
+                                                            <p>
+                                                                <strong>작성일:</strong> {new Date(answer.createdDate).toLocaleDateString()}
+                                                            </p>
                                                         </AnswerItem>
                                                     ))
                                                 ) : (
@@ -185,10 +198,13 @@ const CourseDetail = () => {
                                     inquiries.length > 0 ? (
                                         <InquiryList>
                                             {inquiries.map((inquiry) => (
-                                                <InquiryItem key={inquiry.inquiryId} onClick={() => handleInquiryClick(inquiry.inquiryId)}>
+                                                <InquiryItem key={inquiry.inquiryId}
+                                                             onClick={() => handleInquiryClick(inquiry.inquiryId)}>
                                                     <p><strong>문의 제목:</strong> {inquiry.inquiryTitle}</p>
                                                     <p><strong>작성자:</strong> {inquiry.memberId}</p>
-                                                    <p><strong>작성일:</strong> {new Date(inquiry.createdDate).toLocaleDateString()}</p>
+                                                    <p>
+                                                        <strong>작성일:</strong> {new Date(inquiry.createdDate).toLocaleDateString()}
+                                                    </p>
                                                 </InquiryItem>
                                             ))}
                                         </InquiryList>
@@ -200,7 +216,7 @@ const CourseDetail = () => {
                         )}
                     </>
                 )}
-                {activeTab === "news" && <CourseNewsList courseId={courseId} />}
+                {activeTab === "news" && <CourseNewsList courseId={courseId}/>}
             </TabContent>
         </DetailPage>
     );

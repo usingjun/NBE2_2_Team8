@@ -78,4 +78,13 @@ public class CourseServiceImpl implements CourseService {
 
         return courseDTOList;
     }
+
+    // 강사 닉네임 반환
+    public String getInstructorNicknameByCourseId(Long courseId) {
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("해당 코스를 찾을 수 없습니다."));
+
+        // 해당 코스의 Member(강사)의 닉네임을 반환
+        return course.getMember().getNickname();
+    }
 }

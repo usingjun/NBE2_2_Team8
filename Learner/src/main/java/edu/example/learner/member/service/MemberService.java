@@ -1,5 +1,7 @@
 package edu.example.learner.member.service;
 
+import com.mysql.cj.log.Log;
+import edu.example.learner.member.dto.LoginDTO;
 import edu.example.learner.member.entity.Member;
 import edu.example.learner.member.entity.Role;
 import edu.example.learner.member.exception.LoginException;
@@ -16,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -77,6 +80,32 @@ public class MemberService {
             Member member = memberRepository.getMemberInfo(memberId);
             MemberDTO memberDTO= new MemberDTO(member);
 
+            return memberDTO;
+        }catch (Exception e){
+            log.error(e);
+            throw MemberException.MEMBER_NOT_FOUND.getMemberTaskException();
+        }
+    }
+
+    //다른 회원 정보 조회
+    public MemberDTO getMemberInfoNickName(String nickname) {
+        try {
+            Optional<Member> member = memberRepository.getMemberByNickName(nickname);
+            MemberDTO memberDTO= new MemberDTO(member.get());
+
+            return memberDTO;
+        }catch (Exception e){
+            log.error(e);
+            throw MemberException.MEMBER_NOT_FOUND.getMemberTaskException();
+        }
+    }
+
+    //강사 이름 조회
+    public MemberDTO getInstructorInfo(String nickname) {
+        try {
+            Member member = memberRepository.getMemberByNickName(nickname).orElseThrow();
+            MemberDTO memberDTO= new MemberDTO(member);
+
             // 이미지가 null인지 확인
             if (memberDTO.getProfileImage() == null || memberDTO.getProfileImage().isEmpty()) {
                 // 기본 이미지 경로 설정
@@ -105,13 +134,6 @@ public class MemberService {
 
             MemberDTO modifyMemberDTO = new MemberDTO(memberRepository.save(member));
 
-            // 이미지가 null인지 확인
-            if (modifyMemberDTO.getProfileImage() == null || modifyMemberDTO.getProfileImage().isEmpty()) {
-                // 기본 이미지 경로 설정
-                String defaultImagePath = "/images/default_profile.png";
-                modifyMemberDTO.setProfileImage(defaultImagePath);
-            }
-
             return modifyMemberDTO;
         }catch (Exception e){
             log.error(e);
@@ -135,7 +157,7 @@ public class MemberService {
     }
 
     //로그인
-    public Cookie login(String email, String password) {
+    public LoginDTO login(String email, String password) {
         Member member = memberRepository.getMemberByEmail(email).orElseThrow(LoginException.NOT_FOUND_EMAIL::getMemberTaskException);
 
         if (!passwordEncoder.matches(password, member.getPassword())) {
@@ -150,6 +172,13 @@ public class MemberService {
         cookie.setHttpOnly(false); // JavaScript에서 접근 가능
         cookie.setSecure(false); // 로컬 개발 시 false로 설정
 
-        return cookie;
+        return new LoginDTO(cookie, member.getMemberId());
+    }
+
+    //이메일로 닉네임 얻기
+    public String getNicknameByEmail(String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일로 회원을 찾을 수 없습니다."));
+        return member.getNickname();
     }
 }
