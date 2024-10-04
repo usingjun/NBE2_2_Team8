@@ -44,12 +44,16 @@ const Instructor = () => {
         return <p>{error}</p>;
     }
 
+    const profileImageSrc = instructor?.profileImage
+        ? `data:image/jpeg;base64,${instructor.profileImage}`
+        : "http://localhost:8080/images/default_profile.jpg";
+
     return (
         <PageContainer>
             {instructor && (
                 <InstructorInfo>
                     <InstructorImage
-                        src={instructor.profileImage || defaultImage}
+                        src={profileImageSrc} // Base64 이미지 소스 사용
                         alt="Instructor Image"
                     />
                     <InstructorDetails>
