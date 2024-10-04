@@ -1,6 +1,9 @@
 package edu.example.learner.courseabout.coursereview.controller;
 
+import edu.example.learner.courseabout.course.entity.Course;
+import edu.example.learner.courseabout.course.service.CourseServiceImpl;
 import edu.example.learner.courseabout.coursereview.dto.ReviewDTO;
+import edu.example.learner.courseabout.coursereview.entity.ReviewType;
 import edu.example.learner.courseabout.coursereview.service.ReviewServiceImpl;
 //import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
@@ -19,28 +22,31 @@ import java.util.Map;
 public class CourseReviewController {
 
     private final ReviewServiceImpl reviewService;
+    private final CourseServiceImpl courseService;
 
     @PostMapping("/create")
     @Operation(summary = "Course Review 생성")
     public ResponseEntity<ReviewDTO> create(@RequestBody ReviewDTO reviewDTO) {
+        System.out.println(reviewDTO);
+        reviewDTO.setReviewType(ReviewType.COURSE);
 
         log.info("Create review: " + reviewDTO);
 
-        return ResponseEntity.ok(reviewService.createReview(reviewDTO));
+        return ResponseEntity.ok(reviewService.createReview(reviewDTO, reviewDTO.getReviewType()));
     }
 
 
-    @PutMapping("/update")
+    @PutMapping("/{reviewId}")
     @Operation(summary = "Course Review 수정")
-    public ResponseEntity<ReviewDTO> update(@RequestBody ReviewDTO reviewDTO) {
+    public ResponseEntity<ReviewDTO> update(@PathVariable("reviewId") Long reviewId, @RequestBody ReviewDTO reviewDTO) {
 
         log.info("update Review: " + reviewDTO);
-        return ResponseEntity.ok(reviewService.updateReview(reviewDTO));
+        return ResponseEntity.ok(reviewService.updateReview(reviewId, reviewDTO));
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/{reviewId}")
     @Operation(summary = "Course Review 삭제")
-    public ResponseEntity<Map<String, String>> remove(@RequestParam Long reviewId) {
+    public ResponseEntity<Map<String, String>> remove(@PathVariable("reviewId") Long reviewId) {
 
         log.info("Delete Review: " + reviewId);
 

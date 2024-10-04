@@ -23,7 +23,8 @@ public class ReviewDTO {
     private LocalDateTime reviewCreatedDate;
     private LocalDateTime reviewUpdatedDate;
     private ReviewType reviewType;
-    private Long instructorId;
+    private Long writerId;
+    private String nickname;
     private Long courseId;
 
     public ReviewDTO(Review review) {
@@ -34,13 +35,13 @@ public class ReviewDTO {
         this.reviewCreatedDate = review.getReviewCreatedDate();
         this.reviewUpdatedDate = review.getReviewUpdatedDate();
         this.reviewType = review.getReviewType();
-        this.instructorId = review.getMember().getMemberId();
+        this.writerId = review.getMember().getMemberId();
+        this.nickname = review.getCourse().getMember().getNickname();
         this.courseId = review.getCourse().getCourseId();
     }
 
-    public Review toEntity() {
-        Member member = Member.builder().memberId(instructorId).build();
-        Course course = Course.builder().courseId(courseId).build();
+    public Review toEntity(Course course) {
+        Member member = Member.builder().memberId(writerId).build();
 
         return Review.builder()
                 .reviewId(reviewId)

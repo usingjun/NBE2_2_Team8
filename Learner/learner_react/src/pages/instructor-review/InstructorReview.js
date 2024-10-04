@@ -1,34 +1,47 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useParams, useNavigate } from "react-router-dom";
 
-const CourseReviewList = ({ courseId }) => {
+const InstructorReview = () => {
+    const { nickname } = useParams(); // URL에서 nickname 가져오기
     const [reviewList, setReviewList] = useState([]);
+    const [averageRating, setAverageRating] = useState(0); // 평균 평점 상태 추가
+    const navigate = useNavigate(); // navigate 추가
 
     const fetchReviews = () => {
-        fetch(`http://localhost:8080/course/${courseId}/reviews/list`, {
+        fetch(`http://localhost:8080/members/instructor/${nickname}/reviews/list`, {
             credentials: 'include',
         })
             .then(res => res.json())
             .then(data => {
-                console.log("Fetched reviews:", data);
+                console.log("Fetched instructor reviews:", data);
                 setReviewList(data);
+                calculateAverageRating(data); // 평균 평점 계산
             })
             .catch(err => console.error("리뷰 가져오기 실패:", err));
     };
 
+    const calculateAverageRating = (reviews) => {
+        if (reviews.length === 0) {
+            setAverageRating(0); // 리뷰가 없을 경우 평균 평점 0으로 설정
+            return;
+        }
+        const totalRating = reviews.reduce((sum, review) => sum + review.rating, 0);
+        setAverageRating((totalRating / reviews.length).toFixed(1)); // 소수점 첫째 자리까지 표시
+    };
+
     useEffect(() => {
         fetchReviews();
-    }, [courseId]);
+    }, [nickname]); // nickname에 따라 API 호출
 
     const handleDelete = (reviewId) => {
         if (window.confirm("정말 삭제하시겠습니까?")) {
-            fetch(`http://localhost:8080/course/${courseId}/reviews/${reviewId}`, {
+            fetch(`http://localhost:8080/members/instructor/${nickname}/reviews/${reviewId}`, {
                 method: "DELETE",
                 credentials: 'include',
             })
                 .then(() => {
-                    // 삭제 후 리뷰 목록에서 해당 리뷰 제거
                     setReviewList(reviewList.filter(review => review.reviewId !== reviewId));
+                    calculateAverageRating(reviewList.filter(review => review.reviewId !== reviewId)); // 평균 평점 재계산
                     alert("리뷰가 삭제되었습니다.");
                 })
                 .catch(err => console.error("리뷰 삭제 실패:", err));
@@ -37,8 +50,14 @@ const CourseReviewList = ({ courseId }) => {
 
     return (
         <div className="review-container">
-            <h2 className="review-header">과정 리뷰</h2>
-            <Link to={`/courses/${courseId}/reviews/create`} className="add-review-button">리뷰 추가</Link>
+            <h2 className="review-header">강사 리뷰</h2>
+            <h3 className="average-rating">평균 평점: {averageRating} / 5</h3> {/* 평균 평점 표시 */}
+            <button
+                className="add-review-button"
+                onClick={() => navigate(`/members/instructor/${nickname}/reviews/create`)} // 리뷰 작성 페이지로 이동
+            >
+                리뷰 작성
+            </button>
             <ul className="review-list">
                 {reviewList.map(review => (
                     <li key={review.reviewId} className="review-item">
@@ -49,40 +68,47 @@ const CourseReviewList = ({ courseId }) => {
                         </div>
                         <div className="button-group">
                             <button onClick={() => handleDelete(review.reviewId)} className="delete-button">삭제</button>
-                            <Link to={`/courses/${courseId}/reviews/${review.reviewId}/edit`} className="edit-button">수정</Link>
+                            <Link to={`/members/instructor/${nickname}/reviews/${review.reviewId}`} className="edit-button">수정</Link> {/* 수정 페이지로 이동 */}
                         </div>
                     </li>
                 ))}
             </ul>
             <style jsx>{`
                 .review-container {
-                    max-width: 1000px; /* 너비 증가 */
+                    max-width: 1000px;
                     margin: 0 auto;
-                    padding: 30px; /* 패딩 증가 */
+                    padding: 30px;
                     background-color: #f8f9fa;
-                    border-radius: 12px; /* 모서리 둥글게 */
-                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 강조 */
+                    border-radius: 12px;
+                    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                    position: relative; /* 버튼 위치 조정을 위해 relative 추가 */
                 }
                 .review-header {
-                    font-size: 28px; /* 헤더 크기 증가 */
+                    font-size: 28px;
                     color: #333;
-                    margin-bottom: 30px; /* 아래 여백 증가 */
+                    margin-bottom: 10px;
                     border-bottom: 2px solid #28a745;
-                    padding-bottom: 15px; /* 패딩 증가 */
+                    padding-bottom: 15px;
+                }
+                .average-rating {
+                    font-size: 20px;
+                    color: #28a745;
+                    margin-bottom: 30px; /* 간격 조정 */
                 }
                 .add-review-button {
-                    display: inline-block;
-                    margin-bottom: 30px; /* 아래 여백 증가 */
-                    padding: 12px 20px; /* 패딩 증가 */
-                    background-color: #007bff;
+                    position: absolute; /* 버튼을 절대 위치로 설정 */
+                    top: 30px; /* 상단 여백 */
+                    right: 30px; /* 오른쪽 여백 */
+                    padding: 10px 15px;
+                    background-color: #28a745; /* 초록색 */
                     color: white;
                     border: none;
                     border-radius: 6px; /* 모서리 둥글게 */
-                    text-decoration: none;
-                    font-size: 16px; /* 버튼 텍스트 크기 증가 */
+                    cursor: pointer;
+                    font-size: 16px;
                 }
                 .add-review-button:hover {
-                    background-color: #0056b3;
+                    background-color: #218838; /* 버튼 호버 시 색상 변경 */
                 }
                 .review-list {
                     list-style-type: none;
@@ -91,11 +117,11 @@ const CourseReviewList = ({ courseId }) => {
                 .review-item {
                     display: flex;
                     justify-content: space-between;
-                    align-items: flex-start; /* 상단 정렬 */
+                    align-items: flex-start;
                     background-color: #fff;
-                    border-radius: 10px; /* 모서리 둥글게 */
-                    padding: 20px; /* 패딩 증가 */
-                    margin-bottom: 20px; /* 아래 여백 증가 */
+                    border-radius: 10px;
+                    padding: 20px;
+                    margin-bottom: 20px;
                     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
                     transition: transform 0.2s;
                 }
@@ -104,33 +130,33 @@ const CourseReviewList = ({ courseId }) => {
                 }
                 .review-content {
                     flex-grow: 1;
-                    margin-right: 20px; /* 버튼과의 간격 */
+                    margin-right: 20px;
                 }
                 .review-title {
                     font-weight: bold;
-                    font-size: 20px; /* 제목 크기 증가 */
+                    font-size: 20px;
                     margin: 0;
                 }
                 .review-detail {
-                    margin: 8px 0; /* 위아래 여백 증가 */
-                    font-size: 16px; /* 텍스트 크기 증가 */
+                    margin: 8px 0;
+                    font-size: 16px;
                     color: #555;
                 }
                 .review-rating {
-                    font-size: 16px; /* 평점 텍스트 크기 증가 */
+                    font-size: 16px;
                     color: #28a745;
                 }
                 .button-group {
                     display: flex;
-                    gap: 15px; /* 버튼 간격 증가 */
+                    gap: 15px;
                 }
                 .delete-button, .edit-button {
-                    padding: 10px 15px; /* 패딩 증가 */
+                    padding: 10px 15px;
                     color: white;
                     border: none;
-                    border-radius: 6px; /* 모서리 둥글게 */
+                    border-radius: 6px;
                     cursor: pointer;
-                    font-size: 14px; /* 버튼 텍스트 크기 증가 */
+                    font-size: 14px;
                 }
                 .delete-button {
                     background-color: #dc3545;
@@ -150,4 +176,4 @@ const CourseReviewList = ({ courseId }) => {
     );
 };
 
-export default CourseReviewList;
+export default InstructorReview;

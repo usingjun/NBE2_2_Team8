@@ -1,6 +1,7 @@
 package edu.example.learner.courseabout.coursereview.controller;
 
 import edu.example.learner.courseabout.coursereview.dto.ReviewDTO;
+import edu.example.learner.courseabout.coursereview.entity.ReviewType;
 import edu.example.learner.courseabout.coursereview.service.ReviewServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +14,7 @@ import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/members/{memberId}/reviews")
+@RequestMapping("/members/instructor/{nickname}/reviews")
 @Log4j2
 public class InstructorReviewController {
 
@@ -22,23 +23,26 @@ public class InstructorReviewController {
     @PostMapping("/create")
     @Operation(summary = "Instructor Review 생성")
     public ResponseEntity<ReviewDTO> create(@RequestBody ReviewDTO reviewDTO) {
+        reviewDTO.setReviewType(ReviewType.INSTRUCTOR);
+        reviewDTO.setCourseId(reviewDTO.getCourseId());
 
         log.info("Create review: " + reviewDTO);
+        log.info("reviewType"+reviewDTO.getReviewType());
 
-        return ResponseEntity.ok(reviewService.createReview(reviewDTO));
+        return ResponseEntity.ok(reviewService.createReview(reviewDTO, reviewDTO.getReviewType()));
     }
 
-    @PutMapping("/update")
+    @PutMapping("/{reviewId}")
     @Operation(summary = "Instructor Review 수정")
-    public ResponseEntity<ReviewDTO> update(@RequestBody ReviewDTO reviewDTO) {
+    public ResponseEntity<ReviewDTO> update(@PathVariable("reviewId") Long reviewId, @RequestBody ReviewDTO reviewDTO) {
 
         log.info("update Review: " + reviewDTO);
-        return ResponseEntity.ok(reviewService.updateReview(reviewDTO));
+        return ResponseEntity.ok(reviewService.updateReview(reviewId, reviewDTO));
     }
 
-    @DeleteMapping("/delete")
+    @DeleteMapping("/{reviewId}")
     @Operation(summary = "Instructor Review 삭제")
-    public ResponseEntity<Map<String, String>> remove(@RequestParam Long reviewId) {
+    public ResponseEntity<Map<String, String>> remove(@PathVariable("reviewId") Long reviewId) {
 
         log.info("Delete Review: " + reviewId);
 
@@ -48,8 +52,8 @@ public class InstructorReviewController {
 
     @GetMapping("/list")
     @Operation(summary = "Instructor Review list 조회")
-    public ResponseEntity<List<ReviewDTO>> reviewList(@PathVariable("memberId") Long memberId,
-                                      ReviewDTO reviewDTO) {
-        return ResponseEntity.ok(reviewService.getInstructorReviewList(memberId, reviewDTO));
+    public ResponseEntity<List<ReviewDTO>> reviewList(@PathVariable("nickname") String nickname, ReviewDTO reviewDTO) {
+        Long courseId = reviewDTO.getCourseId();
+        return ResponseEntity.ok(reviewService.getInstructorReviewList(courseId, nickname, reviewDTO));
     }
 }

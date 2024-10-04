@@ -76,4 +76,12 @@ public class MemberRestController {
 
         return ResponseEntity.ok("회원 탈퇴에 성공하였습니다.");
     }
+
+    //강사 이름으로 조회
+    @GetMapping("/instructor/{nickname}")
+    public ResponseEntity<MemberDTO> getInstructorByNickname(@PathVariable String nickname) {
+        log.info("--- myPageRead()");
+        log.info(nickname);
+        return ResponseEntity.ok(memberService.getInstructorInfo(nickname));
+    }
 }

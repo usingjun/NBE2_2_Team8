@@ -12,8 +12,11 @@ import PostCourseInquiry from "./pages/PostCourseInquiry";
 import CourseNews from "./pages/CourseNews";
 import CreateNews from "./pages/CreateNews";
 import UpdateNews from "./pages/UpdateNews";
-import ReviewEdit from "./pages/ReviewEdit";
-import ReviewCreate from "./pages/ReviewCreate";
+import Instructor from "./pages/Instructor";
+import CourseReviewCreate from "./pages/course-review/CourseReviewCreate";
+import CourseReviewEdit from "./pages/course-review/CourseReviewEdit";
+import InstructorReviewCreate from "./pages/instructor-review/InstructorReviewCreate";
+import InstructorReviewEdit from "./pages/instructor-review/InstructorReviewEdit";
 
 
 function App() {
@@ -43,8 +46,11 @@ function App() {
                 <Route path="/courses/:courseId/news/:newsId" element={<CourseNews />} />
                 <Route path="/courses/:courseId/news/create" element={<CreateNews />} />
                 <Route path="/courses/:courseId/news/:newsId/edit" element={<UpdateNews />} />
-                <Route path="/courses/:courseId/reviews/create" element={<ReviewCreate />} />
-                <Route path="/courses/:courseId/reviews/:reviewId/edit" element={<ReviewEdit />} />
+                <Route path="/courses/:courseId/reviews/create" element={<CourseReviewCreate />} />
+                <Route path="/courses/:courseId/reviews/:reviewId/edit" element={<CourseReviewEdit />} />
+                <Route path="/members/instructor/:nickname" element={<Instructor />} />
+                <Route path="/members/instructor/:nickname/reviews/create" element={<InstructorReviewCreate />} /> {/* 강사 리뷰 생성 페이지 */}
+                <Route path="/members/instructor/:nickname/reviews/:reviewId" element={<InstructorReviewEdit />} /> {/* 강사 리뷰 수정 페이지 */}
             </Routes>
         </Router>
     );

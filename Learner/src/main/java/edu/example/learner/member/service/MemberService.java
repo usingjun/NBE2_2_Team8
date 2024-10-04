@@ -112,6 +112,25 @@ public class MemberService {
         }
     }
 
+    //강사 이름 조회
+    public MemberDTO getInstructorInfo(String nickname) {
+        try {
+            Member member = memberRepository.getMemberByNickName(nickname).orElseThrow();
+            MemberDTO memberDTO= new MemberDTO(member);
+
+            // 이미지가 null인지 확인
+            if (memberDTO.getProfileImage() == null || memberDTO.getProfileImage().isEmpty()) {
+                // 기본 이미지 경로 설정
+                String defaultImagePath = "/images/default_profile.png";
+                memberDTO.setProfileImage(defaultImagePath);
+            }
+            return memberDTO;
+        }catch (Exception e){
+            log.error(e);
+            throw MemberException.MEMBER_NOT_FOUND.getMemberTaskException();
+        }
+    }
+
     //회원 정보 수정
     public MemberDTO updateMemberInfo(Long memberId, MemberDTO memberDTO) {
         Member member = memberRepository.getMemberInfo(memberId);

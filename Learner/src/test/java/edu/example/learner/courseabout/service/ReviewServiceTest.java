@@ -36,7 +36,7 @@ public class ReviewServiceTest {
                         .reviewName("title"+i)
                         .reviewDetail("content" + i)
                         .courseId(1L)
-                        .instructorId(1L)
+                        .writerId(1L)
                         .rating(5)
                         .reviewType(ReviewType.COURSE)
                         .build();
@@ -44,14 +44,14 @@ public class ReviewServiceTest {
                         .reviewName("title " + i)
                         .reviewDetail("content" + i)
                         .courseId(1L)
-                        .instructorId(1L)
+                        .writerId(1L)
                         .rating(5)
                         .reviewType(ReviewType.INSTRUCTOR)
                         .build();
 
                 //WHEN
-                ReviewDTO registeredReviewDTO1 = reviewService.createReview(reviewDTO);
-                ReviewDTO registeredReviewDTO2 = reviewService.createReview(reviewDTO2);
+                ReviewDTO registeredReviewDTO1 = reviewService.createReview(reviewDTO, reviewDTO.getReviewType());
+                ReviewDTO registeredReviewDTO2 = reviewService.createReview(reviewDTO2, reviewDTO2.getReviewType());
 
                 //THEN
                 assertNotNull(registeredReviewDTO1);
@@ -107,7 +107,7 @@ public class ReviewServiceTest {
                     .build();
 
             //WHEN
-            ReviewDTO updatedReviewDTO = reviewService.updateReview(reviewDTO);
+            ReviewDTO updatedReviewDTO = reviewService.updateReview(10L, reviewDTO);
 
             //THEN
             assertNotNull(updatedReviewDTO);

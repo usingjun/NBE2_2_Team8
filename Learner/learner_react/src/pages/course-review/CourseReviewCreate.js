@@ -1,21 +1,31 @@
 import React, { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import styled from "styled-components"; // styled-components를 사용하여 스타일 추가
+import styled from "styled-components";
 
-const ReviewCreate = () => {
+const CourseReviewCreate = () => {
     const { courseId } = useParams();
     const navigate = useNavigate();
 
     const [reviewName, setReviewName] = useState("");
     const [reviewDetail, setReviewDetail] = useState("");
     const [rating, setRating] = useState(1);
+    const [memberId] = useState(1); // 예시로 하드코딩된 memberId
 
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const reviewData = { reviewName, reviewDetail, rating };
+        const reviewData = {
+            reviewName,
+            reviewDetail,
+            rating,
+            memberId,
+            courseId,
+        };
 
-        fetch(`http://localhost:8080/course/${courseId}/reviews`, {
+        // 코스 리뷰 API 엔드포인트
+        const endpoint = `http://localhost:8080/course/${courseId}/reviews/create`;
+
+        fetch(endpoint, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
@@ -26,12 +36,18 @@ const ReviewCreate = () => {
             .then((res) => {
                 if (res.ok) {
                     alert("리뷰가 성공적으로 등록되었습니다.");
-                    navigate(`/courses/${courseId}`); // 과정 상세 페이지로 이동
+                    navigate(`/courses/${courseId}`);
                 } else {
+                    res.json().then((data) => {
+                        alert(data.message || "리뷰 등록 실패");
+                    });
                     throw new Error("리뷰 등록 실패");
                 }
             })
-            .catch((err) => console.error(err));
+            .catch((err) => {
+                console.error(err);
+                alert("리뷰 등록 중 오류가 발생했습니다.");
+            });
     };
 
     return (
@@ -72,7 +88,7 @@ const ReviewCreate = () => {
     );
 };
 
-export default ReviewCreate;
+export default CourseReviewCreate;
 
 // Styled Components
 const FormContainer = styled.div`

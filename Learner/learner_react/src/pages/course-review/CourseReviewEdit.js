@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import styled from "styled-components"; // styled-components를 사용하여 스타일 추가
+import styled from "styled-components";
 
-const ReviewUpdate = () => {
-    const { courseId, reviewId } = useParams();
+const CourseReviewEdit = () => {
+    const { courseId, reviewId } = useParams(); // courseId, reviewId 가져오기
+    console.log(courseId, reviewId);
     const navigate = useNavigate();
 
     const [reviewName, setReviewName] = useState("");
     const [reviewDetail, setReviewDetail] = useState("");
     const [rating, setRating] = useState(1);
+    const [memberId] = useState(1); // 예시로 하드코딩된 memberId
+    const [nickname] = useState("");
 
     useEffect(() => {
-        // 리뷰 데이터 가져오기
+        // 리뷰 데이터 가져오기 (reviewId, courseId로 리뷰 조회)
         fetch(`http://localhost:8080/course/${courseId}/reviews/${reviewId}`, {
             credentials: 'include',
         })
@@ -27,8 +30,18 @@ const ReviewUpdate = () => {
     const handleSubmit = (e) => {
         e.preventDefault();
 
-        const reviewData = { reviewName, reviewDetail, rating };
+        const reviewData = {
+            reviewId, // reviewId 추가
+            reviewName,
+            reviewDetail,
+            rating,
+            reviewType: 'COURSE', // 리뷰 타입 설정
+            memberId, // 추가된 memberId
+            nickname,
+            courseId, // courseId 추가
+        };
 
+        // PUT 요청에 reviewId 포함
         fetch(`http://localhost:8080/course/${courseId}/reviews/${reviewId}`, {
             method: "PUT",
             headers: {
@@ -86,7 +99,7 @@ const ReviewUpdate = () => {
     );
 };
 
-export default ReviewUpdate;
+export default CourseReviewEdit;
 
 // Styled Components
 const FormContainer = styled.div`
@@ -121,8 +134,8 @@ const Input = styled.input`
     border-radius: 5px;
     font-size: 1rem;
     &:focus {
-        border-color: #3cb371; /* 포커스 시 색상 변경 */
-        outline: none; /* 포커스 아웃라인 제거 */
+        border-color: #3cb371;
+        outline: none;
     }
 `;
 
@@ -131,11 +144,11 @@ const TextArea = styled.textarea`
     border: 1px solid #ddd;
     border-radius: 5px;
     font-size: 1rem;
-    height: 150px; /* 높이를 적절히 조정 */
-    resize: none; /* 크기 조절 비활성화 */
+    height: 150px;
+    resize: none;
     &:focus {
-        border-color: #3cb371; /* 포커스 시 색상 변경 */
-        outline: none; /* 포커스 아웃라인 제거 */
+        border-color: #3cb371;
+        outline: none;
     }
 `;
 

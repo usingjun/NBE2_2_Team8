@@ -1,10 +1,9 @@
-import React, { useState, useEffect } from "react";
-import { useParams , useNavigate } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
 import CourseNewsList from "./CourseNewsList";
-import InstructorReview from "./InstructorReview";
-import CourseReview from "./CourseReview";
+import CourseReview from "./course-review/CourseReview";
 
 // 기본 이미지 경로
 const defaultImage = "/images/course_default_img.png";
@@ -97,17 +96,19 @@ const CourseDetail = () => {
             {/* 강의 상세 정보 */}
             {course && (
                 <CourseInfo>
-                    <CourseImage src={defaultImage} alt="Course Image" />
+                    <CourseImage src={defaultImage} alt="Course Image"/>
                     <CourseDetails>
                         <CourseTitle>{course.courseName}</CourseTitle>
                         <CourseDescription>{course.courseDescription}</CourseDescription>
-                        <Instructor>강사 : {course.instructorName}</Instructor>
+                        <Instructor onClick={() => navigate(`/members/instructor/${course.memberNickname}`)}>
+                            강사 : {course.memberNickname}
+                        </Instructor>
                     </CourseDetails>
                 </CourseInfo>
             )}
 
             {/* 구분선 */}
-            <Separator />
+            <Separator/>
 
             {/* 탭 메뉴 */}
             <TabMenu>
@@ -125,18 +126,16 @@ const CourseDetail = () => {
                 </Tab>
             </TabMenu>
 
-            <Separator />
+            <Separator/>
 
             {/* 탭에 따라 내용 변경 */}
             <TabContent>
                 {activeTab === "curriculum" && <p>커리큘럼 내용이 여기에 표시됩니다.</p>}
                 {activeTab === "reviews" && (
                     <>
-                        <CourseReview courseId={courseId} />
-                        <InstructorReview courseId={courseId} />
+                        <CourseReview courseId={courseId}/>
                     </>
                 )}
-
 
                 {activeTab === "questions" && (
                     <>
@@ -148,7 +147,8 @@ const CourseDetail = () => {
                                     {selectedInquiry ? (
                                         <WriteButton onClick={() => setSelectedInquiry(null)}>이전 목록으로</WriteButton> // 이전 목록으로 버튼
                                     ) : (
-                                        <WriteButton onClick={() => navigate(`/courses/${courseId}/post`)}>글 작성하기</WriteButton> // 글 작성하기 버튼
+                                        <WriteButton onClick={() => navigate(`/courses/${courseId}/post`)}>글
+                                            작성하기</WriteButton> // 글 작성하기 버튼
                                     )}
                                 </ButtonContainer>
 
@@ -161,7 +161,9 @@ const CourseDetail = () => {
                                                 <h3>{selectedInquiry.inquiryTitle}</h3>
                                                 <p><strong>문의 내용:</strong> {selectedInquiry.inquiryContent}</p>
                                                 <p><strong>작성자:</strong> {selectedInquiry.memberId}</p>
-                                                <p><strong>작성일:</strong> {new Date(selectedInquiry.createdDate).toLocaleDateString()}</p>
+                                                <p>
+                                                    <strong>작성일:</strong> {new Date(selectedInquiry.createdDate).toLocaleDateString()}
+                                                </p>
                                             </InquiryDetail>
 
                                             {/* 답변 목록 */}
@@ -171,7 +173,9 @@ const CourseDetail = () => {
                                                     answers.map((answer) => (
                                                         <AnswerItem key={answer.answerId}>
                                                             <p><strong>답변 내용:</strong> {answer.answerContent}</p>
-                                                            <p><strong>작성일:</strong> {new Date(answer.createdDate).toLocaleDateString()}</p>
+                                                            <p>
+                                                                <strong>작성일:</strong> {new Date(answer.createdDate).toLocaleDateString()}
+                                                            </p>
                                                         </AnswerItem>
                                                     ))
                                                 ) : (
@@ -194,10 +198,13 @@ const CourseDetail = () => {
                                     inquiries.length > 0 ? (
                                         <InquiryList>
                                             {inquiries.map((inquiry) => (
-                                                <InquiryItem key={inquiry.inquiryId} onClick={() => handleInquiryClick(inquiry.inquiryId)}>
+                                                <InquiryItem key={inquiry.inquiryId}
+                                                             onClick={() => handleInquiryClick(inquiry.inquiryId)}>
                                                     <p><strong>문의 제목:</strong> {inquiry.inquiryTitle}</p>
                                                     <p><strong>작성자:</strong> {inquiry.memberId}</p>
-                                                    <p><strong>작성일:</strong> {new Date(inquiry.createdDate).toLocaleDateString()}</p>
+                                                    <p>
+                                                        <strong>작성일:</strong> {new Date(inquiry.createdDate).toLocaleDateString()}
+                                                    </p>
                                                 </InquiryItem>
                                             ))}
                                         </InquiryList>
@@ -209,7 +216,7 @@ const CourseDetail = () => {
                         )}
                     </>
                 )}
-                {activeTab === "news" && <CourseNewsList courseId={courseId} />}
+                {activeTab === "news" && <CourseNewsList courseId={courseId}/>}
             </TabContent>
         </DetailPage>
     );
