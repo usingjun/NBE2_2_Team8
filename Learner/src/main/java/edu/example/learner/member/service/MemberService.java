@@ -80,12 +80,6 @@ public class MemberService {
             Member member = memberRepository.getMemberInfo(memberId);
             MemberDTO memberDTO= new MemberDTO(member);
 
-            // 이미지가 null인지 확인
-            if (memberDTO.getProfileImage() == null || memberDTO.getProfileImage().isEmpty()) {
-                // 기본 이미지 경로 설정
-                String defaultImagePath = "/images/default_profile.png";
-                memberDTO.setProfileImage(defaultImagePath);
-            }
             return memberDTO;
         }catch (Exception e){
             log.error(e);
@@ -99,12 +93,6 @@ public class MemberService {
             Optional<Member> member = memberRepository.getMemberByNickName(nickname);
             MemberDTO memberDTO= new MemberDTO(member.get());
 
-            // 이미지가 null인지 확인
-            if (memberDTO.getProfileImage() == null || memberDTO.getProfileImage().isEmpty()) {
-                // 기본 이미지 경로 설정
-                String defaultImagePath = "/images/default_profile.png";
-                memberDTO.setProfileImage(defaultImagePath);
-            }
             return memberDTO;
         }catch (Exception e){
             log.error(e);
@@ -126,13 +114,6 @@ public class MemberService {
             member.changeEmail(memberDTO.getEmail());
 
             MemberDTO modifyMemberDTO = new MemberDTO(memberRepository.save(member));
-
-            // 이미지가 null인지 확인
-            if (modifyMemberDTO.getProfileImage() == null || modifyMemberDTO.getProfileImage().isEmpty()) {
-                // 기본 이미지 경로 설정
-                String defaultImagePath = "/images/default_profile.png";
-                modifyMemberDTO.setProfileImage(defaultImagePath);
-            }
 
             return modifyMemberDTO;
         }catch (Exception e){
