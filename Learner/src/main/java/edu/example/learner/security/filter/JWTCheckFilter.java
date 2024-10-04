@@ -29,16 +29,21 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         log.info("--- doFilterInternal() ");
         log.info("--- requestURI : " + request.getRequestURI());
 
-        // 제외할 경로 배열
-        String[] shouldNotPath = {"/api/", "/join", "/login"}; // 배열에 모든 경로 추가
+        // 필터링 필요 도메인
+        String[] doFilterPath = {"/mypage"}; // 배열에 모든 경로 추가
+        boolean doFilter = false;
 
-        // shouldNotPath 배열과 비교
-        for (String path : shouldNotPath) {
+        // doFilterPath 배열과 비교
+        for (String path : doFilterPath) {
             if (request.getRequestURI().startsWith(path)) { // startsWith 사용
-                log.info("--- Skipping JWT verification for path: " + request.getRequestURI());
-                filterChain.doFilter(request, response); // 다음 필터로 요청 전달
-                return; // JWT 검증 로직을 실행하지 않음
+                log.info("--- JWT verification for path: " + request.getRequestURI());
+                doFilter = true;
             }
+        }
+
+        if(!doFilter){
+            filterChain.doFilter(request, response); // 다음 필터로 요청 전달
+            return;
         }
 
         String authrization = null;
@@ -76,9 +81,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
             //토큰을 이용하여 인증된 정보 저장
             UsernamePasswordAuthenticationToken authToken
-                    = new UsernamePasswordAuthenticationToken(
-                     new CustomUserPrincipal(mid, role),
-                    null, List.of(new SimpleGrantedAuthority("ROLE_" + role))
+                    = new UsernamePasswordAuthenticationToken(new CustomUserPrincipal(mid, role), null, List.of(new SimpleGrantedAuthority("ROLE_" + role))
             );
 
             //SecurityContext에 인증/인가 정보 저장
@@ -88,7 +91,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             //검증 결과 문제가 없는 경우
             //이 코드가 호출되기 전까지는, 현재 필터에서 JWT를 검증하고 사용자 정보를 설정하는 과정을 수행합니다.
             //이 코드가 실행되면, JWT 검증을 성공적으로 마친 후, 요청이 다음 필터 또는 해당 컨트롤러로 전달됩니다.
-        } catch(Exception e) {
+        } catch (Exception e) {
             handleException(response, e);             //예외가 발생한 경우
         }
     }

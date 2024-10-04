@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/v1/inquiries")
+@RequestMapping("/inquiries")
 @RequiredArgsConstructor
 public class InquiryRestController {
     private final InquiryService inquiryService;

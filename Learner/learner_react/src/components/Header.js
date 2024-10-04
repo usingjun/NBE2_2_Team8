@@ -77,6 +77,9 @@ const Header = ({ openModal }) => {
 
 export default Header;
 
+// 나머지 스타일 컴포넌트는 그대로 두세요.
+
+
 const NavBar = styled.nav`
     display: flex;
     justify-content: space-between;

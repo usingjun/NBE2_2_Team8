@@ -1,20 +1,15 @@
 package edu.example.learner.repository;
 
+import edu.example.learner.member.entity.Member;
+import edu.example.learner.member.repository.MemberRepository;
 import edu.example.learner.qna.inquiry.entity.Inquiry;
 import edu.example.learner.qna.inquiry.entity.InquiryStatus;
-import edu.example.learner.member.entity.Member;
 import edu.example.learner.qna.inquiry.repository.InquiryRepository;
 import lombok.extern.log4j.Log4j2;
-import edu.example.learner.member.repository.MemberRepository;
-import org.junit.jupiter.api.MethodOrderer;
-import org.junit.jupiter.api.Order;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,6 +25,28 @@ import static org.junit.jupiter.api.Assertions.*;
 public class InquiryRepositoryTests {
     @Autowired
     private InquiryRepository inquiryRepository;
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @BeforeEach
+    void setUp() {
+        Member member = memberRepository.save(
+                Member.builder()
+                        .email("aaa@aaa.com")
+                        .password("aaa")
+                        .nickname("aaa")
+                        .build()
+        );
+
+        inquiryRepository.save(
+                Inquiry.builder()
+                        .inquiryTitle("inquiry title")
+                        .inquiryContent("inquiry content")
+                        .inquiryStatus(InquiryStatus.ANSWERED.name())
+                        .member(member)
+                        .build()
+        );
+    }
 
     @Test
     @Order(1)

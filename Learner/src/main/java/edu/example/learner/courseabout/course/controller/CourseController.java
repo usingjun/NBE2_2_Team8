@@ -14,7 +14,7 @@ import java.util.Map;
 @RestController
 @Log4j2
 @RequiredArgsConstructor
-@RequestMapping("api/course")
+@RequestMapping("/course")
 public class CourseController {
     private final CourseService courseService;
 
@@ -39,7 +39,7 @@ public class CourseController {
         return ResponseEntity.ok(courseService.readAll());
     }
 
-    @PutMapping("/update")
+    @PutMapping("")
     public ResponseEntity<CourseDTO> updateCourse(@RequestBody CourseDTO courseDTO) {
         log.info("Updating course {}", courseDTO);
         return ResponseEntity.ok(courseService.updateCourse(courseDTO));

@@ -44,7 +44,7 @@ public class Course {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_nickname",referencedColumnName = "nickname")
-    private Member instructorName;
+    private Member member;
 
     @NotNull
     private Long coursePrice;

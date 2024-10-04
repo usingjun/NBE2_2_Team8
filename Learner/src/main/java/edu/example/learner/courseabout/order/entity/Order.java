@@ -36,6 +36,8 @@ public class Order {
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
 
+    private Double totalPrice;
+
     @JsonIgnore
     @Builder.Default
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
@@ -56,7 +58,8 @@ public class Order {
         if (orderItems.remove(orderItem)) {
             orderItem.setOrder(null); // OrderItem의 order 필드 null 설정
         }
-
-
+    }
+    public void changeTotalPrice(Double price) {
+        this.totalPrice = price;
     }
 }

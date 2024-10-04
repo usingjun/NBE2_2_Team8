@@ -3,7 +3,7 @@ package edu.example.learner.courseabout.video.controller;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/video")
 public class VideoController {
 
     private double totalDuration = 0; // 전체 동영상 시간
