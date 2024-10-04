@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface MemberRepository extends JpaRepository<Member, Integer>, MemberSearch {
+public interface MemberRepository extends JpaRepository<Member, Long>, MemberSearch {
     @Override
     Member getMemberInfo(Long id);
 

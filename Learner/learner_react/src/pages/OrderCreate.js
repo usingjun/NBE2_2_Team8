@@ -9,6 +9,10 @@ const OrderCreate = () => {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
+    //하드코딩 memberId
+
+    const memberId = 1;
+
     useEffect(() => {
         const fetchCourses = async () => {
             try {
@@ -44,16 +48,25 @@ const OrderCreate = () => {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            const response = await axios.post("http://localhost:8080/order", {
+            const response = await axios.post(`http://localhost:8080/order/${memberId}`, {
                 orderItemDTOList: orderItems,
+                memberId: memberId,
             });
             console.log("Order created:", response.data);
-            navigate("/orders");
+
+            // 주문 생성 성공 시 사용자에게 알림
+            setError("주문이 성공적으로 생성되었습니다!");
+
+            // 잠시 후 Order 목록으로 이동
+            setTimeout(() => {
+                navigate("/orders");
+            }, 2000); // 2초 후 이동
         } catch (error) {
             console.error("Error creating order:", error);
             setError("주문 생성에 실패했습니다.");
         }
     };
+
 
     return (
         <OrderCreateContainer>
@@ -65,7 +78,13 @@ const OrderCreate = () => {
                         <select
                             name="courseId"
                             value={item.courseId}
-                            onChange={(event) => handleChange(index, event)}
+                            onChange={(event) => {
+                                handleChange(index, event);
+                                const selectedCourse = courses.find(course => course.courseId === event.target.value);
+                                if (selectedCourse) {
+                                    item.price = selectedCourse.coursePrice; // 가격 자동 설정
+                                }
+                            }}
                             required
                         >
                             <option value="">강의 선택</option>
@@ -75,14 +94,7 @@ const OrderCreate = () => {
                                 </option>
                             ))}
                         </select>
-                        <input
-                            type="number"
-                            name="price"
-                            placeholder="가격"
-                            value={item.price}
-                            onChange={(event) => handleChange(index, event)}
-                            required
-                        />
+                        <span>{item.price} 원</span> {/* 자동 설정된 가격 표시 */}
                         <button type="button" onClick={() => handleRemoveItem(index)}>
                             삭제
                         </button>
