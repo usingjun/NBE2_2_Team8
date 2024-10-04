@@ -1,9 +1,11 @@
 package edu.example.learner.courseabout.order.service;
 
+import edu.example.learner.courseabout.exception.CourseException;
 import edu.example.learner.courseabout.order.dto.OrderDTO;
 import edu.example.learner.courseabout.order.dto.OrderItemDTO;
 import edu.example.learner.courseabout.order.dto.OrderUpdateDTO;
 import edu.example.learner.courseabout.order.exception.OrderException;
+import edu.example.learner.courseabout.order.exception.OrderTaskException;
 import edu.example.learner.courseabout.order.repository.OrderItemRepository;
 import edu.example.learner.courseabout.order.repository.OrderRepository;
 
@@ -23,6 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -79,29 +82,66 @@ public class OrderServiceImpl implements OrderService {
     @Override
     @Transactional
     public OrderUpdateDTO update(OrderUpdateDTO orderUpdateDTO, Long orderId) {
-        Order foundOrder = orderRepository.findById(orderId).orElseThrow(OrderException.ORDER_NOT_FOUND::get);
-        List<OrderItem> orderItems = new ArrayList<>();
+        Order foundOrder = orderRepository.findById(orderId)
+                .orElseThrow(OrderException.ORDER_NOT_FOUND::get);
 
-
+        // 주문 상태 업데이트
         foundOrder.changeOrderStatus(OrderStatus.valueOf(orderUpdateDTO.getOrderStatus()));
 
-        // orderDTO안에 orderItemDTOList를 orderItemList로 변환
-        // DTO안에 있는 강의 번호를 조회해 orderItemlist
-        foundOrder.getOrderItems().clear();
-        for (OrderItemDTO dto : orderUpdateDTO.getOrderItemDTOList()) {
-            Course course = courseRepository.findById(dto.getCourseId()).orElseThrow();
-            dto.setCourseAttribute(String.valueOf(course.getCourseAttribute()));
-            OrderItem orderItem = orderItemRepository.save(dto.toEntity(dto,foundOrder));
+        // 기존 주문 아이템을 가져옵니다.
+        List<OrderItem> existingItems = foundOrder.getOrderItems();
 
-            foundOrder.getOrderItems().add(orderItem);
+        // 새 아이템을 추가 및 업데이트
+        for (OrderItemDTO dto : orderUpdateDTO.getOrderItemDTOList()) {
+            // 기존 아이템 중에서 해당 아이템을 찾습니다.
+            Optional<OrderItem> existingItemOpt = existingItems.stream()
+                    .filter(item -> item.getCourse().getCourseId().equals(dto.getCourseId()))
+                    .findFirst();
+
+            if (existingItemOpt.isPresent()) {
+                // 아이템이 이미 존재하는 경우, 업데이트
+                OrderItem existingItem = existingItemOpt.get();
+                // 가격 업데이트 (필요시 추가 로직)
+                orderItemRepository.save(existingItem); // 변경사항 저장
+            } else {
+                // 새 아이템 추가
+                Course course = courseRepository.findById(dto.getCourseId())
+                        .orElseThrow(CourseException.COURSE_NOT_FOUND::get);
+                dto.setCourseAttribute(String.valueOf(course.getCourseAttribute()));
+                OrderItem newItem = dto.toEntity(dto, foundOrder); // 새로운 OrderItem 생성
+                orderItemRepository.save(newItem); // 새로운 아이템 저장
+                foundOrder.getOrderItems().add(newItem); // 기존 리스트에 추가
+            }
         }
 
-        return new OrderUpdateDTO(foundOrder); // 또는 foundOrder를 기반으로 새로운 DTO를 생성해 반환
+        // 삭제할 아이템 찾기
+        List<Long> updatedCourseIds = orderUpdateDTO.getOrderItemDTOList().stream()
+                .map(OrderItemDTO::getCourseId)
+                .toList();
+
+        // 기존 아이템 중 삭제할 아이템 제거
+        existingItems.removeIf(existingItem ->
+                !updatedCourseIds.contains(existingItem.getCourse().getCourseId())
+        );
+
+        // 총 금액 계산
+        double totalPrice = foundOrder.getOrderItems().stream()
+                .mapToDouble(OrderItem::getPrice) // 각 아이템의 가격을 가져와서
+                .sum(); // 총합 계산
+
+        foundOrder.changeTotalPrice(totalPrice); // 총 금액을 주문에 설정
+
+        return new OrderUpdateDTO(foundOrder);
     }
+
+
 
 
     @Override
     public void delete(Long orderId) {
+        if (!orderRepository.existsById(orderId)) {
+            throw new OrderTaskException("주문이 존재하지 않습니다." ,404);
+        }
         orderRepository.deleteById(orderId);
     }
 

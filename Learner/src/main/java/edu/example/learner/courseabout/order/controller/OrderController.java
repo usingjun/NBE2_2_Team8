@@ -62,10 +62,10 @@ public class OrderController {
     }
 
 
-    // 밑에는 사용자 정보를 가져올 수 있게되면 언락 후 테스트
+////     밑에는 사용자 정보를 가져올 수 있게되면 언락 후 테스트
 //    @GetMapping("/list/") // memberId를 경로에서 제거하고, AuthenticationPrincipal로 받아옴
 //    public ResponseEntity<List<OrderDTO>> getOrders(@AuthenticationPrincipal CustomUserPrincipal userPrincipal) {
-//        Long memberId = userPrincipal.getId(); // 현재 로그인된 사용자의 memberId를 가져옴
+//        Long memberId = userPrincipal.getUsername(); // 현재 로그인된 사용자의 memberId를 가져옴
 //        List<OrderDTO> orderDTOList = orderService.getOrdersById(memberId);
 //        return ResponseEntity.ok(orderDTOList);
 //    }

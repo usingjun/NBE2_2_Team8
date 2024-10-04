@@ -9,15 +9,12 @@ const OrderCreate = () => {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
-    //하드코딩 memberId
-
-    const memberId = 1;
+    const memberId = localStorage.getItem("memberId");
 
     useEffect(() => {
         const fetchCourses = async () => {
             try {
                 const response = await axios.get("http://localhost:8080/course/list");
-                console.log("Courses fetched:", response.data); // 추가
                 setCourses(response.data);
             } catch (error) {
                 console.error("Error fetching courses:", error);
@@ -27,7 +24,6 @@ const OrderCreate = () => {
 
         fetchCourses();
     }, []);
-
 
     const handleChange = (index, event) => {
         const values = [...orderItems];
@@ -52,37 +48,37 @@ const OrderCreate = () => {
                 orderItemDTOList: orderItems,
                 memberId: memberId,
             });
-            console.log("Order created:", response.data);
-
-            // 주문 생성 성공 시 사용자에게 알림
             setError("주문이 성공적으로 생성되었습니다!");
 
-            // 잠시 후 Order 목록으로 이동
             setTimeout(() => {
                 navigate("/orders");
-            }, 2000); // 2초 후 이동
+            }, 2000);
         } catch (error) {
             console.error("Error creating order:", error);
             setError("주문 생성에 실패했습니다.");
         }
     };
 
+    const handleBack = () => {
+        navigate(-1);
+    };
 
     return (
         <OrderCreateContainer>
             <h2>주문 생성</h2>
-            {error && <p style={{ color: "red" }}>{error}</p>}
+            {error && <ErrorMessage>{error}</ErrorMessage>}
+            <BackButton onClick={handleBack}>뒤로가기</BackButton>
             <form onSubmit={handleSubmit}>
                 {orderItems.map((item, index) => (
                     <ItemContainer key={index}>
-                        <select
+                        <Select
                             name="courseId"
                             value={item.courseId}
                             onChange={(event) => {
                                 handleChange(index, event);
                                 const selectedCourse = courses.find(course => course.courseId === event.target.value);
                                 if (selectedCourse) {
-                                    item.price = selectedCourse.coursePrice; // 가격 자동 설정
+                                    item.price = selectedCourse.coursePrice;
                                 }
                             }}
                             required
@@ -93,17 +89,17 @@ const OrderCreate = () => {
                                     {course.courseName} - {course.coursePrice} 원
                                 </option>
                             ))}
-                        </select>
-                        <span>{item.price} 원</span> {/* 자동 설정된 가격 표시 */}
-                        <button type="button" onClick={() => handleRemoveItem(index)}>
+                        </Select>
+                        <PriceDisplay>{item.price} 원</PriceDisplay>
+                        <RemoveButton type="button" onClick={() => handleRemoveItem(index)}>
                             삭제
-                        </button>
+                        </RemoveButton>
                     </ItemContainer>
                 ))}
-                <button type="button" onClick={handleAddItem}>
+                <AddButton type="button" onClick={handleAddItem}>
                     항목 추가
-                </button>
-                <button type="submit">주문 생성</button>
+                </AddButton>
+                <SubmitButton type="submit">주문 생성</SubmitButton>
             </form>
         </OrderCreateContainer>
     );
@@ -114,11 +110,101 @@ export default OrderCreate;
 const OrderCreateContainer = styled.div`
     max-width: 600px;
     margin: 0 auto;
-    padding: 1rem;
+    padding: 2rem;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 `;
 
 const ItemContainer = styled.div`
     display: flex;
+    align-items: center;
     gap: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+`;
+
+const Select = styled.select`
+    flex: 1;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+    transition: border 0.3s;
+
+    &:focus {
+        border-color: #007bff;
+        outline: none;
+    }
+`;
+
+const PriceDisplay = styled.span`
+    font-size: 16px;
+    margin-left: 10px;
+`;
+
+const RemoveButton = styled.button`
+    padding: 8px 12px;
+    background-color: #ff4d4d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: #ff1a1a;
+    }
+`;
+
+const AddButton = styled.button`
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: #28a745;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: #218838;
+    }
+`;
+
+const SubmitButton = styled.button`
+    margin-top: 10px;
+    padding: 8px 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: #0056b3;
+    }
+`;
+
+const BackButton = styled.button`
+    margin-bottom: 15px;
+    padding: 10px;
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: #5a6268;
+    }
+`;
+
+const ErrorMessage = styled.p`
+    color: red;
+    font-weight: bold;
+    margin-bottom: 15px;
 `;
