@@ -9,12 +9,17 @@ const Orders = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const memberId = "1"; // 하드코딩된 멤버 ID 수정 필요
+    const memberId = localStorage.getItem("memberId");
     const navigate = useNavigate();
 
     useEffect(() => {
         const fetchOrders = async () => {
             setLoading(true);
+            if (!memberId) {
+                setError("로그인이 필요합니다.");
+                setLoading(false);
+                return;
+            }
             try {
                 const response = await axios.get(`${Order_Url}/list/${memberId}`);
                 setOrders(response.data);
@@ -29,26 +34,37 @@ const Orders = () => {
     }, [memberId]);
 
     const handleUpdateClick = (orderId) => {
-        navigate(`/orders/update/${orderId}`);
+        navigate(`/order/update/${orderId}`);
     };
 
-    if (loading) return <p>로딩 중...</p>;
-    if (error) return <p>{error}</p>;
+    const handleDeleteClick = (orderId) => {
+        if (window.confirm("정말로 이 주문을 삭제하시겠습니까?")) {
+            navigate(`/order/delete/${orderId}`);
+        }
+    };
+
+    if (loading) return <LoadingMessage>로딩 중...</LoadingMessage>;
+    if (error) return <ErrorMessage>{error}</ErrorMessage>;
 
     return (
         <OrderList>
-            <h2>주문 목록</h2>
+            <Header>주문 목록</Header>
             <Link to="/order/create">
-                <StyledButton>주문 생성</StyledButton>
+                <StyledButton primary>주문 생성</StyledButton>
             </Link>
             {orders.length > 0 ? (
                 orders.map(order => (
                     <OrderItem key={order.orderId}>
-                        <p>주문 ID: {order.orderId}</p>
-                        <p>주문 날짜: {new Date(order.createdDate).toLocaleDateString()}</p>
-                        <p>총 금액: {order.totalPrice} 원</p>
-                        <button onClick={() => handleUpdateClick(order.orderId)}>수정</button>
-                        <Link to={`/orders/${order.orderId}`}>상세보기</Link>
+                        <p>주문 ID: <strong>{order.orderId}</strong></p>
+                        <p>주문 날짜: <strong>{new Date(order.createdDate).toLocaleDateString()}</strong></p>
+                        <p>총 금액: <strong>{order.totalPrice} 원</strong></p>
+                        <ButtonContainer>
+                            <StyledButton onClick={() => handleUpdateClick(order.orderId)} secondary>수정</StyledButton>
+                            <Link to={`/orders/${order.orderId}`}>
+                                <StyledButton>상세보기</StyledButton>
+                            </Link>
+                            <StyledButton onClick={() => handleDeleteClick(order.orderId)} secondary>삭제</StyledButton>
+                        </ButtonContainer>
                     </OrderItem>
                 ))
             ) : (
@@ -60,10 +76,31 @@ const Orders = () => {
 
 export default Orders;
 
+// 스타일 컴포넌트들
 const OrderList = styled.div`
     max-width: 800px;
     margin: 0 auto;
-    padding: 1rem;
+    padding: 2rem;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+`;
+
+const Header = styled.h2`
+    text-align: center;
+    color: #333;
+    margin-bottom: 1.5rem;
+`;
+
+const LoadingMessage = styled.p`
+    text-align: center;
+    color: #007bff;
+`;
+
+const ErrorMessage = styled.p`
+    text-align: center;
+    color: red;
+    font-weight: bold;
 `;
 
 const OrderItem = styled.div`
@@ -71,17 +108,26 @@ const OrderItem = styled.div`
     border: 1px solid #ddd;
     border-radius: 8px;
     margin-bottom: 1rem;
+    background-color: #fff;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+`;
+
+const ButtonContainer = styled.div`
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
 `;
 
 const StyledButton = styled.button`
     padding: 0.5rem 1rem;
-    background-color: #007bff;
+    background-color: ${props => (props.primary ? "#007bff" : props.secondary ? "#dc3545" : "#007bff")};
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s;
 
     &:hover {
-        background-color: #0056b3;
+        background-color: ${props => (props.primary ? "#0056b3" : props.secondary ? "#c82333" : "#0056b3")};
     }
 `;
