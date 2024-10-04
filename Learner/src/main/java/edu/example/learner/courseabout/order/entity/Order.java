@@ -2,6 +2,7 @@ package edu.example.learner.courseabout.order.entity;
 
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import edu.example.learner.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -26,6 +27,10 @@ public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long orderId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id" ,nullable = false)
+    private Member member;
 
     @CreatedDate
     private LocalDateTime createdAt;

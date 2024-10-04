@@ -13,6 +13,9 @@ import edu.example.learner.courseabout.order.entity.OrderItem;
 import edu.example.learner.courseabout.order.entity.OrderStatus;
 
 import edu.example.learner.courseabout.course.repository.CourseRepository;
+import edu.example.learner.member.entity.Member;
+import edu.example.learner.member.exception.MemberException;
+import edu.example.learner.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -29,24 +32,26 @@ public class OrderServiceImpl implements OrderService {
     private final OrderRepository orderRepository;
     private final CourseRepository courseRepository;
     private final OrderItemRepository orderItemRepository;
+    private final MemberRepository memberRepository;
 
     @Override
-    public OrderDTO add(OrderDTO orderDTO) {
+    public OrderDTO add(OrderDTO orderDTO,Long memberId) {
+        orderDTO.setMemberId(memberId);
         Order order = orderDTO.toEntity(orderDTO); // Order DTO를 Order로 변환
         order = orderRepository.save(order); // Order 저장
         double totalPrice = 0.0;
 
         // orderDTO안에 orderItemDTOList를 orderItemList로 변환
         // DTO안에 있는 강의 번호를 조회해 orderItemlist
-        for (OrderItemDTO dto : orderDTO.getOrderItemDTOList()) {
-            log.debug("CourseAttribute value {}", dto.getCourseAttribute());
-            Course course = courseRepository.findById(dto.getCourseId()).orElseThrow();
-            dto.setCourseAttribute(String.valueOf(course.getCourseAttribute()));
-            OrderItem orderItem = orderItemRepository.save(dto.toEntity(dto,order));
+        for (OrderItemDTO orderItemDTO : orderDTO.getOrderItemDTOList()) {
+            log.debug("CourseAttribute value {}", orderItemDTO.getCourseAttribute());
+            Course course = courseRepository.findById(orderItemDTO.getCourseId()).orElseThrow();
+            orderItemDTO.setPrice(course.getCoursePrice());
+            orderItemDTO.setCourseAttribute(String.valueOf(course.getCourseAttribute()));
+            OrderItem orderItem = orderItemRepository.save(orderItemDTO.toEntity(orderItemDTO,order));
             order.getOrderItems().add(orderItem);
             totalPrice += orderItem.getPrice();
         }
-
         order.changeTotalPrice(totalPrice);
         order = orderRepository.save(order);
         orderDTO.setTotalPrice(totalPrice);
@@ -113,6 +118,7 @@ public class OrderServiceImpl implements OrderService {
 //        return orderDTOList;
 //    }
 
+
     @Override
     public List<OrderDTO> readAll() {
         List<Order> orders = orderRepository.findAll();
@@ -130,6 +136,25 @@ public class OrderServiceImpl implements OrderService {
 
         return orderDTOList;
     }
+
+    @Override
+    public List<OrderDTO> getOrdersById(Long memberId) {
+        Member member = memberRepository.getMemberInfo(memberId);
+        List<Order> orders = orderRepository.findByMember(member);
+        List<OrderDTO> orderDTOListByMember = new ArrayList<>();
+
+        for (Order order : orders) {
+            OrderDTO orderDTO = new OrderDTO(order);
+            orderDTO.setOrderItemDTOList(new ArrayList<>()); // 리스트 초기화
+
+            for (OrderItem orderItem : order.getOrderItems()) {
+                orderDTO.getOrderItemDTOList().add(new OrderItemDTO(orderItem));
+            }
+            orderDTOListByMember.add(orderDTO);
+        }
+        return orderDTOListByMember;
+    }
+
 
     @Override
     public void deleteAll() {

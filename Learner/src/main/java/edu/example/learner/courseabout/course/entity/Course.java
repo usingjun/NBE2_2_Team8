@@ -5,6 +5,8 @@ import edu.example.learner.courseabout.news.entity.NewsEntity;
 import edu.example.learner.courseabout.video.entity.Video;
 import edu.example.learner.member.entity.Member;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -49,6 +51,8 @@ public class Course {
     @NotNull
     private Long coursePrice;
     @NotNull
+    @Max(5)
+    @Min(1)
     private Integer courseLevel;
 
     private boolean sale;

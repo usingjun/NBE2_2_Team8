@@ -55,7 +55,7 @@ const Header = ({ openModal }) => {
                             {isMenuOpen && (
                                 <SubMenu>
                                     <SubMenuItem onClick={() => navigate('/myinfo')}>내정보</SubMenuItem>
-                                    <SubMenuItem onClick={() => navigate('/cart')}>장바구니</SubMenuItem>
+                                    <SubMenuItem onClick={() => navigate('/orders')}>장바구니</SubMenuItem>
                                     <SubMenuItem onClick={() => navigate('/edit-profile')}>회원정보 수정</SubMenuItem>
                                     <SubMenuItem onClick={handleLogout}>로그아웃</SubMenuItem>
                                 </SubMenu>
