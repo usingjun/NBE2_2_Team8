@@ -94,6 +94,13 @@ const CourseInquiryList = ({ courseId }) => {
     };
 
     const handleDeleteInquiry = (inquiryId) => {
+        const currentMemberId = localStorage.getItem('memberId'); // 현재 로그인한 사용자의 memberId
+
+        if (String(selectedInquiry.memberId) !== currentMemberId) {
+            alert("작성자만 문의를 삭제할 수 있습니다.");
+            return;
+        }
+
         if (window.confirm("정말로 이 문의를 삭제하시겠습니까?")) {
             axios
                 .delete(`http://localhost:8080/course/${courseId}/course-inquiry/${inquiryId}`)
@@ -134,7 +141,15 @@ const CourseInquiryList = ({ courseId }) => {
             });
     };
 
-    const handleDeleteAnswer = (answerId) => {
+
+    const handleDeleteAnswer = (answerId, answerMemberId) => {
+        const currentMemberId = localStorage.getItem('memberId'); // 현재 로그인한 사용자의 memberId
+
+        if (answerMemberId !== currentMemberId) {
+            alert("작성자만 답변을 삭제할 수 있습니다.");
+            return;
+        }
+
         if (window.confirm("정말로 이 답변을 삭제하시겠습니까?")) {
             axios
                 .delete(`http://localhost:8080/course/${courseId}/course-answer/${answerId}`)
@@ -163,9 +178,11 @@ const CourseInquiryList = ({ courseId }) => {
                         {selectedInquiry ? (
                             <>
                                 <BeforeButton onClick={() => setSelectedInquiry(null)}>이전 목록으로</BeforeButton>
-                                <DeleteInquiryButton onClick={() => handleDeleteInquiry(selectedInquiry.inquiryId)}>
-                                    문의 삭제
-                                </DeleteInquiryButton>
+                                {(role === "admin" || role === "INSTRUCTOR" || String(selectedInquiry.memberId) === localStorage.getItem('memberId')) && (
+                                    <DeleteInquiryButton onClick={() => handleDeleteInquiry(selectedInquiry.inquiryId)}>
+                                        문의 삭제
+                                    </DeleteInquiryButton>
+                                )}
                             </>
                         ) : (
                             <WriteButton onClick={() => navigate(`/courses/${courseId}/post`)}>글 작성하기</WriteButton>
@@ -188,7 +205,7 @@ const CourseInquiryList = ({ courseId }) => {
                                     </p>
                                 </InquiryDetail>
 
-                                {role === "admin" && (
+                                { (role === "admin" || role === "INSTRUCTOR")&& (
                                     <StatusSelect value={inquiryStatus} onChange={(e) => handleStatusChange(e.target.value)}>
                                         <option value="PENDING">PENDING</option>
                                         <option value="ANSWERED">ANSWERED</option>
@@ -225,16 +242,21 @@ const CourseInquiryList = ({ courseId }) => {
                                                 ) : (
                                                     <>
                                                         <p>
-                                                            <strong>답변 내용:</strong> {answer.answerContent}
+                                                            {answer.answerContent}
                                                         </p>
-                                                        <p>
-                                                            <strong>작성일:</strong>{" "}
-                                                            {new Date(answer.answerCreateDate).toLocaleDateString()}
+
+                                                        <p style={{
+                                                            fontSize: "0.9rem",
+                                                            color: "#555",
+                                                            marginTop: "3rem"
+                                                        }}>
+                                                            작성자: {selectedInquiry.memberId} | 작성일:{" "}
+                                                            {new Date(selectedInquiry.createdDate).toLocaleDateString()}
                                                         </p>
                                                     </>
                                                 )}
 
-                                                {role === "admin" && editAnswerId !== answer.answerId && (
+                                                {(role === "admin" || role === "INSTRUCTOR" || String(selectedInquiry.memberId) === localStorage.getItem('memberId')) && (
                                                     <>
                                                         <AnswerButton onClick={() => handleEditAnswerClick(answer)}>
                                                             수정

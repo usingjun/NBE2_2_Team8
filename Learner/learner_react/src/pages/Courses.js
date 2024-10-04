@@ -9,20 +9,26 @@ const Courses = () => {
     const [courses, setCourses] = useState([]);
     const [searchId, setSearchId] = useState("");
     const [searchedCourse, setSearchedCourse] = useState(null);
+    const [role, setRole] = useState(""); // role을 상태로 저장
     const navigate = useNavigate();
 
     // memberId를 로컬 저장소에 저장하는 useEffect
     useEffect(() => {
         const query = new URLSearchParams(window.location.search);
         const memberId = query.get('memberId');
+        const role = query.get('role');
 
         if (memberId) {
             localStorage.setItem('memberId', memberId);
             console.log('Member ID stored in local storage:', memberId);
-
+            console.log('Member ROLE stored in local storage:',role);
             // 페이지 리디렉션
             window.location.href = "http://localhost:3000/courses";
         }
+
+        // role을 로컬 스토리지에서 가져와서 상태로 설정
+        const storedRole = localStorage.getItem('role');
+        setRole(storedRole);
 
         // 강의 목록 가져오기
         axios.get("http://localhost:8080/course/list")
@@ -62,7 +68,7 @@ const Courses = () => {
             </SearchContainer>
 
             {/* 관리자일 때만 강의 생성 버튼 표시*/}
-            {role === "admin" && (
+            {(role === "admin"|| role === "INSTRUCTOR") && (
                 <CreateCourseButton onClick={() => navigate("/post-course")}>
                     강의 생성
                 </CreateCourseButton>

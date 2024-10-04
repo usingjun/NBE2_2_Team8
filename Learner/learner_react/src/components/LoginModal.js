@@ -23,9 +23,10 @@ const LoginModal = ({ closeModal }) => {
 
             // 상태 코드 확인
             if (response.ok) {
-                const { memberId } = await response.json();
+                const { memberId, role } = await response.json();
                 console.log("로그인 성공, memberId:", memberId);
                 localStorage.setItem("memberId", memberId);
+                localStorage.setItem("role",role);
                 alert("로그인에 성공하셨습니다.");
                 closeModal();
                 // 여기서 원하는 페이지로 리디렉션

@@ -3,7 +3,7 @@ import { useParams , useNavigate } from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
 import CourseNewsList from "./CourseNewsList";
-import CourseInquiryList from "./Course/CourseInquiryList"; // 새로 추가된 컴포넌트
+import CourseInquiryList from "./CourseInquiryList"; // 새로 추가된 컴포넌트
 
 const defaultImage = "/images/course_default_img.png";
 
@@ -64,7 +64,7 @@ const CourseDetail = () => {
             )}
 
             {/* role이 admin일 때만 '강의 업데이트'와 '강의 삭제' 버튼을 표시 */}
-            {role === "admin" && (
+            {(role === "admin" || role === "INSTRUCTOR") && (
                 <AdminControls>
                     <UpdateButton onClick={handleUpdateCourse}>강의 업데이트</UpdateButton>
                     <DeleteButton onClick={handleDeleteCourse}>강의 삭제</DeleteButton>

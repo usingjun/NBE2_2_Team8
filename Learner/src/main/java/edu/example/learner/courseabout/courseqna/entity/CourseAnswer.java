@@ -23,6 +23,7 @@ public class CourseAnswer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long answerId;
 
+    private Long memberId;
     private String answerContent;
 
     @CreatedDate

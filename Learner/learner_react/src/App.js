@@ -2,16 +2,15 @@ import React, { useState } from "react";
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import Header from "./components/Header";
 import Courses from "./pages/Courses";
-import PostCourse from "./pages/Course/PostCourse";
-import PutCourse from "./pages/Course/PutCourse";
+import PostCourse from "./pages/PostCourse";
+import PutCourse from "./pages/PutCourse";
 import CourseDetail from "./pages/CourseDetail";
 import Orders from "./pages/Orders";
 import OrderDetail from './pages/OrderDetail';
 import OrderCreate from "./pages/OrderCreate";
 import SignUp from "./pages/SignUp";
 import LoginModal from "./components/LoginModal";
-import PostCourseInquiry from "./pages/PostCourseInquiry";
-import PostCourseInquiry from "./pages/Course/PostCourseInquiry"
+import PostCourseInquiry from "./pages/PostCourseInquiry"
 import CourseNews from "./pages/CourseNews";
 
 

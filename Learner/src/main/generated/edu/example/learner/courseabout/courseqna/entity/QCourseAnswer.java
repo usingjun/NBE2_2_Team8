@@ -30,6 +30,8 @@ public class QCourseAnswer extends EntityPathBase<CourseAnswer> {
 
     public final QCourseInquiry courseInquiry;
 
+    public final NumberPath<Long> memberId = createNumber("memberId", Long.class);
+
     public QCourseAnswer(String variable) {
         this(CourseAnswer.class, forVariable(variable), INITS);
     }
