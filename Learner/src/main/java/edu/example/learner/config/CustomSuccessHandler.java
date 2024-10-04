@@ -1,5 +1,6 @@
 package edu.example.learner.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.example.learner.member.dto.Oauth2.CustomOauth2User;
 import edu.example.learner.security.util.JWTUtil;
 import jakarta.servlet.ServletException;
@@ -15,6 +16,7 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 
 @Component
@@ -26,20 +28,20 @@ public class CustomSuccessHandler extends SimpleUrlAuthenticationSuccessHandler 
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
-        //OAuth2User
+        // OAuth2User
         CustomOauth2User user = (CustomOauth2User) authentication.getPrincipal();
-
         Map<String, Object> claims = user.getAttributes();
 
-        Collection<? extends GrantedAuthority> userRole = user.getAuthorities();
-        Iterator<? extends GrantedAuthority> iterator = userRole.iterator();
-
-        String token = jwtUtil.createToken(claims,30);
-
+        String token = jwtUtil.createToken(claims, 30);
         log.info("token: " + token);
 
-        response.addCookie(createCookie("Authorization",token));
-        response.sendRedirect("http://localhost:3000/courses");
+        response.addCookie(createCookie("Authorization", token));
+
+        // memberId를 가져와서 리디렉션 URL에 추가
+        Long memberId = user.getMemberId();
+        String redirectUrl = "http://localhost:3000/courses?memberId=" + memberId;
+
+        response.sendRedirect(redirectUrl);
     }
 
     public Cookie createCookie(String key, String value) {

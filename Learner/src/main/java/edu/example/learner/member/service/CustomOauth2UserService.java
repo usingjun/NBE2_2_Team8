@@ -16,6 +16,7 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 @RequiredArgsConstructor
@@ -53,7 +54,7 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
         if(existMember.isEmpty()){
             Member member = Member.builder()
                                   .email(oAuth2Response.getEmail())
-                                  .nickname(oAuth2Response.getNickName())
+                                  .nickname(oAuth2Response.getNickName() + new Random().nextInt(1000))
                                   .phoneNumber(oAuth2Response.getPhoneNumber())
                                   .role(Role.USER)
                                   .password(oAuth2Response.getProviderId() + " " + oAuth2Response.getProvider())
@@ -69,6 +70,6 @@ public class CustomOauth2UserService extends DefaultOAuth2UserService {
 
         Member member = memberRepository.getMemberByEmail(oAuth2Response.getEmail()).get();
 
-        return new CustomOauth2User(oAuth2Response, String.valueOf(member.getRole()));
+        return new CustomOauth2User(oAuth2Response, String.valueOf(member.getRole()),member.getMemberId());
     }
 }

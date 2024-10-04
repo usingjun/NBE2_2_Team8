@@ -8,8 +8,5 @@ import java.util.List;
 
 public interface MemberRepository extends JpaRepository<Member, Long>, MemberSearch {
     @Override
-    Member getMemberInfo(Long id);
-
-    @Override
     List<Member> getAllMembers();
 }
