@@ -35,6 +35,7 @@ public interface StudyTableRepository extends JpaRepository<StudyTable, Long> {
     List<Object[]> getWeeklySummary(@Param("memberId") Long memberId, @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     //연간 전체 요약
-    @Query("select month(st.studyDate), week(st.studyDate), sum(st.completed) from StudyTable st where st.member.memberId = :memberId and year(st.studyDate) = :year group by month(st.studyDate), week(st.studyDate) order by month(st.studyDate), week(st.studyDate)")
+    @Query("select month(st.studyDate), floor((day(st.studyDate) + 6) / 7) as weekNumber, sum(st.completed) from StudyTable st where st.member.memberId = :memberId and year(st.studyDate) = :year group by month(st.studyDate), floor((day(st.studyDate) + 6) / 7) order by month(st.studyDate), floor((day(st.studyDate) + 6) / 7)")
     List<Object[]> getYearlySummary(@Param("memberId") Long memberId, @Param("year") int year);
+
 }

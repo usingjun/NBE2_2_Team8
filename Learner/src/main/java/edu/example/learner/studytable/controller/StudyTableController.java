@@ -28,7 +28,7 @@ public class StudyTableController {
     }
 
     @GetMapping("/{memberId}/yearly-summary")
-    public ResponseEntity<?> readYearlySummary(@PathVariable("memberId") Long memberId, @RequestParam("year") Integer year) {
+    public ResponseEntity<?> readYearlySummary(@PathVariable("memberId") Long memberId, @RequestParam("year") int year) {
         Map<String, Object> response = new HashMap<>();
         response.put("yearlyCompleted", studyTableService.getYearlyCompleted(memberId, year));
         response.put("yearlyStudyTime", studyTableService.getYearlyStudyTime(memberId, year));
