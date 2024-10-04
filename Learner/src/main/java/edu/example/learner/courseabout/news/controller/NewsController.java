@@ -6,6 +6,8 @@ import edu.example.learner.courseabout.news.dto.NewsRqDTO;
 import edu.example.learner.courseabout.news.service.HeartNewsService;
 import edu.example.learner.courseabout.news.service.NewsService;
 import edu.example.learner.redis.RedisViewServiceImpl;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -22,6 +24,7 @@ import java.time.Duration;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/course/{courseId}/news")
+@Tag(name = "News", description = "새소식 API")
 public class NewsController {
     private final NewsService newsService;
     private final HeartNewsService heartNewsService;
@@ -29,6 +32,7 @@ public class NewsController {
 
     // 새소식 등록
     @PostMapping
+    @Operation(summary = "새소식 등록", description = "새소식을 등록합니다.")
     public ResponseEntity<NewsResDTO> createNews(@PathVariable Long courseId, @Validated @RequestBody NewsRqDTO newsRqDTO) {
         NewsResDTO createdNews = newsService.createNews(courseId, newsRqDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(createdNews);
@@ -36,6 +40,7 @@ public class NewsController {
 
     // 새소식 업데이트
     @PutMapping("/{newsId}")
+    @Operation(summary = "새소식 수정", description = "새소식을 수정합니다.")
     public ResponseEntity<NewsResDTO> updateNews(@PathVariable Long courseId,
                                                  @PathVariable Long newsId,
                                                  @Validated @RequestBody NewsRqDTO newsRqDTO) {
@@ -45,6 +50,7 @@ public class NewsController {
 
     // 새소식 삭제
     @DeleteMapping("/{newsId}")
+    @Operation(summary = "새소식 삭제", description = "새소식을 삭제합니다.")
     public ResponseEntity<?> deleteNews(@PathVariable Long courseId,
                                         @PathVariable Long newsId) {
         newsService.deleteNews(courseId, newsId);
@@ -53,6 +59,7 @@ public class NewsController {
 
     // 특정 새소식 조회
     @GetMapping("/{newsId}")
+    @Operation(summary = "특정 새소식 조회", description = "특정 새소식을 조회합니다.")
     public ResponseEntity<NewsResDTO> getNews(@PathVariable Long courseId,
                                               @PathVariable Long newsId,
                                               HttpServletRequest request) {
@@ -87,6 +94,7 @@ public class NewsController {
 
     // 전체 새소식 조회
     @GetMapping
+    @Operation(summary = "전체 새소식 조회", description = "전체 새소식을 조회합니다.")
     public ResponseEntity<Page<NewsResDTO>> getAllNews(@PathVariable Long courseId,
                                                        @PageableDefault(size = 8, direction = Sort.Direction.DESC) Pageable pageable) {
         Page<NewsResDTO> allNews = newsService.getAllNews(courseId, pageable);
@@ -96,12 +104,14 @@ public class NewsController {
     //좋아요 처리
     // courseId 처리는 고려
     @PatchMapping
+    @Operation(summary = "좋아요", description = "좋아요를 처리합니다.")
     public ResponseEntity<?> increaseHeart(@RequestBody @Validated HeartNewsReqDTO heartNewsReqDTO) throws Exception {
         heartNewsService.insert(heartNewsReqDTO);
         return ResponseEntity.ok().build();
     }
 
     @DeleteMapping
+    @Operation(summary = "좋아요 취소", description = "좋아요를 취소합니다.")
     public ResponseEntity<?> decreaseHeart(@RequestBody @Validated HeartNewsReqDTO heartNewsReqDTO) {
         heartNewsService.delete(heartNewsReqDTO);
         return ResponseEntity.ok().build();

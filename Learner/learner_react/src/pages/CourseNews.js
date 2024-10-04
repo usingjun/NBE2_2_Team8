@@ -9,22 +9,36 @@ export default function CourseNews() {
     const [news, setNews] = useState(null);
     const [liked, setLiked] = useState(false);
     const [userRole, setUserRole] = useState(null);
+    const [userName, setUserName] = useState(null);
+    const [instructorName, setInstructorName] = useState(null);
 
     useEffect(() => {
         checkUserRole();
         fetchNewsData();
     }, [courseId, newsId]);
 
-    const checkUserRole = () => {
+    const checkUserRole = async () => {  // async로 변경
         try {
             const token = document.cookie
                 .split('; ')
                 .find(row => row.startsWith('Authorization='))
                 ?.split('=')[1];
 
+            console.log("토큰:", token);
             if (token) {
                 const decodedToken = jwtDecode(token);
                 setUserRole(decodedToken.role);
+                const email = decodedToken.mid;
+                console.log("디코딩된 토큰:", decodedToken);
+
+                // 이메일로 닉네임 가져오기
+                const response = await fetch(`http://localhost:8080/member/nickname?email=${email}`);
+                if (!response.ok) {
+                    throw new Error("닉네임을 가져오는 데 실패했습니다.");
+                }
+                const nickname = await response.text(); // JSON이 아닌 문자열 반환
+                console.log("닉네임:", nickname);
+                setUserName(nickname); // 닉네임을 상태에 설정
             }
         } catch (error) {
             console.error("토큰 확인 중 오류 발생:", error);
@@ -95,12 +109,28 @@ export default function CourseNews() {
             });
     };
 
-    const canEditDelete = () => {
-        return userRole === 'Role_INSTRUCTOR' || userRole === 'Role_ADMIN';
+    const canEdit = () => {
+        // courseId를 이용해 member_nickname 확인
+        fetch(`http://localhost:8080/course/${courseId}/member-nickname`, {
+            credentials: 'include',
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return res.text(); // 응답을 텍스트로 처리
+            })
+            .then(nickname => {
+                console.log("Member Nickname:", nickname);
+                setInstructorName(nickname); // 직접 문자열로 설정
+            })
+            .catch(err => console.error("Failed to fetch member nickname:", err));
+
+        return (userRole === 'Role_INSTRUCTOR' && userName===instructorName ) || userRole === 'Role_ADMIN';
     };
 
     const handleUpdateNews = () => {
-        if (canEditDelete()) {
+        if (canEdit()) {
             navigate(`/courses/${courseId}/news/${newsId}/edit`);
         } else {
             alert('새소식 수정은 강사 또는 관리자만 가능합니다.');
@@ -116,7 +146,6 @@ export default function CourseNews() {
         <NewsContainer>
             <NewsHeader>{news.newsName}</NewsHeader>
             <NewsMetaInfo>
-                <span>작성자: {news.authorName}</span>
                 <span>작성일: {new Date(news.newsDate).toLocaleDateString()}</span>
                 <span>조회수: {news.viewCount}</span>
                 <span>좋아요: {news.likeCount}</span>
@@ -128,7 +157,7 @@ export default function CourseNews() {
                     <LikeButton onClick={likeNews} $liked={liked}>
                         {liked ? '좋아요 취소' : '좋아요'}
                     </LikeButton>
-                    {canEditDelete() && (
+                    {canEdit() && (
                         <>
                             <EditButton onClick={handleUpdateNews}>
                                 수정하기

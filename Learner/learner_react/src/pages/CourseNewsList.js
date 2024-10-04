@@ -7,6 +7,8 @@ const CourseNewsList = ({ courseId }) => {
     const [currentPage, setCurrentPage] = useState(0);
     const [totalPages, setTotalPages] = useState(0);
     const [userRole, setUserRole] = useState(null);
+    const [userName, setUserName] = useState(null);
+    const [instructorName, setInstructorName] = useState(null);
     const newsPerPage = 5;
     const navigate = useNavigate();
 
@@ -15,9 +17,8 @@ const CourseNewsList = ({ courseId }) => {
         checkUserRole();
     }, []);
 
-    const checkUserRole = () => {
+    const checkUserRole = async () => {  // async로 변경
         try {
-            // 쿠키에서 JWT 토큰 가져오기 (쿠키 이름은 실제 사용하는 이름으로 변경 필요)
             const token = document.cookie
                 .split('; ')
                 .find(row => row.startsWith('Authorization='))
@@ -25,17 +26,44 @@ const CourseNewsList = ({ courseId }) => {
 
             console.log("토큰:", token);
             if (token) {
-                const decodedToken = jwtDecode(token); // jwtDecode 사용
-                setUserRole(decodedToken.role); // JWT 토큰에서 role 정보 추출
-                console.log("사용자 권한:", decodedToken.role);
+                const decodedToken = jwtDecode(token);
+                setUserRole(decodedToken.role);
+                const email = decodedToken.mid;
+                console.log("디코딩된 토큰:", decodedToken);
+
+                // 이메일로 닉네임 가져오기
+                const response = await fetch(`http://localhost:8080/member/nickname?email=${email}`);
+                if (!response.ok) {
+                    throw new Error("닉네임을 가져오는 데 실패했습니다.");
+                }
+                const nickname = await response.text(); // JSON이 아닌 문자열 반환
+                console.log("닉네임:", nickname);
+                setUserName(nickname); // 닉네임을 상태에 설정
             }
         } catch (error) {
             console.error("토큰 확인 중 오류 발생:", error);
         }
     };
 
+
     const canCreateNews = () => {
-        return userRole === 'Role_INSTRUCTOR' || userRole === 'Role_ADMIN';
+        // courseId를 이용해 member_nickname 확인
+        fetch(`http://localhost:8080/course/${courseId}/member-nickname`, {
+            credentials: 'include',
+        })
+            .then(res => {
+                if (!res.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return res.text(); // 응답을 텍스트로 처리
+            })
+            .then(nickname => {
+                console.log("Member Nickname:", nickname);
+                setInstructorName(nickname); // 직접 문자열로 설정
+            })
+            .catch(err => console.error("Failed to fetch member nickname:", err));
+
+        return (userRole === 'Role_INSTRUCTOR' && userName===instructorName ) || userRole === 'Role_ADMIN';
     };
 
 
