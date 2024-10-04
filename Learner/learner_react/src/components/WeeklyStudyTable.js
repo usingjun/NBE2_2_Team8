@@ -1,16 +1,25 @@
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 
-const WeeklyStudyTable = ({ memberId }) => {
+const WeeklyStudyTable = () => {
     const [studyData, setStudyData] = useState([]); // weeklySummary 배열을 저장할 state
     const [totalStudyTime, setTotalStudyTime] = useState(0); // 총 학습 시간
     const [totalCompleted, setTotalCompleted] = useState(0); // 총 완료 수업
     const [currentDate, setCurrentDate] = useState(new Date()); // 현재 주차의 기준 날짜
+    const [memberId, setMemberId] = useState(null); // memberId state 추가
+
+    // memberId를 localStorage에서 가져오는 useEffect
+    useEffect(() => {
+        const storedMemberId = localStorage.getItem('memberId');
+        if (storedMemberId) {
+            setMemberId(storedMemberId);
+        }
+    }, []);
 
     // 데이터 fetch 함수
     const fetchData = async (selectedDate) => { // 주차 변경에 따른 데이터 fetch
+        if (!memberId) return; // memberId가 없으면 fetch하지 않음
         try {
-            const memberId = 1; //테스트를 위한 memberId 설정
             const formattedDate = selectedDate.toISOString().split('T')[0]; // 선택한 날짜를 "YYYY-MM-DD" 형식으로 변환
             const response = await axios.get(`http://localhost:8080/study-tables/${memberId}/weekly-summary?date=${formattedDate}`); // 날짜를 query parameter로 전송
 
@@ -25,7 +34,7 @@ const WeeklyStudyTable = ({ memberId }) => {
 
     useEffect(() => {
         fetchData(currentDate); // 현재 날짜로 데이터 fetch
-    }, [memberId, currentDate]); // currentDate가 변경될 때마다 fetch
+    }, [memberId, currentDate]); // memberId와 currentDate가 변경될 때마다 fetch
 
     const getColorByCompleted = (completed, date) => {
         const today = new Date();
@@ -37,7 +46,6 @@ const WeeklyStudyTable = ({ memberId }) => {
         else if (completed <= 5) return 'medium-green';
         else return 'dark-green';
     };
-
 
     const handlePreviousWeek = () => {
         const previousWeek = new Date(currentDate);
@@ -59,7 +67,6 @@ const WeeklyStudyTable = ({ memberId }) => {
 
         setCurrentDate(nextWeek); // 선택한 주차로 변경
     };
-
 
     const getWeekInfo = (date) => {
         const year = date.getFullYear();
@@ -109,15 +116,15 @@ const WeeklyStudyTable = ({ memberId }) => {
                 </div>
             </div>
             <div className="summary">
-                <h3>총 학습 시간: {totalStudyTime} 시간</h3>
-                <h3>총 완료한 수업: {totalCompleted} 개</h3>
+                <h3>완료한 수업: {totalCompleted} 개</h3>
+                <h3>학습 시간: {totalStudyTime} 분</h3>
             </div>
         </div>
     );
 };
 
 const styles = `
-    .weekly-study-table {
+.weekly-study-table {
     text-align: center; /* 텍스트 가운데 정렬 */
     border: 1px solid #e0e0e0; /* 테두리 색상 */
     border-radius: 8px; /* 모서리 둥글기 */
@@ -161,17 +168,17 @@ const styles = `
 }
 
 .light-green {
-    background-color: lightgreen;
+    background-color: #c6e48b;
     border: 1px solid lightgray;
 }
 
 .medium-green {
-    background-color: green;
+    background-color: #b2e0b2;
     border: 1px solid lightgray;
 }
 
 .dark-green {
-    background-color: darkgreen;
+    background-color: #7ee6b7;
     border: 1px solid lightgray;
 }
 
@@ -185,7 +192,6 @@ const styles = `
     margin-bottom: 5px; /* 원과 요일 간의 간격 조정 */
 }
 
-
 .summary {
     margin-top: 20px; /* 요약 영역과 원 간격 */
     font-family: 'Arial', sans-serif; /* 폰트 설정 */
@@ -197,7 +203,7 @@ const styles = `
 }
 
 .light-gray {
-    background-color: lightgray; /* 연한 회색 */
+    background-color: #f0f0f0; /* 연한 회색 */
     border: 1px solid lightgray;
 }
 

@@ -131,7 +131,7 @@ const YearlyStudyTable = () => {
                 </div>
             </div>
             <div className="summary">
-                <h3>총 학습 시간: {totalStudyTime} 분</h3>
+                <h3>학습 시간: {totalStudyTime} 분</h3>
             </div>
         </div>
     );
