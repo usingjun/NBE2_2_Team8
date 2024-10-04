@@ -1,5 +1,7 @@
 package edu.example.learner.member.service;
 
+import com.mysql.cj.log.Log;
+import edu.example.learner.member.dto.LoginDTO;
 import edu.example.learner.member.entity.Member;
 import edu.example.learner.member.entity.Role;
 import edu.example.learner.member.exception.LoginException;
@@ -135,7 +137,7 @@ public class MemberService {
     }
 
     //로그인
-    public Cookie login(String email, String password) {
+    public LoginDTO login(String email, String password) {
         Member member = memberRepository.getMemberByEmail(email).orElseThrow(LoginException.NOT_FOUND_EMAIL::getMemberTaskException);
 
         if (!passwordEncoder.matches(password, member.getPassword())) {
@@ -150,6 +152,6 @@ public class MemberService {
         cookie.setHttpOnly(false); // JavaScript에서 접근 가능
         cookie.setSecure(false); // 로컬 개발 시 false로 설정
 
-        return cookie;
+        return new LoginDTO(cookie, member.getMemberId());
     }
 }
