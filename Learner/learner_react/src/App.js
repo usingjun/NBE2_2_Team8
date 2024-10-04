@@ -10,6 +10,8 @@ import SignUp from "./pages/SignUp";
 import LoginModal from "./components/LoginModal";
 import PostCourseInquiry from "./pages/PostCourseInquiry";
 import CourseNews from "./pages/CourseNews";
+import CreateNews from "./pages/CreateNews";
+import UpdateNews from "./pages/UpdateNews";
 import ReviewEdit from "./pages/ReviewEdit";
 import ReviewCreate from "./pages/ReviewCreate";
 
@@ -39,6 +41,8 @@ function App() {
                 <Route path="/orders/:orderId" element={<OrderDetail />} />
                 <Route path="/order/create" element={<OrderCreate />} />
                 <Route path="/courses/:courseId/news/:newsId" element={<CourseNews />} />
+                <Route path="/courses/:courseId/news/create" element={<CreateNews />} />
+                <Route path="/courses/:courseId/news/:newsId/edit" element={<UpdateNews />} />
                 <Route path="/courses/:courseId/reviews/create" element={<ReviewCreate />} />
                 <Route path="/courses/:courseId/reviews/:reviewId/edit" element={<ReviewEdit />} />
             </Routes>
