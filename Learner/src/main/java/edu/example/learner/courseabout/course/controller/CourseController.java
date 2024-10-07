@@ -50,4 +50,10 @@ public class CourseController {
         log.info("Deleting course {}", courseId);
         return ResponseEntity.ok(Map.of("delete","success"));
     }
+
+    @GetMapping("{memberId}/list")
+    public ResponseEntity<List<CourseDTO>> readCourseListByMemberId(@PathVariable Long memberId) {
+        log.info("Reading course list");
+        return ResponseEntity.ok(courseService.readAll());
+    }
 }

@@ -22,6 +22,7 @@ import CourseReviewEdit from "./pages/course-review/CourseReviewEdit";
 import InstructorReviewCreate from "./pages/instructor-review/InstructorReviewCreate";
 import InstructorReviewEdit from "./pages/instructor-review/InstructorReviewEdit";
 import ResetPassword from "./components/ResetPassword"; // ResetPassword 컴포넌트 가져오기
+import MyCourses from './pages/MyCourses';
 
 
 function App() {
@@ -61,6 +62,7 @@ function App() {
                 <Route path="/members/instructor/:nickname/reviews/create" element={<InstructorReviewCreate />} /> {/* 강사 리뷰 생성 페이지 */}
                 <Route path="/members/instructor/:nickname/reviews/:reviewId" element={<InstructorReviewEdit />} /> {/* 강사 리뷰 수정 페이지 */}
                 <Route path="/reset-password/:uuid" element={<ResetPassword />} /> {/* 비밀번호 변경 */}
+                <Route path="/my-courses" element={<MyCourses />} />
             </Routes>
         </Router>
     );
