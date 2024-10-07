@@ -9,7 +9,7 @@ const CourseList = () => {
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [role, setRole] = useState("INSTRUCTOR"); // 하드코딩으로 강사 역할 설정
+    const [role, setRole] = useState("null"); // 하드코딩으로 강사 역할 설정
     const navigate = useNavigate();
     const memberId = localStorage.getItem("memberId");
 
@@ -36,7 +36,7 @@ const CourseList = () => {
     }, [memberId]);
 
     const handleUpdateClick = (courseId) => {
-        navigate(`/course/update/${courseId}`);
+        navigate(`/courses/update/${courseId}`);
     };
 
     const handleDeleteClick = async (courseId) => {
@@ -58,7 +58,7 @@ const CourseList = () => {
         <CourseListContainer>
             <Header>강좌 목록</Header>
             {role === "INSTRUCTOR" ? (
-                <Link to="/course/create">
+                <Link to="/courses/create">
                     <StyledButton primary>강좌 생성</StyledButton>
                 </Link>
             ) : (

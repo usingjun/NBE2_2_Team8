@@ -4,6 +4,8 @@ import axios from "axios";
 import styled from "styled-components";
 import CourseNewsList from "../CourseNewsList";
 import CourseReview from "../course-review/CourseReview";
+import VideoList from "../video/VideoList"; // VideoList 컴포넌트 임포트
+
 
 // 기본 이미지 경로
 const defaultImage = "/images/course_default_img.png";
@@ -132,7 +134,7 @@ const CourseDetail = () => {
 
             {/* 탭에 따라 내용 변경 */}
             <TabContent>
-                {activeTab === "curriculum" && <p>커리큘럼 내용이 여기에 표시됩니다.</p>}
+                {activeTab === "curriculum" && <VideoList /> } {/* VideoList 컴포넌트 추가 */}
                 {activeTab === "reviews" && (
                     <>
                         <CourseReview courseId={courseId}/>
