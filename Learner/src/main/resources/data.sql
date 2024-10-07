@@ -12,7 +12,7 @@ INSERT IGNORE INTO member (member_id, email, password, nickname, role,  phone_nu
         VALUES (4, 'instructor2@gmail.com', '$2a$10$eYec.uEZMP5yrBt8DtsifuQn14svVZOiD2qKq7sg4RjJT1c2OG0ra', '동빈나', 'INSTRUCTOR', '010-5555-6666', '안녕하세요 동빈나입니다.', NOW());
 
 INSERT IGNORE INTO member (member_id, email, password, nickname, role,  phone_number, introduction, create_date)
-        VALUES (5, 'instructor2@gmail.com', '$2a$10$eYec.uEZMP5yrBt8DtsifuQn14svVZOiD2qKq7sg4RjJT1c2OG0ra', '조코딩', 'INSTRUCTOR', '010-7777-8888', '안녕하세요 조코딩입니다.', NOW());
+        VALUES (5, 'instructor3@gmail.com', '$2a$10$eYec.uEZMP5yrBt8DtsifuQn14svVZOiD2qKq7sg4RjJT1c2OG0ra', '조코딩', 'INSTRUCTOR', '010-7777-8888', '안녕하세요 조코딩입니다.', NOW());
 
 -- 초기 강의 데이터  삽입.
 INSERT IGNORE INTO course (course_id, course_attribute, course_name,course_description, course_level, course_price, member_nickname, sale, course_created_date)
