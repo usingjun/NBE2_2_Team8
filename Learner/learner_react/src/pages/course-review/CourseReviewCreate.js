@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
@@ -9,7 +9,15 @@ const CourseReviewCreate = () => {
     const [reviewName, setReviewName] = useState("");
     const [reviewDetail, setReviewDetail] = useState("");
     const [rating, setRating] = useState(1);
-    const [memberId] = useState(1); // 예시로 하드코딩된 memberId
+    const [writerId, setWriterId] = useState(null); // 토큰에서 가져온 memberId 저장
+
+    // useEffect를 통해 로그인한 사용자의 정보를 로컬 스토리지에서 가져옴
+    useEffect(() => {
+        const storedMemberId = localStorage.getItem("memberId"); // localStorage에서 memberId 가져옴
+        if (storedMemberId) {
+            setWriterId(storedMemberId); // memberId 상태 설정
+        }
+    }, []);
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -18,9 +26,11 @@ const CourseReviewCreate = () => {
             reviewName,
             reviewDetail,
             rating,
-            memberId,
+            writerId, // 로그인된 사용자의 memberId
             courseId,
         };
+
+        const token = localStorage.getItem("token"); // 토큰 가져오기
 
         // 코스 리뷰 API 엔드포인트
         const endpoint = `http://localhost:8080/course/${courseId}/reviews/create`;
@@ -29,6 +39,7 @@ const CourseReviewCreate = () => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`, // Authorization 헤더에 토큰 추가
             },
             body: JSON.stringify(reviewData),
             credentials: 'include',

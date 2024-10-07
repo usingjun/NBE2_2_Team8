@@ -1,15 +1,17 @@
 package edu.example.learner.courseabout.coursereview.controller;
 
-import edu.example.learner.courseabout.course.entity.Course;
 import edu.example.learner.courseabout.course.service.CourseServiceImpl;
 import edu.example.learner.courseabout.coursereview.dto.ReviewDTO;
 import edu.example.learner.courseabout.coursereview.entity.ReviewType;
 import edu.example.learner.courseabout.coursereview.service.ReviewServiceImpl;
-//import io.swagger.annotations.ApiOperation;
+import edu.example.learner.member.service.MemberService;
+import edu.example.learner.security.auth.CustomUserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,17 +24,15 @@ import java.util.Map;
 public class CourseReviewController {
 
     private final ReviewServiceImpl reviewService;
-    private final CourseServiceImpl courseService;
 
     @PostMapping("/create")
     @Operation(summary = "Course Review 생성")
     public ResponseEntity<ReviewDTO> create(@RequestBody ReviewDTO reviewDTO) {
-        System.out.println(reviewDTO);
-        reviewDTO.setReviewType(ReviewType.COURSE);
+        System.out.println(reviewDTO.getWriterId());
 
         log.info("Create review: " + reviewDTO);
 
-        return ResponseEntity.ok(reviewService.createReview(reviewDTO, reviewDTO.getReviewType()));
+        return ResponseEntity.ok(reviewService.createReview(reviewDTO, ReviewType.COURSE));
     }
 
 
@@ -46,11 +46,11 @@ public class CourseReviewController {
 
     @DeleteMapping("/{reviewId}")
     @Operation(summary = "Course Review 삭제")
-    public ResponseEntity<Map<String, String>> remove(@PathVariable("reviewId") Long reviewId) {
+    public ResponseEntity<Map<String, String>> remove(@PathVariable("reviewId") Long reviewId, @RequestBody ReviewDTO reviewDTO) {
 
         log.info("Delete Review: " + reviewId);
 
-        reviewService.deleteReview(reviewId);
+        reviewService.deleteReview(reviewId, reviewDTO);
         return ResponseEntity.ok(Map.of("result", "success"));
     }
 
