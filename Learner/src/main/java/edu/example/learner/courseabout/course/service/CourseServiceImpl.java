@@ -75,7 +75,6 @@ public class CourseServiceImpl implements CourseService {
         for (Course course : courseList) {
             courseDTOList.add(new CourseDTO(course));
         }
-
         return courseDTOList;
     }
 
