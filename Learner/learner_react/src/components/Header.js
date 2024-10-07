@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import {Link, useLocation, useNavigate} from "react-router-dom";
-import {useEffect, useState} from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const Header = ({ openModal }) => {
     const navigate = useNavigate();
@@ -42,8 +42,8 @@ const Header = ({ openModal }) => {
                         </SearchBar>
                     </>
                 )}
-            </LeftSection>
 
+            </LeftSection>
             <LogoWrapper onClick={() => navigate("/courses")}>
                 <Logo>Learner</Logo>
             </LogoWrapper>
@@ -55,8 +55,10 @@ const Header = ({ openModal }) => {
                         {isMenuOpen && (
                             <SubMenu>
                                 <SubMenuItem onClick={() => navigate('/내정보')}>내정보</SubMenuItem> {/* 내정보 클릭 시 마이페이지로 이동 */}
-                                <SubMenuItem onClick={() => navigate('/cart')}>장바구니</SubMenuItem>
+                                <SubMenuItem onClick={() => navigate('/course/list')}>내 학습</SubMenuItem>
+                                <SubMenuItem onClick={() => navigate('/orders')}>장바구니</SubMenuItem>
                                 <SubMenuItem onClick={() => navigate('/edit-profile')}>회원정보 수정</SubMenuItem>
+                                <SubMenuItem onClick={() => navigate('/my-courses')}>내 수강 정보</SubMenuItem>
                                 <SubMenuItem onClick={handleLogout}>로그아웃</SubMenuItem>
                             </SubMenu>
                         )}
@@ -76,6 +78,7 @@ const Header = ({ openModal }) => {
 
 export default Header;
 
+
 // 스타일 컴포넌트들
 
 const NavBar = styled.nav`
@@ -91,13 +94,11 @@ const NavBar = styled.nav`
     overflow: visible; /* NavBar 범위를 넘어가는 내용을 보이게 함 */
 `;
 
-const HeaderContent = styled.div`
+const LeftSection = styled.div`
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
+    gap: 1rem;
+    margin-right: auto; /* LeftSection을 왼쪽으로 정렬 */
 `;
 
 const LogoWrapper = styled.div`
@@ -116,13 +117,6 @@ const RightSection = styled.div`
     gap: 1rem;
     margin-left: auto;
     position: relative; /* SubMenu가 RightSection 안에 표시되도록 설정 */
-`;
-
-const LeftSection = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-right: auto; /* LeftSection을 왼쪽으로 정렬 */
 `;
 
 const Logo = styled.h1`

@@ -53,7 +53,7 @@ public class AlarmServiceImpl implements AlarmService {
     @Override
     public AlarmDTO add(AlarmDTO alarmDTO) {
         Alarm save = alarmRepository.save(alarmDTO.toEntity(alarmDTO));
-        Member member = memberRepository.findById(Math.toIntExact(alarmDTO.getMemberId())).orElseThrow(MemberException.MEMBER_NOT_FOUND::getMemberTaskException);
+        Member member = memberRepository.findById(alarmDTO.getMemberId()).orElseThrow(MemberException.MEMBER_NOT_FOUND::getMemberTaskException);
 //        member.getAlarmList().add(save);
         return new AlarmDTO(save);
     }
@@ -81,7 +81,7 @@ public class AlarmServiceImpl implements AlarmService {
 
     @Override
     public List<AlarmDTO> listAlarmsForMember(Long memberId) {
-        Member member = memberRepository.findById(Math.toIntExact(memberId)).orElseThrow(MemberException.MEMBER_NOT_FOUND::getMemberTaskException);
+        Member member = memberRepository.findById(memberId).orElseThrow(MemberException.MEMBER_NOT_FOUND::getMemberTaskException);
 
         List<Alarm> byMember = alarmRepository.findByMember(member);
 
