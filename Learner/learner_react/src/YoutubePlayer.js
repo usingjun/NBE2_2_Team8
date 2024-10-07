@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import {useLocation, useParams} from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
-const YoutubePlayer =() => {
+const YoutubePlayer = () => {
     const { videoId } = useParams();
     const location = useLocation();
     const playerRef = useRef(null);
@@ -126,15 +126,16 @@ const YoutubePlayer =() => {
     };
 
     return (
-        <div>
+        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
             <iframe
                 id="youtube-player"
-                width="560"
-                height="315"
+                width="1280"
+                height="720"
                 src={embedUrl}
                 title="YouTube Video"
                 frameBorder="0"
                 allowFullScreen
+                style={{ marginBottom: '20px' }} // 아래에 여유 공간 추가
             ></iframe>
             <div>전체 동영상 길이: {totalDuration}초</div>
             <div>현재 동영상 길이: {currentTime.toFixed(2)}초</div>
