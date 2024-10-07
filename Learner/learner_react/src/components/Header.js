@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
+import {Link, useLocation, useNavigate} from "react-router-dom";
+import {useEffect, useState} from "react";
 
 const Header = ({ openModal }) => {
     const navigate = useNavigate();
@@ -8,7 +10,6 @@ const Header = ({ openModal }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태
     const [isMenuOpen, setIsMenuOpen] = useState(false); // 하위 메뉴 상태
 
-    // 쿠키에서 JWT 토큰 확인
     useEffect(() => {
         const cookies = document.cookie.split('; ').find(row => row.startsWith('Authorization='));
         if (cookies) {
@@ -19,70 +20,65 @@ const Header = ({ openModal }) => {
         }
     }, []);
 
-    // 로그아웃 처리 함수
     const handleLogout = () => {
-        // 쿠키에서 Authorization 제거
         document.cookie = "Authorization=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;";
-
-        // localStorage에서 memberId 제거
         localStorage.removeItem("memberId");
 
         setIsLoggedIn(false);
         navigate('/courses');
     };
 
-    // 현재 페이지가 "/courses"인지 여부 확인
     const isCoursesPage = location.pathname === "/courses";
     const isCourseDetailPage = location.pathname.startsWith("/courses/");
 
     return (
         <NavBar>
-            <HeaderContent $isCoursesPage={isCoursesPage}>
-                <LogoWrapper $isCoursesPage={isCoursesPage}>
-                    <Logo onClick={() => navigate("/courses")}>Learner</Logo>
-                </LogoWrapper>
-
+            <LeftSection>
                 {isCourseDetailPage && (
-                    <LeftSection>
-                        <NavItem onClick={() => navigate("/courses")}>강의</NavItem>
+                    <>
+                        <NavItem>강의</NavItem>
                         <NavItem>문의</NavItem>
                         <SearchBar>
                             <input type="text" placeholder="검색해보세요" />
                             <button>🔍</button>
                         </SearchBar>
-                    </LeftSection>
+                    </>
                 )}
 
-                <RightSection>
-                    {isLoggedIn ? (
-                        <>
-                            <NavItem onClick={() => setIsMenuOpen(!isMenuOpen)}>마이페이지</NavItem>
-                            {isMenuOpen && (
-                                <SubMenu>
-                                    <SubMenuItem onClick={() => navigate('/myinfo')}>내정보</SubMenuItem>
-                                    <SubMenuItem onClick={() => navigate('/cart')}>장바구니</SubMenuItem>
-                                    <SubMenuItem onClick={() => navigate('/edit-profile')}>회원정보 수정</SubMenuItem>
-                                    <SubMenuItem onClick={handleLogout}>로그아웃</SubMenuItem>
-                                </SubMenu>
-                            )}
-                        </>
-                    ) : (
-                        <Menu>
-                            <StyledButton onClick={openModal}>로그인</StyledButton>
-                            <Link to="/signup">
-                                <StyledButton>회원가입</StyledButton>
-                            </Link>
-                        </Menu>
-                    )}
-                </RightSection>
-            </HeaderContent>
+            </LeftSection>
+            <LogoWrapper onClick={() => navigate("/courses")}>
+                <Logo>Learner</Logo>
+            </LogoWrapper>
+
+            <RightSection>
+                {isLoggedIn ? (
+                    <>
+                        <NavItem onClick={() => setIsMenuOpen(!isMenuOpen)}>마이페이지</NavItem>
+                        {isMenuOpen && (
+                            <SubMenu>
+                                <SubMenuItem onClick={() => navigate('/내정보')}>내정보</SubMenuItem> {/* 내정보 클릭 시 마이페이지로 이동 */}
+                                <SubMenuItem onClick={() => navigate('/cart')}>장바구니</SubMenuItem>
+                                <SubMenuItem onClick={() => navigate('/edit-profile')}>회원정보 수정</SubMenuItem>
+                                <SubMenuItem onClick={handleLogout}>로그아웃</SubMenuItem>
+                            </SubMenu>
+                        )}
+                    </>
+                ) : (
+                    <Menu>
+                        <StyledButton onClick={openModal}>로그인</StyledButton>
+                        <Link to="/signup">
+                            <StyledButton>회원가입</StyledButton>
+                        </Link>
+                    </Menu>
+                )}
+            </RightSection>
         </NavBar>
     );
 };
 
 export default Header;
 
-// 나머지 스타일 컴포넌트는 그대로 두세요.
+// 스타일 컴포넌트들
 
 const NavBar = styled.nav`
     display: flex;
@@ -91,46 +87,50 @@ const NavBar = styled.nav`
     background-color: #fff;
     padding: 0.5rem 1rem;
     height: 60px;
-    position: relative;
     border-bottom: 1px solid #ddd;
     margin: 0 auto;
-    overflow: visible; /* Header 범위를 넘어가는 내용을 보이게 함 */
+    position: relative; /* 메뉴가 페이지 밖으로 나가지 않도록 NavBar에 상대 위치 부여 */
+    overflow: visible; /* NavBar 범위를 넘어가는 내용을 보이게 함 */
 `;
 
 const HeaderContent = styled.div`
     display: flex;
-    justify-content: ${({ $isCoursesPage }) => ($isCoursesPage ? "center" : "space-between")};
+    justify-content: space-between;
     align-items: center;
     width: 100%;
-    max-width: 1200px; /* Header 최대 너비 설정 */
-    margin: 0 auto; /* 중앙 정렬 */
-    overflow: visible; /* HeaderContent 범위를 넘어가는 내용을 보이게 함 */
+    max-width: 1200px;
+    margin: 0 auto;
 `;
 
 const LogoWrapper = styled.div`
     display: flex;
-    justify-content: ${({ $isCoursesPage }) => ($isCoursesPage ? "center" : "flex-start")};
-    flex-grow: 1;
-`;
-
-const Logo = styled.h1`
-    font-size: 1.5rem;
-    color: #3cb371;
-    cursor: pointer;
-    margin-right: 2rem;
-`;
-
-const LeftSection = styled.div`
-    display: flex;
+    justify-content: center;
     align-items: center;
-    gap: 1rem;
-    flex-grow: 1;
+    position: absolute; /* 부모 요소에서 절대 위치 */
+    left: 50%; /* 페이지의 50% 지점에 위치 */
+    transform: translateX(-50%); /* 중앙에 고정시키기 위해 왼쪽으로 50% 이동 */
+    cursor: pointer;
 `;
 
 const RightSection = styled.div`
     display: flex;
     align-items: center;
     gap: 1rem;
+    margin-left: auto;
+    position: relative; /* SubMenu가 RightSection 안에 표시되도록 설정 */
+`;
+
+const LeftSection = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-right: auto; /* LeftSection을 왼쪽으로 정렬 */
+`;
+
+const Logo = styled.h1`
+    font-size: 1.5rem;
+    color: #3cb371;
+    cursor: pointer;
 `;
 
 const Menu = styled.div`
@@ -155,23 +155,27 @@ const NavItem = styled.span`
     cursor: pointer;
     padding: 0.5rem 1rem;
     position: relative;
-    border-radius: 5px; /* 테두리 둥글게 */
-    background-color: ${({ $isActive }) => ($isActive ? '#3cb371' : 'transparent')}; /* 마이페이지 활성화 시 배경색 */
-    color: ${({ $isActive }) => ($isActive ? 'white' : 'inherit')}; /* 마이페이지 활성화 시 글자색 변경 */
+    border-radius: 5px;
     &:hover {
-        background-color: #3cb371; /* 마우스 오버 시 배경색 */
-        color: white; /* 마우스 오버 시 글자색 */
+        background-color: #3cb371;
+        color: white;
     }
 `;
 
 const SubMenu = styled.div`
     position: absolute;
+    top: 100%; /* NavItem 바로 아래에 위치하도록 설정 */
+    left: 0;
+    display: flex;
+    flex-direction: column;
     background-color: white;
     border: 1px solid #ddd;
     border-radius: 5px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     margin-top: 0.5rem;
     z-index: 1000; /* 메뉴가 다른 요소 위에 나타나도록 설정 */
+    width: 150px;
+    overflow: visible; /* 메뉴가 페이지 밖으로 나가지 않도록 설정 */
 `;
 
 const SubMenuItem = styled(NavItem)`
@@ -191,13 +195,11 @@ const SearchBar = styled.div`
         border: 1px solid #ddd;
         width: 200px;
         margin-right: 0.5rem;
-        box-shadow: none;
     }
     button {
         background: none;
         border: none;
         font-size: 1.2rem;
         cursor: pointer;
-        box-shadow: none;
     }
 `;

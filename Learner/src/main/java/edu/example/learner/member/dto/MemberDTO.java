@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.springframework.boot.context.properties.bind.DefaultValue;
+import org.springframework.web.multipart.MultipartFile;
 
 
 import java.time.LocalDateTime;
@@ -30,7 +31,7 @@ public class MemberDTO {
 
     private String phoneNumber;
 
-    private String profileImage;
+    private byte[] profileImage;
 
     private String imageType;
 
@@ -52,10 +53,7 @@ public class MemberDTO {
             this.introduction = member.getIntroduction();
         }
         this.imageType = member.getImageType();
-        // 이미지를 Base64로 인코딩하여 저장
-        if (member.getProfileImage() != null) {
-            this.profileImage = Base64.encodeBase64String(member.getProfileImage());
-        }
+        this.profileImage = member.getProfileImage();
     }
 
     public MemberDTO getNonSensitiveInfo(MemberDTO member) {

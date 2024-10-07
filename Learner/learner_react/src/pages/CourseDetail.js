@@ -1,10 +1,12 @@
-import React, { useState, useEffect } from "react";
-import { useParams , useNavigate } from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
 import CourseNewsList from "./CourseNewsList";
 import CourseInquiryList from "./CourseInquiryList"; // 새로 추가된 컴포넌트
+import CourseReview from "./course-review/CourseReview";
 
+// 기본 이미지 경로
 const defaultImage = "/images/course_default_img.png";
 
 const CourseDetail = () => {
@@ -27,6 +29,7 @@ const CourseDetail = () => {
 
     const handleTabChange = (tab) => {
         setActiveTab(tab);
+        setSelectedInquiry(null); // 탭 변경 시 문의 상세 정보 초기화
     };
 
 
@@ -52,13 +55,16 @@ const CourseDetail = () => {
 
     return (
         <DetailPage>
+            {/* 강의 상세 정보 */}
             {course && (
                 <CourseInfo>
-                    <CourseImage src={defaultImage} alt="Course Image" />
+                    <CourseImage src={defaultImage} alt="Course Image"/>
                     <CourseDetails>
                         <CourseTitle>{course.courseName}</CourseTitle>
                         <CourseDescription>{course.courseDescription}</CourseDescription>
-                        <Instructor>강사 : {course.instructorName}</Instructor>
+                        <Instructor onClick={() => navigate(`/members/instructor/${course.memberNickname}`)}>
+                            강사 : {course.memberNickname}
+                        </Instructor>
                     </CourseDetails>
                 </CourseInfo>
             )}
@@ -72,7 +78,10 @@ const CourseDetail = () => {
             )}
 
             <Separator />
+            {/* 구분선 */}
+            <Separator/>
 
+            {/* 탭 메뉴 */}
             <TabMenu>
                 <Tab onClick={() => handleTabChange("curriculum")} active={activeTab === "curriculum"}>
                     커리큘럼
@@ -88,13 +97,100 @@ const CourseDetail = () => {
                 </Tab>
             </TabMenu>
 
-            <Separator />
+            <Separator/>
 
+            {/* 탭에 따라 내용 변경 */}
             <TabContent>
                 {activeTab === "curriculum" && <p>커리큘럼 내용이 여기에 표시됩니다.</p>}
                 {activeTab === "reviews" && <p>수강평 내용이 여기에 표시됩니다.</p>}
                 {activeTab === "questions" && <CourseInquiryList courseId={courseId} />}
                 {activeTab === "news" && <CourseNewsList courseId={courseId} />}
+                {activeTab === "reviews" && (
+                    <>
+                        <CourseReview courseId={courseId}/>
+                    </>
+                )}
+
+                {activeTab === "questions" && (
+                    <>
+                        {loading ? (
+                            <p>로딩 중...</p>
+                        ) : (
+                            <>
+                                <ButtonContainer>
+                                    {selectedInquiry ? (
+                                        <WriteButton onClick={() => setSelectedInquiry(null)}>이전 목록으로</WriteButton> // 이전 목록으로 버튼
+                                    ) : (
+                                        <WriteButton onClick={() => navigate(`/courses/${courseId}/post`)}>글
+                                            작성하기</WriteButton> // 글 작성하기 버튼
+                                    )}
+                                </ButtonContainer>
+
+                                {selectedInquiry ? (
+                                    loadingDetail ? (
+                                        <p>문의 상세 정보를 로딩 중입니다...</p>
+                                    ) : (
+                                        <>
+                                            <InquiryDetail>
+                                                <h3>{selectedInquiry.inquiryTitle}</h3>
+                                                <p><strong>문의 내용:</strong> {selectedInquiry.inquiryContent}</p>
+                                                <p><strong>작성자:</strong> {selectedInquiry.memberId}</p>
+                                                <p>
+                                                    <strong>작성일:</strong> {new Date(selectedInquiry.createdDate).toLocaleDateString()}
+                                                </p>
+                                            </InquiryDetail>
+
+                                            {/* 답변 목록 */}
+                                            <AnswerList>
+                                                <h4>답변 목록</h4>
+                                                {answers.length > 0 ? (
+                                                    answers.map((answer) => (
+                                                        <AnswerItem key={answer.answerId}>
+                                                            <p><strong>답변 내용:</strong> {answer.answerContent}</p>
+                                                            <p>
+                                                                <strong>작성일:</strong> {new Date(answer.createdDate).toLocaleDateString()}
+                                                            </p>
+                                                        </AnswerItem>
+                                                    ))
+                                                ) : (
+                                                    <p>답변이 없습니다.</p>
+                                                )}
+                                            </AnswerList>
+
+                                            {/* 답변 작성 폼 */}
+                                            <AnswerForm>
+                                                <textarea
+                                                    value={newAnswer}
+                                                    onChange={(e) => setNewAnswer(e.target.value)}
+                                                    placeholder="답변 내용을 입력하세요"
+                                                />
+                                                <SubmitButton onClick={handleAnswerSubmit}>답변 달기</SubmitButton>
+                                            </AnswerForm>
+                                        </>
+                                    )
+                                ) : (
+                                    inquiries.length > 0 ? (
+                                        <InquiryList>
+                                            {inquiries.map((inquiry) => (
+                                                <InquiryItem key={inquiry.inquiryId}
+                                                             onClick={() => handleInquiryClick(inquiry.inquiryId)}>
+                                                    <p><strong>문의 제목:</strong> {inquiry.inquiryTitle}</p>
+                                                    <p><strong>작성자:</strong> {inquiry.memberId}</p>
+                                                    <p>
+                                                        <strong>작성일:</strong> {new Date(inquiry.createdDate).toLocaleDateString()}
+                                                    </p>
+                                                </InquiryItem>
+                                            ))}
+                                        </InquiryList>
+                                    ) : (
+                                        <p>문의가 없습니다.</p>
+                                    )
+                                )}
+                            </>
+                        )}
+                    </>
+                )}
+                {activeTab === "news" && <CourseNewsList courseId={courseId}/>}
             </TabContent>
         </DetailPage>
     );
@@ -178,6 +274,13 @@ const AdminControls = styled.div`
     display: flex;
     justify-content: flex-start;
     gap: 1rem;
+    padding: 20px;  /* 내부 여백 추가 */
+    background-color: #f9f9f9;  /* 배경색 설정 */
+    border-radius: 10px;  /* 모서리 둥글게 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  /* 그림자 추가 */
+    max-width: 800px;  /* 최대 너비 설정 */
+    width: 100%;  /* 너비를 100%로 설정 */
+    box-sizing: border-box;  /* 패딩 포함한 너비 계산 */
 `;
 
 const UpdateButton = styled.button`

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react"; // useEffect 추가
+import React, { useState } from "react";
 import styled from "styled-components";
 
 const LoginModal = ({ closeModal }) => {
@@ -6,7 +6,7 @@ const LoginModal = ({ closeModal }) => {
     const [password, setPassword] = useState("");
 
     const handleLogin = async (event) => {
-        event.preventDefault(); // 기본 동작 방지
+        event.preventDefault();
 
         try {
             const response = await fetch("http://localhost:8080/join/login", {
@@ -18,10 +18,9 @@ const LoginModal = ({ closeModal }) => {
                     email: email,
                     password: password,
                 }),
-                credentials: "include", // 쿠키를 포함하려면 이 옵션을 추가해야 함
+                credentials: "include",
             });
 
-            // 상태 코드 확인
             if (response.ok) {
                 const { memberId, role } = await response.json();
                 console.log("로그인 성공, memberId:", memberId);
@@ -29,8 +28,7 @@ const LoginModal = ({ closeModal }) => {
                 localStorage.setItem("role",role);
                 alert("로그인에 성공하셨습니다.");
                 closeModal();
-                // 여기서 원하는 페이지로 리디렉션
-                window.location.href = "http://localhost:3000/courses"; // 로그인 후 이동할 페이지
+                window.location.href = "http://localhost:3000/courses";
             } else {
                 const errorMessage = await response.text();
                 console.error(`오류 발생: ${response.status} - ${errorMessage}`);
@@ -42,15 +40,12 @@ const LoginModal = ({ closeModal }) => {
         }
     };
 
-
-    // 네이버 로그인 클릭 핸들러
     const handleNaverClick = () => {
-        window.location.href = "http://localhost:8080/oauth2/authorization/naver"; // 네이버 로그인 페이지로 리디렉션
+        window.location.href = "http://localhost:8080/oauth2/authorization/naver";
     };
 
-    // 구글 로그인 클릭 핸들러
     const handleGoogleClick = () => {
-        window.location.href = "http://localhost:8080/oauth2/authorization/google"; // 구글 로그인 페이지로 리디렉션
+        window.location.href = "http://localhost:8080/oauth2/authorization/google";
     };
 
     return (
@@ -79,13 +74,12 @@ const LoginModal = ({ closeModal }) => {
                     <ButtonLink>회원가입</ButtonLink>
                 </PasswordOptions>
 
-                {/* 소셜 로그인 버튼 */}
                 <SocialLoginContainer>
                     <SocialLoginButton onClick={handleGoogleClick}>
-                        <GoogleIcon>G</GoogleIcon> {/* 구글 아이콘 */}
+                        <Icon src="http://localhost:8080/images/google_login.png" alt="Google Logo" />
                     </SocialLoginButton>
                     <SocialLoginButton onClick={handleNaverClick}>
-                        <NaverIcon>N</NaverIcon> {/* 네이버 아이콘 */}
+                        <Icon src="http://localhost:8080/images/naver_login.png" alt="Naver Logo" />
                     </SocialLoginButton>
                 </SocialLoginContainer>
             </ModalContainer>
@@ -182,22 +176,15 @@ const SocialLoginContainer = styled.div`
 `;
 
 const SocialLoginButton = styled.div`
-    width: 50px;
-    height: 50px;
     display: flex;
     justify-content: center;
     align-items: center;
-    border-radius: 50%;
     cursor: pointer;
+    border: none; // border 제거
 `;
 
-const GoogleIcon = styled(SocialLoginButton)`
-    background-color: #ffffff;
-    border: 1px solid #ddd;
-`;
-
-const NaverIcon = styled(SocialLoginButton)`
-    background-color: #03c75a;
-    color: white;
-    font-weight: bold;
+const Icon = styled.img`
+    width: 120px; // Google 로그인 버튼의 너비
+    height: 40px; // Google 로그인 버튼의 높이
+    object-fit: contain; // 비율 유지
 `;
