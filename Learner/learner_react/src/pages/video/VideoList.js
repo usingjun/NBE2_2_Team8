@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
+import { handlePlayClick } from "./HandlePlayClick";
 
 const Video_Url = "http://localhost:8080/video";
 const Course_Url = "http://localhost:8080/course";
@@ -11,6 +12,7 @@ const VideoList = () => {
     const [videos, setVideos] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchVideos = async () => {
@@ -69,9 +71,9 @@ const VideoList = () => {
                                 <Link to={`/video/update/${video.video_Id}`}>
                                     <StyledButton secondary>수정</StyledButton>
                                 </Link>
-                                <Link to={`/video/${video.video_Id}/play`} state={{ videoEntityId: video.video_Id, youtubeId: youtubeId }}>
-                                    <StyledButton secondary>재생</StyledButton>
-                                </Link>
+                                <StyledButton onClick={() => handlePlayClick(courseId, video, navigate, setError)} secondary>
+                                    재생
+                                </StyledButton>
                                 <StyledButton onClick={() => handleDeleteClick(video.video_Id)} secondary>삭제</StyledButton>
                             </ButtonContainer>
                         </VideoItem>
