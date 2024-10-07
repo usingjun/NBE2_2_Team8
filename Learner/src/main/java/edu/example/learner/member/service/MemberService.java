@@ -18,8 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -185,7 +183,7 @@ public class MemberService {
         }
 
         // JWT 생성 및 쿠키 반환
-        String accessToken = jwtUtil.createToken(Map.of("mid", member.getEmail(), "role", member.getRole()), 30);
+        String accessToken = jwtUtil.createToken(Map.of("mid", member.getEmail(), "role", ("ROLE_" + member.getRole())), 30);
         Cookie cookie = new Cookie("Authorization", accessToken);
         cookie.setMaxAge(60 * 60 * 60); // 60시간
         cookie.setPath("/"); // 전체 경로에서 접근 가능
@@ -212,18 +210,5 @@ public class MemberService {
          log.info("본래 비밀번호 " + member.getPassword());
         // 저장된 비밀번호와 입력된 비밀번호를 비교합니다.
         return passwordEncoder.matches(rawPassword, member.getPassword());
-    }
-
-    //전체 회원 조회
-    public List<MemberDTO> getAllMembers() {
-        List<Member> members = memberRepository.findAll();
-
-        List<MemberDTO> memberDTOS = new ArrayList<>();
-        for (Member member : members) {
-            MemberDTO memberDTO = new MemberDTO(member);
-            memberDTOS.add(memberDTO);
-        }
-
-        return memberDTOS;
     }
 }

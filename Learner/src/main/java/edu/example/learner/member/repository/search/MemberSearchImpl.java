@@ -1,7 +1,6 @@
 package edu.example.learner.member.repository.search;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import edu.example.learner.member.dto.MemberDTO;
 import edu.example.learner.member.entity.Member;
 import edu.example.learner.member.entity.QMember;
 import lombok.RequiredArgsConstructor;
@@ -45,5 +44,4 @@ public class MemberSearchImpl implements MemberSearch{
                 .where(qMember.nickname.eq(nickName))
                 .fetchOne());
     }
-
 }

@@ -6,7 +6,7 @@ import styled from "styled-components";
 const Order_Url = "http://localhost:8080/order";
 
 const Orders = () => {
-    const [orders, setOrders] = useState([]); // orders의 초기값을 빈 배열로 설정
+    const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const memberId = localStorage.getItem("memberId");
@@ -21,20 +21,11 @@ const Orders = () => {
                 return;
             }
             try {
-                const response = await axios.get(`${Order_Url}/list/${memberId}`, { withCredentials: true });
-
-                // 응답 데이터가 배열인지 확인
-                if (Array.isArray(response.data)) {
-                    setOrders(response.data);
-                } else {
-                    console.error('주문 응답이 배열이 아닙니다:', response.data);
-                    setError("주문 목록을 가져오는 데 실패했습니다.");
-                    setOrders([]); // 배열이 아닐 경우 빈 배열 설정
-                }
+                const response = await axios.get(`${Order_Url}/list/${memberId}`);
+                setOrders(response.data);
             } catch (error) {
                 console.error("주문 가져오는 중 오류 발생:", error);
                 setError("주문 목록을 가져오는 데 실패했습니다.");
-                setOrders([]); // 에러 발생 시 빈 배열 설정
             } finally {
                 setLoading(false);
             }
@@ -43,19 +34,20 @@ const Orders = () => {
     }, [memberId]);
 
     const handleUpdateClick = (orderId) => {
-        navigate(`/orders/update/${orderId}`,{ withCredentials: true });
+        navigate(`/orders/update/${orderId}`);
     };
 
     const handleDeleteClick = (orderId) => {
         if (window.confirm("정말로 이 주문을 삭제하시겠습니까?")) {
-            navigate(`/orders/delete/${orderId}`,{ withCredentials: true });
+            navigate(`/orders/delete/${orderId}`);
         }
     };
 
     const handlePurchase = async (orderId) => {
         const memberId = localStorage.getItem("memberId");
+        console.log(orderId);
         try {
-            const response = await axios.post(`${Order_Url}/purchase/${orderId}`, { orderId, memberId },{ withCredentials: true });
+            const response = await axios.post(`${Order_Url}/purchase/${orderId}`, { orderId,memberId });
             alert("결제가 완료되었습니다. 주문 ID: " + response.data.orderId);
         } catch (error) {
             console.error("결제 중 오류 발생:", error);

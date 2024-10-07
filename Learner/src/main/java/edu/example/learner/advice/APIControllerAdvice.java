@@ -4,8 +4,6 @@ import edu.example.learner.courseabout.exception.HeartNewsAlreadyExistsException
 import edu.example.learner.courseabout.exception.NotFoundException;
 import edu.example.learner.courseabout.exception.ReviewTaskException;
 import edu.example.learner.courseabout.order.exception.OrderTaskException;
-import edu.example.learner.member.exception.LoginException;
-import edu.example.learner.member.exception.LoginTaskException;
 import edu.example.learner.member.exception.MemberTaskException;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
@@ -32,20 +30,7 @@ public class APIControllerAdvice {
 
     //member 예외처리
     @ExceptionHandler(MemberTaskException.class)
-    public ResponseEntity<?> handleMemberException(MemberTaskException e) {
-        log.info("--- MemberTaskException");
-        log.info("--- e.getClass().getName() : " + e.getClass().getName());
-        log.info("--- e.getMessage() : " + e.getMessage());
-
-        Map<String, String> errMap = Map.of("error", e.getMessage());
-
-
-        return ResponseEntity.status(e.getStatusCode()).body(errMap);
-    }
-
-    //Login 예외처리
-    @ExceptionHandler(LoginTaskException.class)
-    public ResponseEntity<?> handleLoginException(LoginTaskException e) {
+    public ResponseEntity<?> handleOrderTaskException(MemberTaskException e) {
         log.info("--- MemberTaskException");
         log.info("--- e.getClass().getName() : " + e.getClass().getName());
         log.info("--- e.getMessage() : " + e.getMessage());

@@ -31,7 +31,7 @@ public class CourseInquiryController {
                 .stream()
                 .map(CourseInquiryDTO::new)
                 .toList();
-        log.info(courseInquiryDTOS);
+
         return ResponseEntity.ok(courseInquiryDTOS);
     }
 
