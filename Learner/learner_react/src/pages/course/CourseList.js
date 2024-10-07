@@ -36,7 +36,7 @@ const CourseList = () => {
     }, [memberId]);
 
     const handleUpdateClick = (courseId) => {
-        navigate(`/course/update/${courseId}`);
+        navigate(`/courses/update/${courseId}`);
     };
 
     const handleDeleteClick = async (courseId) => {
@@ -58,7 +58,7 @@ const CourseList = () => {
         <CourseListContainer>
             <Header>강좌 목록</Header>
             {role === "INSTRUCTOR" ? (
-                <Link to="/course/create">
+                <Link to="/courses/create">
                     <StyledButton primary>강좌 생성</StyledButton>
                 </Link>
             ) : (
