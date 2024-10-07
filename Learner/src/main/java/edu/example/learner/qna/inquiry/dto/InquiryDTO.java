@@ -4,6 +4,7 @@ import edu.example.learner.qna.inquiry.entity.Inquiry;
 import edu.example.learner.qna.inquiry.entity.InquiryStatus;
 import edu.example.learner.member.entity.Member;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -31,7 +32,10 @@ public class InquiryDTO {
     @Builder.Default
     private String inquiryStatus = InquiryStatus.CONFIRMING.name();
 
+    @NotNull
     private Long memberId;
+
+    private String memberNickname;
 
     public InquiryDTO(Inquiry inquiry) {
         this.inquiryId = inquiry.getInquiryId();
@@ -41,6 +45,7 @@ public class InquiryDTO {
         this.inquiryUpdateDate = inquiry.getInquiryUpdateDate();
         this.inquiryStatus = inquiry.getInquiryStatus();
         this.memberId = inquiry.getMember().getMemberId();
+        this.memberNickname = inquiry.getMember().getNickname();
     }
 
     public Inquiry toEntity() {

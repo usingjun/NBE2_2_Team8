@@ -22,8 +22,8 @@ public class AnswerServiceImpl implements AnswerService {
     private final InquiryRepository inquiryRepository;
 
     @Override
-    public AnswerDTO read(Long answerId) {
-        return new AnswerDTO(answerRepository.findById(answerId).orElseThrow(LearnerException.NOT_FOUND_EXCEPTION::getTaskException));
+    public AnswerDTO read(Long inquiryId) {
+        return new AnswerDTO(answerRepository.findByInquiryId(inquiryId).orElseThrow(LearnerException.NOT_FOUND_EXCEPTION::getTaskException));
     }
 
     @Override

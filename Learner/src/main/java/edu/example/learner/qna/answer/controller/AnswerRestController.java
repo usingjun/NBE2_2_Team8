@@ -16,9 +16,9 @@ import java.util.Map;
 public class AnswerRestController {
     private final AnswerService answerService;
 
-    @GetMapping("/{answerId}")
-    public ResponseEntity<AnswerDTO> read(@PathVariable("answerId") Long answerId) {
-        return ResponseEntity.ok(answerService.read(answerId));
+    @GetMapping("/{inquiryId}")
+    public ResponseEntity<AnswerDTO> read(@PathVariable("inquiryId") Long inquiryId) {
+        return ResponseEntity.ok(answerService.read(inquiryId));
     }
 
     @GetMapping
