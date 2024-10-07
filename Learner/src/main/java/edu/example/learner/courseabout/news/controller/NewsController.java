@@ -5,7 +5,7 @@ import edu.example.learner.courseabout.news.dto.NewsResDTO;
 import edu.example.learner.courseabout.news.dto.NewsRqDTO;
 import edu.example.learner.courseabout.news.service.HeartNewsService;
 import edu.example.learner.courseabout.news.service.NewsService;
-import edu.example.learner.redis.RedisViewServiceImpl;
+import edu.example.learner.redis.RedisServiceImpl;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -28,7 +28,7 @@ import java.time.Duration;
 public class NewsController {
     private final NewsService newsService;
     private final HeartNewsService heartNewsService;
-    private final RedisViewServiceImpl redisViewServiceImpl;
+    private final RedisServiceImpl redisViewServiceImpl;
 
     // 새소식 등록
     @PostMapping

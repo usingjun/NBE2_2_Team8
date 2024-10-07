@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import styled from "styled-components";
+import FindEmail from "./FindEmail";
+import PasswordSendEmail from "./PasswordSendEmail";
 
-const LoginModal = ({ closeModal }) => {
+const LoginModal = ({closeModal}) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [showFindEmail, setShowFindEmail] = useState(false);
+    const [showResetPassword, setShowResetPassword] = useState(false);
 
     const handleLogin = async (event) => {
         event.preventDefault();
@@ -22,7 +26,7 @@ const LoginModal = ({ closeModal }) => {
             });
 
             if (response.ok) {
-                const { memberId } = await response.json();
+                const {memberId} = await response.json();
                 console.log("로그인 성공, memberId:", memberId);
                 localStorage.setItem("memberId", memberId);
                 alert("로그인에 성공하셨습니다.");
@@ -48,41 +52,55 @@ const LoginModal = ({ closeModal }) => {
     };
 
     return (
-        <ModalBackground>
-            <ModalContainer>
-                <CloseButton onClick={closeModal}>X</CloseButton>
-                <Logo>Learner</Logo>
-                <Form onSubmit={handleLogin}>
-                    <Input
-                        type="email"
-                        placeholder="이메일"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                    <Input
-                        type="password"
-                        placeholder="비밀번호"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                    <LoginButton type="submit">로그인</LoginButton>
-                </Form>
-                <PasswordOptions>
-                    <ButtonLink>아이디(이메일) 찾기</ButtonLink> |
-                    <ButtonLink>비밀번호 찾기</ButtonLink> |
-                    <ButtonLink>회원가입</ButtonLink>
-                </PasswordOptions>
+        <>
+            <ModalBackground>
+                <ModalContainer>
+                    <CloseButton onClick={closeModal}>X</CloseButton>
+                    <Logo>Learner</Logo>
+                    <Form onSubmit={handleLogin}>
+                        <Input
+                            type="email"
+                            placeholder="이메일"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                        />
+                        <Input
+                            type="password"
+                            placeholder="비밀번호"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                        />
+                        <LoginButton type="submit">로그인</LoginButton>
+                    </Form>
+                    <PasswordOptions>
+                        <ButtonLink onClick={() => setShowFindEmail(true)}>
+                            아이디(이메일) 찾기
+                        </ButtonLink> |
+                        <ButtonLink onClick={() => setShowResetPassword(true)}>
+                            비밀번호 찾기
+                        </ButtonLink> |
+                        <ButtonLink>회원가입</ButtonLink>
+                    </PasswordOptions>
 
-                <SocialLoginContainer>
-                    <SocialLoginButton onClick={handleGoogleClick}>
-                        <Icon src="http://localhost:8080/images/google_login.png" alt="Google Logo" />
-                    </SocialLoginButton>
-                    <SocialLoginButton onClick={handleNaverClick}>
-                        <Icon src="http://localhost:8080/images/naver_login.png" alt="Naver Logo" />
-                    </SocialLoginButton>
-                </SocialLoginContainer>
-            </ModalContainer>
-        </ModalBackground>
+                    <SocialLoginContainer>
+                        <SocialLoginButton onClick={handleGoogleClick}>
+                            <Icon src="http://localhost:8080/images/google_login.png" alt="Google Logo"/>
+                        </SocialLoginButton>
+                        <SocialLoginButton onClick={handleNaverClick}>
+                            <Icon src="http://localhost:8080/images/naver_login.png" alt="Naver Logo"/>
+                        </SocialLoginButton>
+                    </SocialLoginContainer>
+                </ModalContainer>
+            </ModalBackground>
+
+            {showFindEmail && (
+                <FindEmail closeModal={() => setShowFindEmail(false)}/>
+            )}
+
+            {showResetPassword && (
+                <PasswordSendEmail closeModal={() => setShowResetPassword(false)}/>
+            )}
+        </>
     );
 };
 
@@ -146,6 +164,7 @@ const LoginButton = styled.button`
     border-radius: 5px;
     font-size: 1.1rem;
     cursor: pointer;
+
     &:hover {
         background-color: #218838;
     }
@@ -163,6 +182,7 @@ const ButtonLink = styled.button`
     font-size: 0.875rem;
     text-decoration: underline;
     cursor: pointer;
+
     &:hover {
         color: #28a745;
     }
