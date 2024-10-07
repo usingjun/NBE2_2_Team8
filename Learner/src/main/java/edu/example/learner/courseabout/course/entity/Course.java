@@ -95,7 +95,7 @@ public class Course {
     @LastModifiedDate
     private LocalDateTime courseModifiedDate;
 
-    @OneToMany(mappedBy = "courseNews")
+    @OneToMany(mappedBy = "courseNews", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<NewsEntity> newsEntities = new ArrayList<>();
 
