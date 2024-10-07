@@ -1,5 +1,7 @@
 package edu.example.learner.courseabout.order.service;
 
+import edu.example.learner.courseabout.course.entity.MemberCourse;
+import edu.example.learner.courseabout.course.repository.MemberCourseRepository;
 import edu.example.learner.courseabout.exception.CourseException;
 import edu.example.learner.courseabout.order.dto.OrderDTO;
 import edu.example.learner.courseabout.order.dto.OrderItemDTO;
@@ -24,6 +26,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,6 +39,48 @@ public class OrderServiceImpl implements OrderService {
     private final CourseRepository courseRepository;
     private final OrderItemRepository orderItemRepository;
     private final MemberRepository memberRepository;
+    private final MemberCourseRepository memberCourseRepository;
+
+    @Override
+    public OrderDTO purchaseOrderItems(Long orderId, Long memberId) {
+        // 주문 찾기
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(OrderException.ORDER_NOT_FOUND::get);
+
+        // 주문자 확인
+        if (!order.getMember().getMemberId().equals(memberId)) {
+            throw OrderException.ORDER_NOT_FOUND.get();
+        }
+
+        // 주문의 아이템 리스트를 통해 총 가격 계산
+        double totalPrice = 0.0;
+
+        for (OrderItem orderItem : order.getOrderItems()) {
+            totalPrice += orderItem.getPrice();
+        }
+
+        // 주문 상태 업데이트 (예: 결제 완료 상태로 변경)
+        order.changeOrderStatus(OrderStatus.COMPLETED);
+        order.changeTotalPrice(totalPrice); // 총 가격 설정
+
+        // 구매 정보 저장 (멤버-강의 연결)
+        for (OrderItem orderItem : order.getOrderItems()) {
+            MemberCourse memberCourse = MemberCourse.builder()
+                    .member(order.getMember())
+                    .course(orderItem.getCourse())
+                    .purchaseDate(new Date())
+                    .build();
+            memberCourseRepository.save(memberCourse);
+        }
+
+        // 주문 정보 저장
+        orderRepository.save(order);
+        log.info("저장완료");
+
+        // 주문 DTO 반환
+        return new OrderDTO(order);
+    }
+
 
     @Override
     public OrderDTO add(OrderDTO orderDTO,Long memberId) {
@@ -130,7 +175,6 @@ public class OrderServiceImpl implements OrderService {
                 .sum(); // 총합 계산
 
         foundOrder.changeTotalPrice(totalPrice); // 총 금액을 주문에 설정
-
         return new OrderUpdateDTO(foundOrder);
     }
 
