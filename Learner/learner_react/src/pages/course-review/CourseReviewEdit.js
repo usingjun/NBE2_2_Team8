@@ -3,18 +3,21 @@ import { useParams, useNavigate } from "react-router-dom";
 import styled from "styled-components";
 
 const CourseReviewEdit = () => {
-    const { courseId, reviewId } = useParams(); // courseId, reviewId 가져오기
-    console.log(courseId, reviewId);
+    const { courseId, reviewId } = useParams();
     const navigate = useNavigate();
 
     const [reviewName, setReviewName] = useState("");
     const [reviewDetail, setReviewDetail] = useState("");
     const [rating, setRating] = useState(1);
-    const [memberId] = useState(1); // 예시로 하드코딩된 memberId
-    const [nickname] = useState("");
+    const [writerId, setWriterId] = useState(null); // writerId 상태 추가
 
     useEffect(() => {
-        // 리뷰 데이터 가져오기 (reviewId, courseId로 리뷰 조회)
+        const storedWriterId = localStorage.getItem("memberId"); // localStorage에서 memberId 가져오기
+        if (storedWriterId) {
+            setWriterId(storedWriterId); // writerId 상태 설정
+        }
+
+        // 리뷰 데이터 가져오기
         fetch(`http://localhost:8080/course/${courseId}/reviews/${reviewId}`, {
             credentials: 'include',
         })
@@ -31,14 +34,13 @@ const CourseReviewEdit = () => {
         e.preventDefault();
 
         const reviewData = {
-            reviewId, // reviewId 추가
+            reviewId,
             reviewName,
             reviewDetail,
             rating,
-            reviewType: 'COURSE', // 리뷰 타입 설정
-            memberId, // 추가된 memberId
-            nickname,
-            courseId, // courseId 추가
+            reviewType: 'COURSE',
+            writerId, // writerId 추가
+            courseId,
         };
 
         // PUT 요청에 reviewId 포함
@@ -53,7 +55,7 @@ const CourseReviewEdit = () => {
             .then((res) => {
                 if (res.ok) {
                     alert("리뷰가 성공적으로 수정되었습니다.");
-                    navigate(`/courses/${courseId}`); // 과정 상세 페이지로 이동
+                    navigate(`/courses/${courseId}`);
                 } else {
                     throw new Error("리뷰 수정 실패");
                 }
