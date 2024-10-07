@@ -14,5 +14,6 @@ public interface OrderService {
     List<OrderDTO> readAll();
     List<OrderDTO> getOrdersById(Long memberId);
     void deleteAll();
+    public OrderDTO purchaseOrderItems(Long orderId, Long memberId);
 
 }

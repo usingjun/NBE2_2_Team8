@@ -43,6 +43,18 @@ const Orders = () => {
         }
     };
 
+    const handlePurchase = async (orderId) => {
+        const memberId = localStorage.getItem("memberId");
+        console.log(orderId);
+        try {
+            const response = await axios.post(`${Order_Url}/purchase/${orderId}`, { orderId,memberId });
+            alert("결제가 완료되었습니다. 주문 ID: " + response.data.orderId);
+        } catch (error) {
+            console.error("결제 중 오류 발생:", error);
+            alert("결제에 실패했습니다.");
+        }
+    };
+
     if (loading) return <LoadingMessage>로딩 중...</LoadingMessage>;
     if (error) return <ErrorMessage>{error}</ErrorMessage>;
 
@@ -63,6 +75,7 @@ const Orders = () => {
                             <Link to={`/orders/${order.orderId}`}>
                                 <StyledButton>상세보기</StyledButton>
                             </Link>
+                            <StyledButton onClick={() => handlePurchase(order.orderId)} primary>구매</StyledButton>
                             <StyledButton onClick={() => handleDeleteClick(order.orderId)} secondary>삭제</StyledButton>
                         </ButtonContainer>
                     </OrderItem>
