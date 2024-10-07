@@ -15,4 +15,6 @@ public interface CourseService {
     List<CourseDTO> readAll();
     List<CourseDTO> getCoursesByNickname(String nickname);
     List<MemberCourseDTO> getMemberCoursesByMemberId(Long memberId);
+    List<CourseDTO> getCoursesByMemberId(Long memberId);
+
 }
