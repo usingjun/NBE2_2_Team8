@@ -1,6 +1,7 @@
 package edu.example.learner.courseabout.course.controller;
 
 import edu.example.learner.courseabout.course.dto.CourseDTO;
+import edu.example.learner.courseabout.course.dto.MemberCourseDTO;
 import edu.example.learner.courseabout.course.service.CourseService;
 import edu.example.learner.member.dto.MemberDTO;
 import edu.example.learner.member.service.MemberService;
