@@ -12,4 +12,8 @@ public interface MemberRepository extends JpaRepository<Member, Long>, MemberSea
     List<Member> getAllMembers();
 
     Optional<Member> findByEmail(String email);
+
+    List<Member> findByPhoneNumber(String phoneNumber);
+
+    boolean existsByEmail(String email);
 }
