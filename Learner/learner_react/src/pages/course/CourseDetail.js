@@ -2,8 +2,8 @@ import React, {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
-import CourseNewsList from "./CourseNewsList";
-import CourseReview from "./course-review/CourseReview";
+import CourseNewsList from "../CourseNewsList";
+import CourseReview from "../course-review/CourseReview";
 
 // 기본 이미지 경로
 const defaultImage = "/images/course_default_img.png";

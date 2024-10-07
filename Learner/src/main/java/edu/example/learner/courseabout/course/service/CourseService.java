@@ -13,4 +13,6 @@ public interface CourseService {
     CourseDTO updateCourse(CourseDTO courseDTO);
     void deleteCourse(Long courseId);
     List<CourseDTO> readAll();
+    List<CourseDTO> getCoursesByNickname(String nickname);
+ 
 }

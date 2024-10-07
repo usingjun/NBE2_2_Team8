@@ -3,6 +3,7 @@ import styled from "styled-components";
 
 const MyPage = () => {
     const [userInfo, setUserInfo] = useState(null);
+    const [myCourses, setMyCourses] = useState([]); // 사용자 강의 상태 추가
     const [selectedFile, setSelectedFile] = useState(null);
     const [errorMessage, setErrorMessage] = useState(""); // 오류 메시지 상태 추가
     const [isHover, setIsHover] = useState(false);
@@ -25,7 +26,24 @@ const MyPage = () => {
             }
         };
 
+        const fetchMyCourses = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/members/${memberId}/courses`, {
+                    credentials: "include",
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setMyCourses(data); // 사용자 강의 정보 설정
+                } else {
+                    console.error("강의 정보 로드 실패:", response.status);
+                }
+            } catch (error) {
+                console.error("강의 정보 API 호출 중 오류 발생:", error);
+            }
+        };
+
         fetchUserInfo();
+        fetchMyCourses(); // 강의 정보 가져오기
     }, []);
 
     const handleLogout = () => {
@@ -284,6 +302,28 @@ const AboutTitle = styled.h2`
 
 const AboutContent = styled.p`
     font-size: 1.2rem;
+`;
+
+const MyCoursesSection = styled.div`
+    margin: 2rem 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 1.5rem;
+    background-color: #f9f9f9;
+    text-align: left;
+`;
+
+const CourseList = styled.ul`
+    list-style-type: none;
+    padding: 0;
+`;
+
+const CourseItem = styled.li`
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #ddd;
+    &:last-child {
+        border-bottom: none; // 마지막 항목의 경계 제거
+    }
 `;
 
 const ButtonContainer = styled.div`
