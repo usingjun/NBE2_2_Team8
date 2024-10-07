@@ -4,14 +4,7 @@ import Header from "./components/Header";
 import Courses from "./pages/Courses";
 import PostCourse from "./pages/PostCourse";
 import PutCourse from "./pages/PutCourse";
-import CourseDetail from "./pages/CourseDetail";
-import Orders from "./pages/Orders";
-import OrderDetail from './pages/OrderDetail';
-import OrderCreate from "./pages/OrderCreate";
-import OrderUpdate from "./pages/OrderUpdate";
-import OrderDelete from "./pages/OrderDelete";
 import SignUp from "./pages/SignUp";
-import Courses from "./pages/Courses";
 import LoginModal from "./components/LoginModal";
 import PostCourseInquiry from "./pages/PostCourseInquiry"
 import CourseNews from "./pages/CourseNews";
@@ -30,7 +23,6 @@ import VideoRoutes from "./VideoRoutes";
 import YoutubePlayer from "./YoutubePlayer";
 import ResetPassword from "./components/ResetPassword"; // ResetPassword 컴포넌트 가져오기
 import MyCourses from './pages/MyCourses';
-import OtherUserPage from "./pages/OtherUserPage";
 
 function App() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -52,12 +44,11 @@ function App() {
                 <Route path="/courses" element={<Courses />} />
                 <Route path="/post-course" element={<PostCourse />} />
                 <Route path="/put-course/:courseId" element={<PutCourse />} />
-                <Route path="/courses/:courseId" element={<CourseDetail />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/courses" element={<Courses />} /> {/* 수정된 경로 */}
                 <Route path="/courses/:courseId/post" element={<PostCourseInquiry />} />
                 <Route path="/courses/:courseId/news/:newsId" element={<CourseNews />} />
-                <Route path="/my-page" element={<MyPage />} />
+                <Route path="/내정보" element={<MyPage />} />
                 <Route path="/courses/:courseId/news/create" element={<CreateNews />} />
                 <Route path="/courses/:courseId/news/:newsId/edit" element={<UpdateNews />} />
                 <Route path="/edit-profile" element={<EditProfile />} />
@@ -74,7 +65,7 @@ function App() {
                 <Route path="/members/instructor/:nickname/reviews/:reviewId" element={<InstructorReviewEdit />} /> {/* 강사 리뷰 수정 페이지 */}
                 <Route path="/reset-password/:uuid" element={<ResetPassword />} /> {/* 비밀번호 변경 */}
                 <Route path="/my-courses" element={<MyCourses />} />
-                <Route path="/members/:nickname/other" element={<OtherUserPage />} />
+
             </Routes>
         </Router>
     );
