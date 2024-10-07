@@ -12,6 +12,15 @@ const InstructorReviewCreate = () => {
     const [memberId] = useState(1); // 예시로 하드코딩된 memberId
     const [courses, setCourses] = useState([]); // 강의 목록 상태
     const [selectedCourseId, setSelectedCourseId] = useState(""); // 선택한 강의 ID
+    const [writerId, setWriterId] = useState(null); // 토큰에서 가져온 memberId 저장
+
+    // useEffect를 통해 로그인한 사용자의 정보를 로컬 스토리지에서 가져옴
+    useEffect(() => {
+        const storedMemberId = localStorage.getItem("memberId"); // localStorage에서 memberId 가져옴
+        if (storedMemberId) {
+            setWriterId(storedMemberId); // memberId 상태 설정
+        }
+    }, []);
 
     useEffect(() => {
         const fetchCourses = async () => {
@@ -38,9 +47,12 @@ const InstructorReviewCreate = () => {
             reviewDetail,
             rating,
             memberId,
+            writerId, // 로그인된 사용자의 memberId
             nickname,
             courseId: selectedCourseId, // 선택한 강의 ID 추가
         };
+
+        const token = localStorage.getItem("token"); // 토큰 가져오기
 
         const endpoint = `http://localhost:8080/members/instructor/${nickname}/reviews/create`;
 
@@ -48,6 +60,7 @@ const InstructorReviewCreate = () => {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}`, // Authorization 헤더에 토큰 추가
             },
             body: JSON.stringify(reviewData),
             credentials: 'include',
