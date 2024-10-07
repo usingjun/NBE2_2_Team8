@@ -1,6 +1,8 @@
 package edu.example.learner.courseabout.course.controller;
 
 import edu.example.learner.courseabout.course.dto.CourseDTO;
+import edu.example.learner.courseabout.course.dto.MemberCourseDTO;
+import edu.example.learner.courseabout.course.entity.MemberCourse;
 import edu.example.learner.courseabout.course.service.CourseService;
 
 import edu.example.learner.courseabout.exception.CourseTaskException;
@@ -73,9 +75,12 @@ public class CourseController {
         return ResponseEntity.ok(Map.of("delete","success"));
     }
 
+    //내 수강 정보
     @GetMapping("{memberId}/list")
-    public ResponseEntity<List<CourseDTO>> readCourseListByMemberId(@PathVariable Long memberId) {
+    public ResponseEntity<List<MemberCourseDTO>> readCourseListByMemberId(@PathVariable Long memberId) {
         log.info("Reading course list");
-        return ResponseEntity.ok(courseService.readAll());
+        return ResponseEntity.ok(courseService.getMemberCoursesByMemberId(memberId));
     }
+
+
 }

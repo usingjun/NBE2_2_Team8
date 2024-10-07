@@ -5,7 +5,23 @@ const InstructorReview = () => {
     const { nickname } = useParams(); // URL에서 nickname 가져오기
     const [reviewList, setReviewList] = useState([]);
     const [averageRating, setAverageRating] = useState(0); // 평균 평점 상태 추가
+    const [userId, setUserId] = useState(''); // 사용자의 memberId를 저장할 상태 추가
     const navigate = useNavigate(); // navigate 추가
+
+    useEffect(() => {
+        const token = localStorage.getItem("memberId");
+        if (token) {
+            fetch(`http://localhost:8080/members/${token}`, {
+                credentials: 'include',
+            })
+                .then(res => res.json())
+                .then(data => {
+                    console.log("사용자 정보:", data);
+                    setUserId(data.memberId); // 사용자 memberId 설정
+                })
+                .catch(err => console.error("사용자 정보 가져오기 실패:", err));
+        }
+    }, []);
 
     const fetchReviews = () => {
         fetch(`http://localhost:8080/members/instructor/${nickname}/reviews/list`, {
@@ -34,14 +50,18 @@ const InstructorReview = () => {
     }, [nickname]); // nickname에 따라 API 호출
 
     const handleDelete = (reviewId) => {
+        const token = localStorage.getItem("memberId");
         if (window.confirm("정말 삭제하시겠습니까?")) {
             fetch(`http://localhost:8080/members/instructor/${nickname}/reviews/${reviewId}`, {
                 method: "DELETE",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'memberId': token  // memberId를 헤더에 추가
+                },
                 credentials: 'include',
             })
                 .then(() => {
                     setReviewList(reviewList.filter(review => review.reviewId !== reviewId));
-                    calculateAverageRating(reviewList.filter(review => review.reviewId !== reviewId)); // 평균 평점 재계산
                     alert("리뷰가 삭제되었습니다.");
                 })
                 .catch(err => console.error("리뷰 삭제 실패:", err));
@@ -65,10 +85,15 @@ const InstructorReview = () => {
                             <h3 className="review-title">{review.reviewName}</h3>
                             <p className="review-detail">{review.reviewDetail}</p>
                             <span className="review-rating">평점: {review.rating} / 5</span>
+                            <p className="review-author">작성자: {review.writerName}</p>
                         </div>
                         <div className="button-group">
-                            <button onClick={() => handleDelete(review.reviewId)} className="delete-button">삭제</button>
-                            <Link to={`/members/instructor/${nickname}/reviews/${review.reviewId}`} className="edit-button">수정</Link> {/* 수정 페이지로 이동 */}
+                            {userId === review.writerId && ( // userId와 review의 writerId가 일치할 때만 버튼 표시
+                                <>
+                                    <button onClick={() => handleDelete(review.reviewId)} className="delete-button">삭제</button>
+                                    <Link to={`/members/instructor/${nickname}/reviews/${review.reviewId}`} className="edit-button">수정</Link> {/* 수정 페이지로 이동 */}
+                                </>
+                            )}
                         </div>
                     </li>
                 ))}

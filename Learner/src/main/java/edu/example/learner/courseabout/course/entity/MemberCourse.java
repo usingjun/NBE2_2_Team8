@@ -1,5 +1,6 @@
 package edu.example.learner.courseabout.course.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import edu.example.learner.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

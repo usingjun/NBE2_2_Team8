@@ -28,7 +28,7 @@ public class ReviewServiceImpl implements ReviewService {
     public ReviewDTO createReview(ReviewDTO reviewDTO, ReviewType reviewType) {
         try {
             Course course = courseService.read(reviewDTO.getCourseId()).toEntity();
-            reviewDTO.setWriterId(1L);
+            reviewDTO.setWriterName(memberService.getMemberInfo(reviewDTO.getWriterId()).getNickname());
             reviewDTO.setReviewType(reviewType);
 
             Review review = reviewDTO.toEntity(course);
@@ -53,9 +53,15 @@ public class ReviewServiceImpl implements ReviewService {
         Course course = courseService.read(reviewDTO.getCourseId()).toEntity();
 
         Review review = reviewRepository.findById(reviewId).orElseThrow(ReviewException.NOT_FOUND::get);
-        reviewDTO.setWriterId(1L);
+        if (review.getMember().getMemberId() != reviewDTO.getWriterId()) {
+            throw ReviewException.NOT_MATCHED_REVIEWER.get();
+        }
+        if (reviewDTO.getRating() == 0) {
+            reviewDTO.setRating(1);
+        }
 
         Review newReview = reviewDTO.toEntity(course);
+
         try {
             review.changeReviewName(newReview.getReviewName());
             review.changeReviewDetail(newReview.getReviewDetail());
@@ -70,8 +76,12 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public void deleteReview(Long reviewId) {
+    public void deleteReview(Long reviewId, ReviewDTO reviewDTO) {
         Review review = reviewRepository.findById(reviewId).orElseThrow(ReviewException.NOT_FOUND::get);
+
+        if (review.getMember().getMemberId() != reviewDTO.getWriterId()) {
+            throw ReviewException.NOT_MATCHED_REVIEWER.get();
+        }
 
         try {
             reviewRepository.delete(review);
@@ -83,7 +93,6 @@ public class ReviewServiceImpl implements ReviewService {
 
     @Override
     public List<ReviewDTO> getCourseReviewList(Long courseId, ReviewDTO reviewDTO) {
-        System.out.println("service");
 
         // COURSE인 리뷰만 가져오기 위해 필터링
         List<Review> reviewList = reviewRepository.getCourseReview(courseId).orElse(null);
@@ -104,7 +113,9 @@ public class ReviewServiceImpl implements ReviewService {
                             .rating(review.getRating())
                             .reviewType(review.getReviewType())
                             .writerId(review.getMember().getMemberId())
-                            .courseId(review.getCourse().getCourseId())
+                            .courseId(courseId)
+                            .writerName(review.getMember().getNickname())
+                            .nickname(review.getCourse().getMember().getNickname())
                             .build());
                 });
 
@@ -134,6 +145,7 @@ public class ReviewServiceImpl implements ReviewService {
                             .writerId(review.getMember().getMemberId())
                             .courseId(courseId)
                             .nickname(nickname)
+                            .writerName(review.getMember().getNickname())
                             .build());
                 });
 
