@@ -12,7 +12,6 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -29,21 +28,17 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         log.info("--- doFilterInternal() ");
         log.info("--- requestURI : " + request.getRequestURI());
 
-        log.info("--- doFilterInternal() called by thread: " + Thread.currentThread().getName());
-        log.info("--- request ID: " + request.getAttribute("org.springframework.web.context.request.RequestAttributes.SCOPE_REQUEST"));
-
-
-// 필터링할 경로 설정
-        String[] doFilterPath = {"/course", "/members", "/order", "/reviews", "/video", "/news", "/like"};
+        // 필터링할 경로 설정
+        String[] doFilterPath = {"/course", "/members", "/order", "/reviews", "/video", "/news", "/like", "/course-inquiry"};
         boolean doFilter = false;
 
-// 요청 URI 및 HTTP 메소드 확인
+        // 요청 URI 및 HTTP 메소드 확인
         String requestURI = request.getRequestURI();
         String method = request.getMethod();
         log.info("method : " + method);
         log.info("requestURI : " + requestURI);
 
-// 필터링 로직
+        // 필터링 로직
         for (String path : doFilterPath) {
             if (requestURI.startsWith(path)) {
                 log.info("--- JWT verification for path: " + requestURI);
@@ -57,12 +52,11 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         }
         log.info("doFilter : " + doFilter);
 
-// 필터를 적용하지 않는 경우, 다음 필터로 요청 전달
+        // 필터를 적용하지 않는 경우, 다음 필터로 요청 전달
         if (!doFilter) {
             filterChain.doFilter(request, response);
             return;
         }
-
 
         // Authorization 쿠키에서 토큰 추출
         String authorization = null;
@@ -100,21 +94,25 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             UsernamePasswordAuthenticationToken authToken
                     = new UsernamePasswordAuthenticationToken(new CustomUserPrincipal(mid, role), null, List.of(new SimpleGrantedAuthority("ROLE_" + role)));
 
+            log.info("authToken : " + authToken);
+
             // SecurityContext에 인증/인가 정보 저장
             SecurityContextHolder.getContext().setAuthentication(authToken);
 
-            filterChain.doFilter(request, response); // 다음 필터로 요청 전달
+            log.info("SecurityContext에 인증/인가 정보 저장");
+
+            // OAuth2 인증 생략, 다음 필터로 요청 전달
+            filterChain.doFilter(request, response);
         } catch (Exception e) {
             handleException(response, e); // 예외 발생 시 처리
         }
     }
 
-    public void handleException(HttpServletResponse response, Exception e)
-            throws IOException {
+    public void handleException(HttpServletResponse response, Exception e) throws IOException {
+        log.info("--- handleException ---");
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType("application/json");
-        response.getWriter()
-                .println("{\"error\": \"" + e.getMessage() + "\"}");
+        response.getWriter().println("{\"error\": \"" + e.getMessage() + "\"}");
     }
 
     private boolean shouldFilterRequest(String path, String method, String requestURI) {
@@ -139,10 +137,10 @@ public class JWTCheckFilter extends OncePerRequestFilter {
                 return isPostPutDeleteRequest;
             case "/likes":
                 return true; // 모든 요청에 대해 필터 적용
+            case "/course-inquiry":
+                return isPostPutDeleteRequest;
             default:
                 return false; // 기본적으로 필터 적용 안 함
         }
     }
-
-
 }
