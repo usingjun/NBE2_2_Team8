@@ -1,6 +1,6 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate, Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
 
 const Header = ({ openModal }) => {
     const navigate = useNavigate();
@@ -91,13 +91,11 @@ const NavBar = styled.nav`
     overflow: visible; /* NavBar 범위를 넘어가는 내용을 보이게 함 */
 `;
 
-const HeaderContent = styled.div`
+const LeftSection = styled.div`
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    width: 100%;
-    max-width: 1200px;
-    margin: 0 auto;
+    gap: 1rem;
+    margin-right: auto; /* LeftSection을 왼쪽으로 정렬 */
 `;
 
 const LogoWrapper = styled.div`
@@ -116,13 +114,6 @@ const RightSection = styled.div`
     gap: 1rem;
     margin-left: auto;
     position: relative; /* SubMenu가 RightSection 안에 표시되도록 설정 */
-`;
-
-const LeftSection = styled.div`
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-right: auto; /* LeftSection을 왼쪽으로 정렬 */
 `;
 
 const Logo = styled.h1`

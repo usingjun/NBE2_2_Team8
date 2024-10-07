@@ -3,7 +3,7 @@ import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
 import CourseNewsList from "./CourseNewsList";
-import CourseInquiryList from "./CourseInquiryList"; // 새로 추가된 컴포넌트
+import CourseInquiryList from "./CourseInquiryList";
 import CourseReview from "./course-review/CourseReview";
 
 // 기본 이미지 경로
