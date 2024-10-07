@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -107,5 +108,15 @@ public class MemberRestController {
         log.info("--- myPageRead()");
         log.info(nickname);
         return ResponseEntity.ok(memberService.getInstructorInfo(nickname));
+    }
+
+    //memberId로 닉네임 조회
+    @GetMapping("/{memberId}/nickname")
+    public ResponseEntity<String> getNickname(@PathVariable Long memberId){
+        String nickname = memberService.getMemberNickname(memberId);
+        if(nickname== null){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("닉네임을 찾을 수 없습니다.");
+        }
+        return ResponseEntity.ok(nickname);
     }
 }

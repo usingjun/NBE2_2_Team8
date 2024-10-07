@@ -44,7 +44,7 @@ public class CourseAnswerService {
     //특정 강의 문의의 전체 답변 보기
     public List<CourseAnswer> readAll(Long inquiryId){
         try{
-            return courseAnswerRepository.getCourseAnswers(inquiryId).orElse(null);
+            return courseAnswerRepository.getCourseAnswers(inquiryId).orElseThrow(CourseAnswerException.NOT_FOUND::get);
         }catch (Exception e){
             log.error("--- "+ e.getMessage());
             throw CourseAnswerException.NOT_REGISTERED.get();

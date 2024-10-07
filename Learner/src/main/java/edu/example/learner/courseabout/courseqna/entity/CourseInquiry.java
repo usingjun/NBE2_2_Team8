@@ -1,6 +1,7 @@
 package edu.example.learner.courseabout.courseqna.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import edu.example.learner.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -26,7 +27,10 @@ public class CourseInquiry{
 
     private Long courseId;          //문의 강의 Id
 
-    private Long memberId;          //문의자 Id
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;          //문의자 Id
+
     private String inquiryTitle;    //문의 제목
     private String inquiryContent;  //문의 내용
 

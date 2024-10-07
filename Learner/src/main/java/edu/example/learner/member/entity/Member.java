@@ -1,5 +1,6 @@
 package edu.example.learner.member.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})  // Hibernate 프록시 필드를 무시
 public class Member{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

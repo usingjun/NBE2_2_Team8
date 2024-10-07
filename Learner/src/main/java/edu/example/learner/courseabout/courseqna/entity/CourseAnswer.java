@@ -1,6 +1,7 @@
 package edu.example.learner.courseabout.courseqna.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import edu.example.learner.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 import net.minidev.json.annotate.JsonIgnore;
@@ -23,7 +24,10 @@ public class CourseAnswer {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long answerId;
 
-    private Long memberId;
+    @ManyToOne(fetch = FetchType.LAZY)  // ManyToOne으로 Member와 연관관계 설정
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
     private String answerContent;
 
     @CreatedDate

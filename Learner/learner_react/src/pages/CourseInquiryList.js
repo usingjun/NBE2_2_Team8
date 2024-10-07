@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { jwtDecode } from "jwt-decode";
 
 const CourseInquiryList = ({ courseId }) => {
     const navigate = useNavigate();
@@ -15,8 +16,11 @@ const CourseInquiryList = ({ courseId }) => {
     const [updatedAnswer, setUpdatedAnswer] = useState("");
     const [inquiryStatus, setInquiryStatus] = useState("PENDING");
 
-    const role = localStorage.getItem("role"); // role을 가져옴
+    const [userRole, setUserRole] = useState(null); // 사용자 역할 저장
+    const [nicknames, setNicknames] = useState({}); // 각 사용자 ID별 닉네임을 저장
+    const [userId, setUserId] = useState(null); // 사용자 ID 저장
 
+    // 문의 목록 불러오기
     useEffect(() => {
         setLoading(true);
         axios
@@ -29,8 +33,32 @@ const CourseInquiryList = ({ courseId }) => {
                 console.error("Error fetching the course inquiries:", error);
                 setLoading(false);
             });
+
+        fetchUserRoleAndId();
     }, [courseId]);
 
+    // JWT 토큰에서 사용자 역할과 ID를 추출
+    const fetchUserRoleAndId = () => {
+        const token = document.cookie
+            .split('; ')
+            .find(row => row.startsWith('Authorization='))
+            ?.split('=')[1];
+
+        if (token) {
+            const decodedToken = jwtDecode(token); // 토큰 디코딩
+            //console.log("Decoded Token:", decodedToken); // 디버깅용 콘솔 로그
+
+            // 역할을 소문자로 변환해서 저장 (e.g., 'Role_USER' -> 'role_user')
+            const normalizedRole = decodedToken.role.toLowerCase();
+            setUserRole(normalizedRole);
+            setUserId(decodedToken.mid);
+
+            //console.log("User role:", normalizedRole); // 정상적으로 저장된 역할 확인
+        }
+    };
+
+
+    // 문의 클릭 시 상세 정보 불러오기
     const handleInquiryClick = (inquiryId) => {
         setLoadingDetail(true);
         axios
@@ -48,6 +76,7 @@ const CourseInquiryList = ({ courseId }) => {
             .then((response) => {
                 setAnswers(response.data);
                 setLoadingDetail(false);
+                //console.log("console log: ", response.data);
             })
             .catch((error) => {
                 console.error("Error fetching inquiry details or answers:", error);
@@ -55,15 +84,25 @@ const CourseInquiryList = ({ courseId }) => {
             });
     };
 
+    // 답변 제출
     const handleAnswerSubmit = () => {
         if (!newAnswer.trim()) {
             console.error("No selected inquiry or empty answer");
             return;
         }
+
+        const memberId = localStorage.getItem("memberId");
+        if (!memberId) {
+            console.error("로그인된 사용자의 memberId를 찾을 수 없습니다.");
+            alert("로그인이 필요합니다. 로그인 후 다시 시도해 주세요.");
+            return;
+        }
+
         axios
             .post(`http://localhost:8080/course/${courseId}/course-answer`, {
                 inquiryId: selectedInquiry.inquiryId,
                 answerContent: newAnswer,
+                memberId:memberId,
             })
             .then(() => {
                 return axios.get(
@@ -79,6 +118,7 @@ const CourseInquiryList = ({ courseId }) => {
             });
     };
 
+    // 문의 상태 변경
     const handleStatusChange = (status) => {
         axios
             .put(`http://localhost:8080/course/${courseId}/course-inquiry/${selectedInquiry.inquiryId}/status`, {
@@ -93,10 +133,9 @@ const CourseInquiryList = ({ courseId }) => {
             });
     };
 
+    // 문의 삭제
     const handleDeleteInquiry = (inquiryId) => {
-        const currentMemberId = localStorage.getItem('memberId'); // 현재 로그인한 사용자의 memberId
-
-        if (String(selectedInquiry.memberId) !== currentMemberId) {
+        if (String(selectedInquiry.memberId) !== userId) {
             alert("작성자만 문의를 삭제할 수 있습니다.");
             return;
         }
@@ -115,6 +154,7 @@ const CourseInquiryList = ({ courseId }) => {
         }
     };
 
+    // 답변 수정
     const handleEditAnswerClick = (answer) => {
         setEditAnswerId(answer.answerId); // 수정할 답변 ID 설정
         setUpdatedAnswer(answer.answerContent); // 기존 답변 내용을 수정란에 미리 설정
@@ -141,11 +181,9 @@ const CourseInquiryList = ({ courseId }) => {
             });
     };
 
-
+    // 답변 삭제
     const handleDeleteAnswer = (answerId, answerMemberId) => {
-        const currentMemberId = localStorage.getItem('memberId'); // 현재 로그인한 사용자의 memberId
-
-        if (answerMemberId !== currentMemberId) {
+        if (answerMemberId !== userId) {
             alert("작성자만 답변을 삭제할 수 있습니다.");
             return;
         }
@@ -163,6 +201,7 @@ const CourseInquiryList = ({ courseId }) => {
         }
     };
 
+    // 수정 취소
     const handleCancelEdit = () => {
         setEditAnswerId(null);
         setUpdatedAnswer("");
@@ -178,7 +217,7 @@ const CourseInquiryList = ({ courseId }) => {
                         {selectedInquiry ? (
                             <>
                                 <BeforeButton onClick={() => setSelectedInquiry(null)}>이전 목록으로</BeforeButton>
-                                {(role === "admin" || role === "INSTRUCTOR" || String(selectedInquiry.memberId) === localStorage.getItem('memberId')) && (
+                                {(userRole === "role_admin" || userRole === "role_instructor" || String(selectedInquiry.memberId) === localStorage.getItem('memberId')) && (
                                     <DeleteInquiryButton onClick={() => handleDeleteInquiry(selectedInquiry.inquiryId)}>
                                         문의 삭제
                                     </DeleteInquiryButton>
@@ -199,13 +238,25 @@ const CourseInquiryList = ({ courseId }) => {
                                     <p>
                                         <span style={{ whiteSpace: "pre-line" }}>{selectedInquiry.inquiryContent}</span>
                                     </p>
-                                    <p style={{ fontSize: "0.9rem", color: "#555",  marginTop: "3rem"}}>
-                                        작성자: {selectedInquiry.memberId} | 작성일:{" "}
+                                    <p style={{ fontSize: "0.9rem", color: "#555", marginTop: "3rem" }}>
+                                        {selectedInquiry.profileImage ? (
+                                            <ProfileImage
+                                                src={`data:image/jpeg;base64,${btoa(String.fromCharCode(...new Uint8Array(selectedInquiry.profileImage)))}`}
+                                                alt="작성자 프로필"
+                                            />
+                                        ) : (
+                                            <ProfileImage
+                                                src="/images/default_user_img.png"
+                                                alt="기본 프로필"
+                                            />
+                                        )}
+                                        작성자: {selectedInquiry.memberNickname || '알 수 없음'} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 작성일:{" "}
                                         {new Date(selectedInquiry.createdDate).toLocaleDateString()}
                                     </p>
                                 </InquiryDetail>
 
-                                { (role === "admin" || role === "INSTRUCTOR")&& (
+
+                                {(userRole === "role_admin" || userRole === "role_instructor") && (
                                     <StatusSelect value={inquiryStatus} onChange={(e) => handleStatusChange(e.target.value)}>
                                         <option value="PENDING">PENDING</option>
                                         <option value="ANSWERED">ANSWERED</option>
@@ -218,45 +269,23 @@ const CourseInquiryList = ({ courseId }) => {
                                     {answers.length > 0 ? (
                                         answers.map((answer) => (
                                             <AnswerItem key={answer.answerId}>
-                                                {editAnswerId === answer.answerId ? (
-                                                    <>
-                                                        <textarea
-                                                            style={{
-                                                                width: "100%", // 테두리와 비슷한 크기로 조정
-                                                                height: "150px", // 높이를 넉넉하게 조정
-                                                                fontSize: "1rem"
-                                                            }}
-                                                            value={updatedAnswer}
-                                                            onChange={(e) => setUpdatedAnswer(e.target.value)}
-                                                            placeholder="답변 내용을 수정하세요"
+                                                <p>{answer.answerContent}</p>
+                                                <p style={{ fontSize: "0.9rem", color: "#555", marginTop: "3rem" }}>
+                                                    {answer.member.profileImage ? (
+                                                        <ProfileImage
+                                                            src={`data:image/jpeg;base64,${btoa(String.fromCharCode(...new Uint8Array(answer.profileImage)))}`}
+                                                            alt="작성자 프로필"
                                                         />
-                                                        <div>
-                                                            <UpdateSubmitButton
-                                                                onClick={() => handleEditAnswerSubmit(answer.answerId)}
-                                                            >
-                                                                수정 완료
-                                                            </UpdateSubmitButton>
-                                                            <CancelButton onClick={handleCancelEdit}>취소</CancelButton>
-                                                        </div>
-                                                    </>
-                                                ) : (
-                                                    <>
-                                                        <p>
-                                                            {answer.answerContent}
-                                                        </p>
-
-                                                        <p style={{
-                                                            fontSize: "0.9rem",
-                                                            color: "#555",
-                                                            marginTop: "3rem"
-                                                        }}>
-                                                            작성자: {selectedInquiry.memberId} | 작성일:{" "}
-                                                            {new Date(selectedInquiry.createdDate).toLocaleDateString()}
-                                                        </p>
-                                                    </>
-                                                )}
-
-                                                {(role === "admin" || role === "INSTRUCTOR" || String(selectedInquiry.memberId) === localStorage.getItem('memberId')) && (
+                                                    ) : (
+                                                        <ProfileImage
+                                                            src="/images/default_user_img.png"
+                                                            alt="기본 프로필"
+                                                        />
+                                                    )}
+                                                    작성자: {answer.member.nickname || '알 수 없음'} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 작성일:{" "}
+                                                    {new Date(answer.answerCreateDate).toLocaleDateString()}
+                                                </p>
+                                                {(userRole === "role_admin" || userRole === "role_instructor"|| String(selectedInquiry.memberId) === localStorage.getItem('memberId')) && (
                                                     <>
                                                         <AnswerButton onClick={() => handleEditAnswerClick(answer)}>
                                                             수정
@@ -276,12 +305,13 @@ const CourseInquiryList = ({ courseId }) => {
                                     )}
                                 </AnswerList>
 
+
                                 <AnswerForm>
                                     <textarea
                                         style={{
-                                            width: "100%", // 테두리와 비슷한 크기로 조정
-                                            height: "150px", // 높이를 넉넉하게 조정
-                                            fontSize: "1rem"
+                                            width: "100%",
+                                            height: "150px",
+                                            fontSize: "1rem",
                                         }}
                                         value={newAnswer}
                                         onChange={(e) => setNewAnswer(e.target.value)}
@@ -295,20 +325,29 @@ const CourseInquiryList = ({ courseId }) => {
                         inquiries.length > 0 ? (
                             <InquiryList>
                                 {inquiries.map((inquiry) => (
-                                    <InquiryItem
-                                        key={inquiry.inquiryId}
-                                        onClick={() => handleInquiryClick(inquiry.inquiryId)}
-                                    >
+                                    <InquiryItem key={inquiry.inquiryId}
+                                                 onClick={() => handleInquiryClick(inquiry.inquiryId)}>
                                         <p>
                                             <strong>{inquiry.inquiryTitle}</strong>
                                         </p>
-                                        <p style={{ fontSize: "0.9rem", color: "#555" }}>
-                                            작성자 : {inquiry.memberId} 작성일 :
-                                            {new Date(inquiry.createdDate).toLocaleDateString()}
+                                        <p style={{fontSize: "0.9rem", color: "#555"}}>
+                                            {inquiry.profileImage ? (
+                                                <ProfileImage
+                                                    src={`data:image/jpeg;base64,${inquiry.member.profileImage}`}
+                                                    alt="작성자 프로필"
+                                                />
+                                            ) : (
+                                                <ProfileImage
+                                                    src="/images/default_user_img.png"
+                                                    alt="기본 프로필"
+                                                />
+                                            )}
+                                            작성자 : {inquiry.memberNickname || '알 수 없음'}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 작성일 : {new Date(inquiry.createdDate).toLocaleDateString()}
                                         </p>
                                     </InquiryItem>
                                 ))}
                             </InquiryList>
+
                         ) : (
                             <p>문의가 없습니다.</p>
                         )
@@ -321,7 +360,7 @@ const CourseInquiryList = ({ courseId }) => {
 
 export default CourseInquiryList;
 
-// 스타일 컴포넌트들
+// 스타일 컴포넌트들...
 
 const InquiryList = styled.div`
     margin-top: 1rem;
@@ -470,4 +509,13 @@ const AnswerButton = styled.button`
     &:hover {
         background-color: #2a9d63;
     }
+`;
+
+const ProfileImage = styled.img`
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 5px;
+    object-fit: cover;
+    vertical-align: middle;
 `;
