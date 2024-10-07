@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface CourseRepository extends JpaRepository<Course, Long> {
     List<Course> readByCourseAttribute(CourseAttribute courseAttribute);
+    List<Course> getByMemberNickname(String memberNickname);
 }

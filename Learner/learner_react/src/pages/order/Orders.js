@@ -34,12 +34,12 @@ const Orders = () => {
     }, [memberId]);
 
     const handleUpdateClick = (orderId) => {
-        navigate(`/order/update/${orderId}`);
+        navigate(`/orders/update/${orderId}`);
     };
 
     const handleDeleteClick = (orderId) => {
         if (window.confirm("정말로 이 주문을 삭제하시겠습니까?")) {
-            navigate(`/order/delete/${orderId}`);
+            navigate(`/orders/delete/${orderId}`);
         }
     };
 
@@ -49,7 +49,7 @@ const Orders = () => {
     return (
         <OrderList>
             <Header>주문 목록</Header>
-            <Link to="/order/create">
+            <Link to="/orders/create">
                 <StyledButton primary>주문 생성</StyledButton>
             </Link>
             {orders.length > 0 ? (

@@ -10,10 +10,17 @@ const InstructorReviewEdit = () => {
     const [reviewDetail, setReviewDetail] = useState("");
     const [rating, setRating] = useState(1);
     const [memberId] = useState(1); // 예시로 하드코딩된 memberId
+    const [writerId, setWriterId] = useState(null); // writerId 상태 추가
     const [courses, setCourses] = useState([]); // 강의 목록 상태
     const [selectedCourseId, setSelectedCourseId] = useState(""); // 선택한 강의 ID
 
+
     useEffect(() => {
+        const storedWriterId = localStorage.getItem("memberId"); // localStorage에서 memberId 가져오기
+        if (storedWriterId) {
+            setWriterId(storedWriterId); // writerId 상태 설정
+        }
+
         // 리뷰 데이터 가져오기 (reviewId, nickname으로 리뷰 조회)
         fetch(`http://localhost:8080/members/instructor/${nickname}/reviews/${reviewId}`, {
             credentials: 'include',
@@ -48,6 +55,7 @@ const InstructorReviewEdit = () => {
             memberId, // 추가된 memberId
             nickname, // nickname 추가
             courseId: selectedCourseId, // 선택한 강의 ID 추가
+            writerId, // writerId 추가
         };
 
         console.log("전송할 데이터:", reviewData);

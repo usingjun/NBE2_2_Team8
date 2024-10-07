@@ -1,13 +1,16 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import {useLocation, useParams} from 'react-router-dom';
 
-const YoutubePlayer = ({ videoUrl }) => {
-    videoUrl = "https://www.youtube.com/watch?v=cJ9xdW_hqR4&list=PLlV7zJmoG4XJfK8vVL2E2NX8ej73vjNlh";
+const YoutubePlayer =() => {
+    const { videoId } = useParams();
+    const location = useLocation();
     const playerRef = useRef(null);
     const [totalDuration, setTotalDuration] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
+    const videoEntityId = location.state.videoEntityId; // 비디오 엔티티 ID
+    const youtubeId = location.state.youtubeId; // 유튜브 비디오 ID
 
-    const videoId = videoUrl.split('v=')[1]?.split('&')[0];
-    const embedUrl = videoId ? `https://www.youtube.com/embed/${videoId}?enablejsapi=1` : '';
+    const embedUrl = `https://www.youtube.com/embed/${youtubeId}?enablejsapi=1`;
 
     useEffect(() => {
         if (videoId) {
@@ -17,20 +20,26 @@ const YoutubePlayer = ({ videoUrl }) => {
                 sendTotalDuration(duration); // 전체 동영상 시간을 백엔드로 전송
             });
         }
-    }, [videoUrl]);
+    }, [videoId]);
 
     const fetchVideoDuration = (videoId) => {
-        const apiKey = "AIzaSyDoEwQOJ6Igsm9dCnk1b1y1sqzG3qdoEw0";
-        const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${apiKey}&part=contentDetails`;
+        const apiKey = "AIzaSyDoEwQOJ6Igsm9dCnk1b1y1sqzG3qdoEw0"; // 여기에 유효한 API 키를 입력하세요
+        const url = `https://www.googleapis.com/youtube/v3/videos?id=${youtubeId}&key=${apiKey}&part=contentDetails`;
 
         return fetch(url)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`비디오 길이 가져오기 오류: ${response.status} ${response.statusText}`);
+                }
+                return response.json();
+            })
             .then(data => {
+                console.log(data); // 응답 확인
                 if (data.items && data.items.length > 0) {
                     const duration = data.items[0].contentDetails.duration;
                     return convertISO8601ToSeconds(duration);
                 } else {
-                    throw new Error("Video not found");
+                    throw new Error("비디오를 찾을 수 없습니다.");
                 }
             });
     };
@@ -67,7 +76,7 @@ const YoutubePlayer = ({ videoUrl }) => {
     const onPlayerReady = (event) => {
         event.target.playVideo();
         setInterval(() => {
-            getCurrentTime(); // 현재 시간을 주기적으로 가져오기
+            getCurrentTime();
         }, 5000);
     };
 
@@ -76,13 +85,15 @@ const YoutubePlayer = ({ videoUrl }) => {
             const currentTime = playerRef.current.getCurrentTime();
             setCurrentTime(currentTime);
 
-            // 현재 재생 시간을 백엔드로 전송
-            fetch('http://localhost:8080/api/savePlayTime', {
+            fetch('http://localhost:8080/video/savePlayTime', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ currentTime: currentTime }),
+                body: JSON.stringify({
+                    videoId: videoEntityId, // 비디오 엔티티의 ID로 수정
+                    currentTime: currentTime
+                }),
             })
                 .then(response => response.json())
                 .then(data => {
@@ -95,12 +106,15 @@ const YoutubePlayer = ({ videoUrl }) => {
     };
 
     const sendTotalDuration = (duration) => {
-        fetch('http://localhost:8080/api/savePlayTime', {
+        fetch('http://localhost:8080/video/savePlayTime', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ totalDuration: duration }),
+            body: JSON.stringify({
+                videoId: videoEntityId, // 비디오 엔티티의 ID로 수정
+                totalDuration: duration
+            }),
         })
             .then(response => response.json())
             .then(data => {
@@ -110,28 +124,6 @@ const YoutubePlayer = ({ videoUrl }) => {
                 console.error('오류:', error);
             });
     };
-
-    // 전체 동영상 시간과 현재 재생 시간을 가져오는 함수
-    const fetchVideoInfo = () => {
-        fetch('http://localhost:8080/api/videoInfo')
-            .then(response => response.json())
-            .then(data => {
-                setTotalDuration(data.totalDuration);
-                setCurrentTime(data.currentTime);
-            })
-            .catch((error) => {
-                console.error('오류:', error);
-            });
-    };
-
-    // 컴포넌트가 마운트될 때 비디오 정보를 가져옵니다.
-    useEffect(() => {
-        fetchVideoInfo();
-    }, []);
-
-    if (!videoUrl) {
-        return <div>비디오 URL이 필요합니다.</div>;
-    }
 
     return (
         <div>
@@ -151,20 +143,3 @@ const YoutubePlayer = ({ videoUrl }) => {
 };
 
 export default YoutubePlayer;
-
-// App.js
-import React from 'react';
-import YoutubePlayer from './YoutubePlayer';
-
-const App = () => {
-    const videoUrl = "https://www.youtube.com/watch?v=cJ9xdW_hqR4&list=PLlV7zJmoG4XJfK8vVL2E2NX8ej73vjNlh"; // 사용하고자 하는 비디오 URL
-
-    return (
-        <div>
-            <h1>YouTube Video Player</h1>
-            <YoutubePlayer videoUrl={videoUrl} />
-        </div>
-    );
-};
-
-export default App;

@@ -23,18 +23,18 @@ public class InstructorReviewController {
     @PostMapping("/create")
     @Operation(summary = "Instructor Review 생성")
     public ResponseEntity<ReviewDTO> create(@RequestBody ReviewDTO reviewDTO) {
-        reviewDTO.setReviewType(ReviewType.INSTRUCTOR);
+        log.info(reviewDTO.getWriterId());
+
         reviewDTO.setCourseId(reviewDTO.getCourseId());
-
         log.info("Create review: " + reviewDTO);
-        log.info("reviewType"+reviewDTO.getReviewType());
 
-        return ResponseEntity.ok(reviewService.createReview(reviewDTO, reviewDTO.getReviewType()));
+        return ResponseEntity.ok(reviewService.createReview(reviewDTO, ReviewType.INSTRUCTOR));
     }
 
     @PutMapping("/{reviewId}")
     @Operation(summary = "Instructor Review 수정")
     public ResponseEntity<ReviewDTO> update(@PathVariable("reviewId") Long reviewId, @RequestBody ReviewDTO reviewDTO) {
+        log.info(reviewDTO.getWriterId());
 
         log.info("update Review: " + reviewDTO);
         return ResponseEntity.ok(reviewService.updateReview(reviewId, reviewDTO));
@@ -42,11 +42,11 @@ public class InstructorReviewController {
 
     @DeleteMapping("/{reviewId}")
     @Operation(summary = "Instructor Review 삭제")
-    public ResponseEntity<Map<String, String>> remove(@PathVariable("reviewId") Long reviewId) {
+    public ResponseEntity<Map<String, String>> remove(@PathVariable("reviewId") Long reviewId, @RequestBody ReviewDTO reviewDTO) {
 
         log.info("Delete Review: " + reviewId);
 
-        reviewService.deleteReview(reviewId);
+        reviewService.deleteReview(reviewId,reviewDTO);
         return ResponseEntity.ok(Map.of("result", "success"));
     }
 

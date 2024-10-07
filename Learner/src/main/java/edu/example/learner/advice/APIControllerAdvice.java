@@ -2,6 +2,7 @@ package edu.example.learner.advice;
 
 import edu.example.learner.courseabout.exception.HeartNewsAlreadyExistsException;
 import edu.example.learner.courseabout.exception.NotFoundException;
+import edu.example.learner.courseabout.exception.ReviewTaskException;
 import edu.example.learner.courseabout.order.exception.OrderTaskException;
 import edu.example.learner.member.exception.MemberTaskException;
 import lombok.extern.log4j.Log4j2;
@@ -72,4 +73,15 @@ public class APIControllerAdvice {
     public ResponseEntity<String> handleHeartNewsAlreadyExistsException(HeartNewsAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
+
+    // ReviewTaskException 예외처리 추가
+    @ExceptionHandler(ReviewTaskException.class)
+    public ResponseEntity<Map<String, String>> handleReviewException(ReviewTaskException e) {
+        log.error("ReviewTaskException : ", e);
+
+        Map<String, String> errMap = Map.of("error", e.getMessage());
+
+        return ResponseEntity.status(e.getCode()).body(errMap);
+    }
+
 }

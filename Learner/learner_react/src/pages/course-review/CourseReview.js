@@ -1,8 +1,26 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 
-const CourseReviewList = ({ courseId }) => {
+const CourseReview = ({ courseId }) => {
     const [reviewList, setReviewList] = useState([]);
+    const [userNickname, setUserNickname] = useState('');
+    const [userId, setUserId] = useState(''); // 사용자의 memberId를 저장할 상태 추가
+
+    useEffect(() => {
+        const token = localStorage.getItem("memberId");
+        if (token) {
+            fetch(`http://localhost:8080/members/${token}`, {
+                credentials: 'include',
+            })
+                .then(res => res.json())
+                .then(data => {
+                    console.log("사용자 정보:", data);
+                    setUserNickname(data.nickname);
+                    setUserId(data.memberId); // 사용자 memberId 설정
+                })
+                .catch(err => console.error("사용자 정보 가져오기 실패:", err));
+        }
+    }, []);
 
     const fetchReviews = () => {
         fetch(`http://localhost:8080/course/${courseId}/reviews/list`, {
@@ -21,13 +39,17 @@ const CourseReviewList = ({ courseId }) => {
     }, [courseId]);
 
     const handleDelete = (reviewId) => {
+        const token = localStorage.getItem("memberId");
         if (window.confirm("정말 삭제하시겠습니까?")) {
             fetch(`http://localhost:8080/course/${courseId}/reviews/${reviewId}`, {
                 method: "DELETE",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'memberId': token  // memberId를 헤더에 추가
+                },
                 credentials: 'include',
             })
                 .then(() => {
-                    // 삭제 후 리뷰 목록에서 해당 리뷰 제거
                     setReviewList(reviewList.filter(review => review.reviewId !== reviewId));
                     alert("리뷰가 삭제되었습니다.");
                 })
@@ -35,11 +57,10 @@ const CourseReviewList = ({ courseId }) => {
         }
     };
 
-    // 평균 평점 계산 함수
     const calculateAverageRating = () => {
         if (reviewList.length === 0) return 0;
         const totalRating = reviewList.reduce((acc, review) => acc + review.rating, 0);
-        return (totalRating / reviewList.length).toFixed(1); // 소수점 첫째자리까지
+        return (totalRating / reviewList.length).toFixed(1);
     };
 
     return (
@@ -47,7 +68,6 @@ const CourseReviewList = ({ courseId }) => {
             <h2 className="review-header">과정 리뷰</h2>
             <Link to={`/courses/${courseId}/reviews/create`} className="add-review-button">리뷰 작성</Link>
 
-            {/* 평균 평점 표시 */}
             <h3 className="average-rating">평균 평점: {calculateAverageRating()} / 5</h3>
 
             <ul className="review-list">
@@ -57,10 +77,15 @@ const CourseReviewList = ({ courseId }) => {
                             <h3 className="review-title">{review.reviewName}</h3>
                             <p className="review-detail">{review.reviewDetail}</p>
                             <span className="review-rating">평점: {review.rating} / 5</span>
+                            <p className="review-author">작성자: {review.writerName}</p>
                         </div>
                         <div className="button-group">
-                            <button onClick={() => handleDelete(review.reviewId)} className="delete-button">삭제</button>
-                            <Link to={`/courses/${courseId}/reviews/${review.reviewId}/edit`} className="edit-button">수정</Link>
+                            {userId === review.writerId && ( // userId와 review의 writerId가 일치할 때만 버튼 표시
+                                <>
+                                    <button onClick={() => handleDelete(review.reviewId)} className="delete-button">삭제</button>
+                                    <Link to={`/courses/${courseId}/reviews/${review.reviewId}/edit`} className="edit-button">수정</Link>
+                                </>
+                            )}
                         </div>
                     </li>
                 ))}
@@ -168,4 +193,4 @@ const CourseReviewList = ({ courseId }) => {
     );
 };
 
-export default CourseReviewList;
+export default CourseReview;
