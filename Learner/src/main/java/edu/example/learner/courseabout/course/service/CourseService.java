@@ -2,6 +2,7 @@ package edu.example.learner.courseabout.course.service;
 
 import edu.example.learner.courseabout.course.dto.CourseDTO;
 import edu.example.learner.courseabout.course.entity.CourseAttribute;
+import edu.example.learner.courseabout.course.entity.MemberCourse;
 
 import java.util.List;
 
@@ -13,5 +14,5 @@ public interface CourseService {
     void deleteCourse(Long courseId);
     List<CourseDTO> readAll();
     List<CourseDTO> getCoursesByNickname(String nickname);
-
+ 
 }

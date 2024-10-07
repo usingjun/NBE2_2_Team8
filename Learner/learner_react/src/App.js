@@ -9,6 +9,7 @@ import CourseNews from "./pages/CourseNews";
 import MyPage from "./pages/MyPage";
 import CreateNews from "./pages/CreateNews";
 import UpdateNews from "./pages/UpdateNews";
+import EditProfile from './components/EditProfile';
 import Instructor from "./pages/Instructor";
 import CourseReviewCreate from "./pages/course-review/CourseReviewCreate";
 import CourseReviewEdit from "./pages/course-review/CourseReviewEdit";
@@ -18,7 +19,8 @@ import CourseRoutes from './CourseRoutes';
 import OrderRoutes from "./OrderRoutes";
 import VideoRoutes from "./VideoRoutes";
 import YoutubePlayer from "./YoutubePlayer";
-
+import ResetPassword from "./components/ResetPassword"; // ResetPassword 컴포넌트 가져오기
+import MyCourses from './pages/MyCourses';
 
 function App() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -44,6 +46,7 @@ function App() {
                 <Route path="/내정보" element={<MyPage />} />
                 <Route path="/courses/:courseId/news/create" element={<CreateNews />} />
                 <Route path="/courses/:courseId/news/:newsId/edit" element={<UpdateNews />} />
+                <Route path="/edit-profile" element={<EditProfile />} />
                 <Route path="/courses/:courseId/reviews/create" element={<CourseReviewCreate />} />
                 <Route path="/courses/:courseId/reviews/:reviewId/edit" element={<CourseReviewEdit />} />
                 <Route path="/members/instructor/:nickname" element={<Instructor />} />
@@ -53,6 +56,10 @@ function App() {
                 <Route path="/*" element={<CourseRoutes />} /> {/* 모든 하위 경로를 CourseRoutes로 전달 */}
                 <Route path="/orders/*" element={<OrderRoutes />} />
                 <Route path="/video/*" element={<VideoRoutes />} /> {/* 비디오 관련 라우팅 추가 */}
+                <Route path="/members/instructor/:nickname/reviews/create" element={<InstructorReviewCreate />} /> {/* 강사 리뷰 생성 페이지 */}
+                <Route path="/members/instructor/:nickname/reviews/:reviewId" element={<InstructorReviewEdit />} /> {/* 강사 리뷰 수정 페이지 */}
+                <Route path="/reset-password/:uuid" element={<ResetPassword />} /> {/* 비밀번호 변경 */}
+                <Route path="/my-courses" element={<MyCourses />} />
             </Routes>
         </Router>
     );

@@ -35,11 +35,20 @@ public class MemberRestController {
 
         try {
             memberService.uploadImage(file, memberId);
-            return ResponseEntity.ok("Image uploaded successfully");
+            return ResponseEntity.status(HttpStatus.CREATED).body("Image uploaded successfully");
         } catch (Exception e) {
             log.error("Error uploading image", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error uploading image: " + e.getMessage());
         }
+    }
+
+    //이미지 삭제
+    @DeleteMapping("{memberId}/image")
+    public ResponseEntity<String> deleteMember(@PathVariable Long memberId) {
+        log.info("--- memberDelete()");
+        memberService.removeImage(memberId);
+
+        return ResponseEntity.status(HttpStatus.CREATED).body("이미지가 성공적으로 삭제되었습니다.");
     }
 
     //마이페이지
@@ -68,6 +77,18 @@ public class MemberRestController {
         log.info("--- memberModify()");
 
         return ResponseEntity.ok(memberService.updateMemberInfo(memberId,memberDTO));
+    }
+
+    //비밀번호 인증
+    @PostMapping("/{memberId}/verify-password")
+    public ResponseEntity<String> verifyPassword(@PathVariable Long memberId, @RequestBody String password) {
+        boolean isVerified = memberService.verifyPassword(memberId, password);
+        log.info("password : " + password );
+        if (isVerified) {
+            return ResponseEntity.ok("비밀번호 인증 성공!");
+        } else {
+            return ResponseEntity.status(403).body("비밀번호가 일치하지 않습니다.");
+        }
     }
 
     //회원 탈퇴
