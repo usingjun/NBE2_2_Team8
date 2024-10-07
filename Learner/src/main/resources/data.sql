@@ -40,4 +40,4 @@ INSERT IGNORE INTO news (news_id, like_count, view_count, course_id, news_date, 
 VALUES (2, 0, 0, 1, NOW(), '강의 30% 할인 이벤트입니다.', '강의 할인공지');
 
 -- 초기 수강 구매 목록 데이터 1개 삽입
-INSERT IGNORE INTO member_course (member_course_id, member_id, course_id, purchase_date) VALUES (1, 3, 1, NOW());
+INSERT IGNORE INTO member_course (member_course_id, member_id, course_id, purchase_date) VALUES (1, 2, 1, NOW());
