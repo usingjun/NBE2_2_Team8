@@ -18,6 +18,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -210,5 +212,18 @@ public class MemberService {
          log.info("본래 비밀번호 " + member.getPassword());
         // 저장된 비밀번호와 입력된 비밀번호를 비교합니다.
         return passwordEncoder.matches(rawPassword, member.getPassword());
+    }
+
+    //전체 회원 조회
+    public List<MemberDTO> getAllMembers() {
+        List<Member> members = memberRepository.findAll();
+
+        List<MemberDTO> memberDTOS = new ArrayList<>();
+        for (Member member : members) {
+            MemberDTO memberDTO = new MemberDTO(member);
+            memberDTOS.add(memberDTO);
+        }
+
+        return memberDTOS;
     }
 }

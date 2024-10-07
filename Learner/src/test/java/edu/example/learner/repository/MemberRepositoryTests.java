@@ -93,10 +93,10 @@ public class MemberRepositoryTests {
     public void testDeleteMember() {
         long memberId = 1L;
 
-        assertTrue(memberRepository.existsById((int) memberId));
+        assertTrue(memberRepository.existsById((long) memberId));
 
-        memberRepository.deleteById(Math.toIntExact(memberId));
-        assertFalse(memberRepository.existsById((int) memberId));
+        memberRepository.deleteById((long) Math.toIntExact(memberId));
+        assertFalse(memberRepository.existsById((long) memberId));
     }
 
     @Test
