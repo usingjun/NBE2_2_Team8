@@ -211,11 +211,4 @@ public class MemberService {
         // 저장된 비밀번호와 입력된 비밀번호를 비교합니다.
         return passwordEncoder.matches(rawPassword, member.getPassword());
     }
-
-    // MemberId로 해당 회원의 닉네임을 가져오는 서비스 로직
-    public String getMemberNickname(Long memberId) {
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new EntityNotFoundException("해당 회원을 찾을 수 없습니다."));
-        return member.getNickname();
-    }
 }

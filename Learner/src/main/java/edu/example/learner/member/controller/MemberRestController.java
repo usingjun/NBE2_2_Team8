@@ -109,14 +109,4 @@ public class MemberRestController {
         log.info(nickname);
         return ResponseEntity.ok(memberService.getInstructorInfo(nickname));
     }
-
-    //memberId로 닉네임 조회
-    @GetMapping("/{memberId}/nickname")
-    public ResponseEntity<String> getNickname(@PathVariable Long memberId){
-        String nickname = memberService.getMemberNickname(memberId);
-        if(nickname== null){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("닉네임을 찾을 수 없습니다.");
-        }
-        return ResponseEntity.ok(nickname);
-    }
 }
