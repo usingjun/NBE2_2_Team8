@@ -117,6 +117,22 @@ public class CourseServiceImpl implements CourseService {
         return memberCourseDTOList;
     }
 
+    @Override
+    public List<CourseDTO> getCoursesByMemberId(Long memberId) {
+        List<MemberCourse> memberCourses = memberCourseRepository.findByMember_MemberId(memberId);
+
+        if (memberCourses == null || memberCourses.isEmpty()) {
+            throw CourseException.MEMBER_COURSE_NOT_FOUND.get();
+        }
+
+        List<CourseDTO> courseDTOList = new ArrayList<>();
+        for (MemberCourse memberCourse : memberCourses) {
+            courseDTOList.add(new CourseDTO(memberCourse.getCourse()));
+        }
+        return courseDTOList;
+    }
+
+
 
     // 강사 닉네임 반환
     public String getInstructorNicknameByCourseId(Long courseId) {
@@ -126,4 +142,5 @@ public class CourseServiceImpl implements CourseService {
         // 해당 코스의 Member(강사)의 닉네임을 반환
         return course.getMember().getNickname();
     }
+
 }
