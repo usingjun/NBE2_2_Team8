@@ -30,6 +30,8 @@ public class QCourseAnswer extends EntityPathBase<CourseAnswer> {
 
     public final QCourseInquiry courseInquiry;
 
+    public final edu.example.learner.member.entity.QMember member;
+
     public QCourseAnswer(String variable) {
         this(CourseAnswer.class, forVariable(variable), INITS);
     }
@@ -48,7 +50,8 @@ public class QCourseAnswer extends EntityPathBase<CourseAnswer> {
 
     public QCourseAnswer(Class<? extends CourseAnswer> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
-        this.courseInquiry = inits.isInitialized("courseInquiry") ? new QCourseInquiry(forProperty("courseInquiry")) : null;
+        this.courseInquiry = inits.isInitialized("courseInquiry") ? new QCourseInquiry(forProperty("courseInquiry"), inits.get("courseInquiry")) : null;
+        this.member = inits.isInitialized("member") ? new edu.example.learner.member.entity.QMember(forProperty("member")) : null;
     }
 
 }
