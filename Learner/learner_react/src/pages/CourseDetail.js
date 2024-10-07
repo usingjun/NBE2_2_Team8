@@ -29,7 +29,6 @@ const CourseDetail = () => {
 
     const handleTabChange = (tab) => {
         setActiveTab(tab);
-        setSelectedInquiry(null); // 탭 변경 시 문의 상세 정보 초기화
     };
 
 
@@ -105,92 +104,6 @@ const CourseDetail = () => {
                 {activeTab === "reviews" && <p>수강평 내용이 여기에 표시됩니다.</p>}
                 {activeTab === "questions" && <CourseInquiryList courseId={courseId} />}
                 {activeTab === "news" && <CourseNewsList courseId={courseId} />}
-                {activeTab === "reviews" && (
-                    <>
-                        <CourseReview courseId={courseId}/>
-                    </>
-                )}
-
-                {activeTab === "questions" && (
-                    <>
-                        {loading ? (
-                            <p>로딩 중...</p>
-                        ) : (
-                            <>
-                                <ButtonContainer>
-                                    {selectedInquiry ? (
-                                        <WriteButton onClick={() => setSelectedInquiry(null)}>이전 목록으로</WriteButton> // 이전 목록으로 버튼
-                                    ) : (
-                                        <WriteButton onClick={() => navigate(`/courses/${courseId}/post`)}>글
-                                            작성하기</WriteButton> // 글 작성하기 버튼
-                                    )}
-                                </ButtonContainer>
-
-                                {selectedInquiry ? (
-                                    loadingDetail ? (
-                                        <p>문의 상세 정보를 로딩 중입니다...</p>
-                                    ) : (
-                                        <>
-                                            <InquiryDetail>
-                                                <h3>{selectedInquiry.inquiryTitle}</h3>
-                                                <p><strong>문의 내용:</strong> {selectedInquiry.inquiryContent}</p>
-                                                <p><strong>작성자:</strong> {selectedInquiry.memberId}</p>
-                                                <p>
-                                                    <strong>작성일:</strong> {new Date(selectedInquiry.createdDate).toLocaleDateString()}
-                                                </p>
-                                            </InquiryDetail>
-
-                                            {/* 답변 목록 */}
-                                            <AnswerList>
-                                                <h4>답변 목록</h4>
-                                                {answers.length > 0 ? (
-                                                    answers.map((answer) => (
-                                                        <AnswerItem key={answer.answerId}>
-                                                            <p><strong>답변 내용:</strong> {answer.answerContent}</p>
-                                                            <p>
-                                                                <strong>작성일:</strong> {new Date(answer.createdDate).toLocaleDateString()}
-                                                            </p>
-                                                        </AnswerItem>
-                                                    ))
-                                                ) : (
-                                                    <p>답변이 없습니다.</p>
-                                                )}
-                                            </AnswerList>
-
-                                            {/* 답변 작성 폼 */}
-                                            <AnswerForm>
-                                                <textarea
-                                                    value={newAnswer}
-                                                    onChange={(e) => setNewAnswer(e.target.value)}
-                                                    placeholder="답변 내용을 입력하세요"
-                                                />
-                                                <SubmitButton onClick={handleAnswerSubmit}>답변 달기</SubmitButton>
-                                            </AnswerForm>
-                                        </>
-                                    )
-                                ) : (
-                                    inquiries.length > 0 ? (
-                                        <InquiryList>
-                                            {inquiries.map((inquiry) => (
-                                                <InquiryItem key={inquiry.inquiryId}
-                                                             onClick={() => handleInquiryClick(inquiry.inquiryId)}>
-                                                    <p><strong>문의 제목:</strong> {inquiry.inquiryTitle}</p>
-                                                    <p><strong>작성자:</strong> {inquiry.memberId}</p>
-                                                    <p>
-                                                        <strong>작성일:</strong> {new Date(inquiry.createdDate).toLocaleDateString()}
-                                                    </p>
-                                                </InquiryItem>
-                                            ))}
-                                        </InquiryList>
-                                    ) : (
-                                        <p>문의가 없습니다.</p>
-                                    )
-                                )}
-                            </>
-                        )}
-                    </>
-                )}
-                {activeTab === "news" && <CourseNewsList courseId={courseId}/>}
             </TabContent>
         </DetailPage>
     );

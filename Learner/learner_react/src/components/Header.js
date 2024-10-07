@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
 import styled from "styled-components";
-import {Link, useLocation, useNavigate} from "react-router-dom";
-import {useEffect, useState} from "react";
 
 const Header = ({ openModal }) => {
     const navigate = useNavigate();
