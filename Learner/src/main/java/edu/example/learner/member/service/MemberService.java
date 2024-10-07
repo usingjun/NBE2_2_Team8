@@ -9,6 +9,7 @@ import edu.example.learner.member.exception.MemberException;
 import edu.example.learner.member.dto.MemberDTO;
 import edu.example.learner.member.repository.MemberRepository;
 import edu.example.learner.security.util.JWTUtil;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.Cookie;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
