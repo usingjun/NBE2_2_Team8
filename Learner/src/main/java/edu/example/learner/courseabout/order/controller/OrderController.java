@@ -3,6 +3,7 @@ package edu.example.learner.courseabout.order.controller;
 import edu.example.learner.courseabout.order.dto.OrderDTO;
 import edu.example.learner.courseabout.order.dto.OrderUpdateDTO;
 import edu.example.learner.courseabout.course.service.CourseService;
+import edu.example.learner.courseabout.order.dto.PurchaseRequest;
 import edu.example.learner.courseabout.order.service.OrderService;
 import edu.example.learner.security.auth.CustomUserPrincipal;
 import lombok.RequiredArgsConstructor;
@@ -75,6 +76,14 @@ public class OrderController {
         orderService.delete(orderId);
         return ResponseEntity.ok(Map.of("success", "ok"));
     }
+
+    @PostMapping("/purchase/{orderId}")
+    public ResponseEntity<OrderDTO> purchaseOrderItems(@PathVariable Long orderId, @RequestBody PurchaseRequest purchaseRequest) {
+        Long memberId = purchaseRequest.getMemberId();
+        OrderDTO orderDTO = orderService.purchaseOrderItems(orderId, memberId);
+        return ResponseEntity.ok(orderDTO);
+    }
+
 
     // 사용자 정보를 가져올 수 있는 경우 주석 해제 후 사용할 수 있음
     /*
