@@ -63,7 +63,7 @@ public class MemberRestController {
 
     //다른 사용자 조회
     @GetMapping("/{nickname}/other")
-    public ResponseEntity<MemberDTO> memberRead(@RequestParam String nickname) {
+    public ResponseEntity<MemberDTO> memberRead(@PathVariable String nickname) {
         log.info("--- memberRead()");
         MemberDTO memberDTO = memberService.getMemberInfoNickName(nickname);
         //본인이 아닌 사용자 조회시 개인정보빼고 정보 전달

@@ -5,6 +5,15 @@ const CourseReview = ({ courseId }) => {
     const [reviewList, setReviewList] = useState([]);
     const [userNickname, setUserNickname] = useState('');
     const [userId, setUserId] = useState(''); // 사용자의 memberId를 저장할 상태 추가
+    const [writerId, setWriterId] = useState(null); // 토큰에서 가져온 memberId 저장
+
+    // useEffect를 통해 로그인한 사용자의 정보를 로컬 스토리지에서 가져옴
+    useEffect(() => {
+        const storedMemberId = localStorage.getItem("memberId"); // localStorage에서 memberId 가져옴
+        if (storedMemberId) {
+            setWriterId(storedMemberId); // memberId 상태 설정
+        }
+    }, []);
 
     useEffect(() => {
         const token = localStorage.getItem("memberId");
@@ -45,12 +54,14 @@ const CourseReview = ({ courseId }) => {
                 method: "DELETE",
                 headers: {
                     'Content-Type': 'application/json',
-                    'memberId': token  // memberId를 헤더에 추가
+                    'memberId': token
                 },
                 credentials: 'include',
+                body: JSON.stringify({writerId})
             })
                 .then(() => {
                     setReviewList(reviewList.filter(review => review.reviewId !== reviewId));
+
                     alert("리뷰가 삭제되었습니다.");
                 })
                 .catch(err => console.error("리뷰 삭제 실패:", err));
@@ -61,6 +72,20 @@ const CourseReview = ({ courseId }) => {
         if (reviewList.length === 0) return 0;
         const totalRating = reviewList.reduce((acc, review) => acc + review.rating, 0);
         return (totalRating / reviewList.length).toFixed(1);
+    };
+
+    const formatDate = (dateString) => {
+        const options = {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false // 24시간 형식
+        };
+        const date = new Date(dateString);
+        return date.toLocaleString('ko-KR', options).replace(',', ''); // 한국 형식으로 반환
     };
 
     return (
@@ -77,7 +102,14 @@ const CourseReview = ({ courseId }) => {
                             <h3 className="review-title">{review.reviewName}</h3>
                             <p className="review-detail">{review.reviewDetail}</p>
                             <span className="review-rating">평점: {review.rating} / 5</span>
-                            <p className="review-author">작성자: {review.writerName}</p>
+                            <p className="review-author">
+                                {/* userId와 review.writerId가 같으면 MyPage로, 다르면 OtherUserPage로 이동 */}
+                                <Link
+                                    to={userId === review.writerId ? `/my-page` : `/members/${review.writerName}/other`}>
+                                    작성자: {review.writerName}
+                                </Link>
+                            </p>
+                            <p className="review-updatedDate"> 수정일 : {formatDate(review.reviewUpdatedDate)}</p>
                         </div>
                         <div className="button-group">
                             {userId === review.writerId && ( // userId와 review의 writerId가 일치할 때만 버튼 표시
@@ -100,6 +132,7 @@ const CourseReview = ({ courseId }) => {
                     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 강조 */
                     position: relative; /* 버튼 위치 조정을 위해 relative 추가 */
                 }
+
                 .review-header {
                     font-size: 28px; /* 헤더 크기 증가 */
                     color: #333;
