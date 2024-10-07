@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
+import VideoNavigation from './pages/video/VideoNavigation';
 
 const YoutubePlayer = () => {
     const { videoId } = useParams();
@@ -7,8 +8,12 @@ const YoutubePlayer = () => {
     const playerRef = useRef(null);
     const [totalDuration, setTotalDuration] = useState(0);
     const [currentTime, setCurrentTime] = useState(0);
-    const videoEntityId = location.state.videoEntityId; // 비디오 엔티티 ID
-    const youtubeId = location.state.youtubeId; // 유튜브 비디오 ID
+    // location.state를 안전하게 접근
+    const { videoEntityId, youtubeId, courseId, courseVideos = [] } = location.state || {};
+
+    // 비디오 인덱스 계산
+    const currentVideoIndex = courseVideos.findIndex(video => video.video_Id === videoEntityId);
+    const [isLoading, setIsLoading] = useState(false);
 
     const embedUrl = `https://www.youtube.com/embed/${youtubeId}?enablejsapi=1`;
 
@@ -125,8 +130,19 @@ const YoutubePlayer = () => {
             });
     };
 
+    // 이전, 다음 동영상
+    const previousVideo = currentVideoIndex > 0 ? courseVideos[currentVideoIndex - 1] : null;
+    const nextVideo = currentVideoIndex < courseVideos.length - 1 ? courseVideos[currentVideoIndex + 1] : null;
+
+
     return (
-        <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', flexDirection: 'column' }}>
+        <div style={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100vh',
+            flexDirection: 'column'
+        }}>
             <iframe
                 id="youtube-player"
                 width="1280"
@@ -135,10 +151,18 @@ const YoutubePlayer = () => {
                 title="YouTube Video"
                 frameBorder="0"
                 allowFullScreen
-                style={{ marginBottom: '20px' }} // 아래에 여유 공간 추가
+                style={{marginBottom: '20px'}} // 아래에 여유 공간 추가
             ></iframe>
             <div>전체 동영상 길이: {totalDuration}초</div>
             <div>현재 동영상 길이: {currentTime.toFixed(2)}초</div>
+            {/* Include the VideoNavigation component */}
+            <VideoNavigation
+                previousVideo={previousVideo}
+                nextVideo={nextVideo}
+                courseId={courseId}
+                currentVideoIndex={currentVideoIndex}
+                isLoading={isLoading}
+            />
         </div>
     );
 };
