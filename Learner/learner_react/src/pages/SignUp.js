@@ -36,8 +36,14 @@ const SignUp = () => {
 
             // 응답 상태가 2xx가 아닐 경우 처리
             if (!response.ok) {
-                const errorData = await response.json(); // JSON 응답 파싱
-                throw new Error(errorData.error); // 에러 메시지 추출
+                const errorData = await response.text(); // 응답을 텍스트로 가져옴
+
+                // JSON 파싱하여 error 메시지 추출
+                const errorObject = JSON.parse(errorData); // JSON 문자열을 객체로 변환
+                const message = errorObject.error || "알 수 없는 오류가 발생했습니다."; // 메시지 추출
+
+                setErrorMessage(message); // 에러 메시지 업데이트
+                return; // 더 이상의 처리를 중단
             }
 
             // 성공적으로 회원가입이 완료된 경우
@@ -46,9 +52,11 @@ const SignUp = () => {
 
         } catch (error) {
             console.error("Error:", error);
-            setErrorMessage(error.message); // 에러 메시지를 상태에 저장
+            // 에러 메시지를 백엔드에서 가져온 메시지로 업데이트
+            setErrorMessage("로그인 요청 중 오류가 발생했습니다. " + (error.message || "알 수 없는 오류가 발생했습니다."));
         }
     };
+
 
 
 
