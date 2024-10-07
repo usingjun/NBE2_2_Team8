@@ -43,7 +43,7 @@ public class InquiryDTO {
         this.inquiryContent = inquiry.getInquiryContent();
         this.inquiryCreateDate = inquiry.getInquiryCreateDate();
         this.inquiryUpdateDate = inquiry.getInquiryUpdateDate();
-        this.inquiryStatus = inquiry.getInquiryStatus();
+        this.inquiryStatus = inquiry.getInquiryStatus().name();
         this.memberId = inquiry.getMember().getMemberId();
         this.memberNickname = inquiry.getMember().getNickname();
     }
@@ -55,7 +55,7 @@ public class InquiryDTO {
                 .inquiryContent(inquiryContent)
                 .inquiryCreateDate(inquiryCreateDate)
                 .inquiryUpdateDate(inquiryUpdateDate)
-                .inquiryStatus(inquiryStatus)
+                .inquiryStatus(InquiryStatus.valueOf(inquiryStatus))
                 .member(Member.builder().memberId(memberId).build())
                 .build();
     }

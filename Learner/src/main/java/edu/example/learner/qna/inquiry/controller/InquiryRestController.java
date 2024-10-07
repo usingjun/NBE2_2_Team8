@@ -1,9 +1,12 @@
 package edu.example.learner.qna.inquiry.controller;
 
+import edu.example.learner.qna.answer.service.AnswerService;
 import edu.example.learner.qna.inquiry.dto.InquiryDTO;
+import edu.example.learner.qna.inquiry.entity.InquiryStatus;
 import edu.example.learner.qna.inquiry.service.InquiryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,6 +18,7 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class InquiryRestController {
     private final InquiryService inquiryService;
+    private final AnswerService answerService;
 
     @GetMapping("/{inquiryId}")
     public ResponseEntity<InquiryDTO> read(@PathVariable("inquiryId") Long inquiryId) {
@@ -35,6 +39,14 @@ public class InquiryRestController {
     public ResponseEntity<InquiryDTO> update(@PathVariable("inquiryId") Long inquiryId, @Validated @RequestBody InquiryDTO inquiryDTO) {
         inquiryDTO.setInquiryId(inquiryId);
         return ResponseEntity.ok(inquiryService.update(inquiryDTO));
+    }
+
+    @PutMapping("/{inquiryId}/status")
+    public ResponseEntity<InquiryDTO> updateStatus(@PathVariable("inquiryId") Long inquiryId, @RequestBody String inquiryStatus) {
+        InquiryDTO foundInquiryDTO = inquiryService.read(inquiryId);
+        System.out.println("inquiryStatus: " + inquiryStatus);
+        foundInquiryDTO.setInquiryStatus(inquiryStatus);
+        return ResponseEntity.ok(inquiryService.update(foundInquiryDTO));
     }
 
     @DeleteMapping("/{inquiryId}")

@@ -5,6 +5,7 @@ import axios from 'axios'; // HTTP 요청을 위해 axios 가져오기
 const InquiryListPage = () => {
     const [inquiries, setInquiries] = useState([]); // 문의 목록 데이터를 저장할 상태
     const [sortBy, setSortBy] = useState('latest'); // 정렬 기준을 저장할 상태, 기본값은 '최신순'
+    const [filterStatus, setFilterStatus] = useState('ALL'); // 상태 필터링을 위한 상태
     const [memberId, setMemberId] = useState(null); // LocalStorage에서 가져온 memberId 상태 저장
     const navigate = useNavigate(); // 페이지 이동을 위한 navigate 함수 생성
 
@@ -35,8 +36,18 @@ const InquiryListPage = () => {
         setSortBy(e.target.value); // 선택된 정렬 기준을 상태에 저장
     };
 
-    // 문의 목록을 정렬하는 함수
-    const sortedInquiries = inquiries.sort((a, b) => {
+    // 상태 필터링 변경 핸들러
+    const handleStatusFilterChange = (e) => {
+        setFilterStatus(e.target.value); // 선택된 상태 필터를 상태에 저장
+    };
+
+    // 문의 목록을 정렬하고 필터링하는 함수
+    const filteredInquiries = inquiries.filter((inquiry) => {
+        if (filterStatus === 'ALL') return true; // 모든 상태를 보여줄 경우
+        return inquiry.inquiryStatus === filterStatus; // 선택된 상태와 일치하는 경우만
+    });
+
+    const sortedInquiries = filteredInquiries.sort((a, b) => {
         if (sortBy === 'status') {
             return a.inquiryStatus.localeCompare(b.inquiryStatus); // 상태별로 정렬
         } else if (sortBy === 'latest') {
@@ -57,13 +68,24 @@ const InquiryListPage = () => {
                         <option value="status">상태별</option>
                     </select>
                 </label>
+                <label>
+                    {/* 상태 필터링 선택하는 드롭다운 */}
+                    상태 필터:
+                    <select value={filterStatus} onChange={handleStatusFilterChange}>
+                        <option value="ALL">모두</option>
+                        <option value="CONFIRMING">CONFIRMING</option>
+                        <option value="PENDING">PENDING</option>
+                        <option value="ANSWERED">ANSWERED</option>
+                        <option value="RESOLVED">RESOLVED</option>
+                    </select>
+                </label>
                 {/* memberId가 있을 때만 문의 작성 버튼을 보여줌 */}
                 {memberId && (
                     <button onClick={() => navigate('/inquiries/new')}>문의 작성</button>
                 )}
             </div>
 
-            {inquiries.length === 0 ? ( // 문의 목록이 비어 있는 경우 조건부 렌더링
+            {sortedInquiries.length === 0 ? ( // 문의 목록이 비어 있는 경우 조건부 렌더링
                 <p>등록된 문의가 없습니다.</p> // 문의가 없을 때 보여줄 문구
             ) : (
                 <table>
