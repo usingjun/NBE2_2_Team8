@@ -1,11 +1,16 @@
 package edu.example.learner.courseabout.course.service;
 
 import edu.example.learner.courseabout.course.dto.CourseDTO;
+import edu.example.learner.courseabout.course.dto.MemberCourseDTO;
 import edu.example.learner.courseabout.course.entity.Course;
 import edu.example.learner.courseabout.course.entity.CourseAttribute;
+import edu.example.learner.courseabout.course.entity.MemberCourse;
 import edu.example.learner.courseabout.course.repository.CourseRepository;
+import edu.example.learner.courseabout.course.repository.MemberCourseRepository;
+import edu.example.learner.courseabout.exception.CourseException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,8 +21,10 @@ import java.util.Optional;
 @Service
 @Transactional
 @RequiredArgsConstructor
+@Log4j2
 public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
+    private final MemberCourseRepository memberCourseRepository;
 
     @Override
     public CourseDTO addCourse(CourseDTO courseDTO) {
@@ -64,7 +71,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public void deleteCourse(Long courseId) {
-        courseRepository.deleteById(2L);
+        courseRepository.deleteById(courseId);
     }
 
     @Override
@@ -75,9 +82,57 @@ public class CourseServiceImpl implements CourseService {
         for (Course course : courseList) {
             courseDTOList.add(new CourseDTO(course));
         }
-
         return courseDTOList;
     }
+
+    @Override
+    public List<CourseDTO> getCoursesByNickname(String nickname) {
+        List<Course> byMemberNickname = courseRepository.getByMemberNickname(nickname);
+        if (byMemberNickname != null && !byMemberNickname.isEmpty()) {
+            List<CourseDTO> courseDTOList = new ArrayList<>();
+            for (Course course : byMemberNickname) {
+                courseDTOList.add(new CourseDTO(course));
+            }
+            return courseDTOList;
+        } else {
+            return new ArrayList<>(); // 빈 리스트 반환
+        }
+    }
+
+    //수강 중인 강의 목록
+    @Override
+    public List<MemberCourseDTO> getMemberCoursesByMemberId(Long memberId) {
+        List<MemberCourse> memberCourseList = memberCourseRepository.getMemberCourse(memberId);
+
+        if (memberCourseList == null && memberCourseList.isEmpty()) {
+            throw CourseException.MEMBER_COURSE_NOT_FOUND.get();
+        }
+
+        List<MemberCourseDTO> memberCourseDTOList = new ArrayList<>();
+
+        for (MemberCourse memberCourse : memberCourseList) {
+            memberCourseDTOList.add(new MemberCourseDTO(memberCourse));
+        }
+        log.info(memberCourseDTOList);
+        return memberCourseDTOList;
+    }
+
+    @Override
+    public List<CourseDTO> getCoursesByMemberId(Long memberId) {
+        List<MemberCourse> memberCourses = memberCourseRepository.findByMember_MemberId(memberId);
+
+        if (memberCourses == null || memberCourses.isEmpty()) {
+            throw CourseException.MEMBER_COURSE_NOT_FOUND.get();
+        }
+
+        List<CourseDTO> courseDTOList = new ArrayList<>();
+        for (MemberCourse memberCourse : memberCourses) {
+            courseDTOList.add(new CourseDTO(memberCourse.getCourse()));
+        }
+        return courseDTOList;
+    }
+
+
 
     // 강사 닉네임 반환
     public String getInstructorNicknameByCourseId(Long courseId) {
@@ -87,4 +142,5 @@ public class CourseServiceImpl implements CourseService {
         // 해당 코스의 Member(강사)의 닉네임을 반환
         return course.getMember().getNickname();
     }
+
 }

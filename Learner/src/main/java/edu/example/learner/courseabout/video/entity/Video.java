@@ -1,6 +1,7 @@
 package edu.example.learner.courseabout.video.entity;
 
 import edu.example.learner.courseabout.course.entity.Course;
+import edu.example.learner.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -37,7 +38,7 @@ public class Video {
     private LocalDateTime updatedAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "course_Id")
+    @JoinColumn(name = "course_Id", referencedColumnName = "course_id") // course_id에 맞추기
     private Course course;
 
     // Getters and changeters

@@ -41,7 +41,8 @@ const Courses = () => {
     }, []); // 컴포넌트가 마운트될 때 실행
 
     const handleSearch = () => {
-        axios.get(`http://localhost:8080/course/${searchId}`)
+        const memberId = localStorage.getItem('memberId');
+        axios.get(`http://localhost:8080/course/${memberId}`)
             .then((response) => {
                 setSearchedCourse(response.data);
             })

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
 
@@ -8,6 +8,7 @@ const OrderDetail = () => {
     const [order, setOrder] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const navigate = useNavigate(); // useNavigate 훅 사용
 
     useEffect(() => {
         const fetchOrderDetail = async () => {
@@ -16,7 +17,7 @@ const OrderDetail = () => {
                 const response = await axios.get(`http://localhost:8080/order/${orderId}`);
                 setOrder(response.data);
             } catch (error) {
-                console.error("Error fetching order details:", error);
+                console.error("주문 세부정보를 가져오는 중 오류 발생:", error);
                 setError("주문 세부정보를 가져오는 데 실패했습니다.");
             } finally {
                 setLoading(false);
@@ -29,6 +30,10 @@ const OrderDetail = () => {
     if (loading) return <p>로딩 중...</p>;
     if (error) return <p>{error}</p>;
     if (!order) return <p>주문이 없습니다.</p>;
+
+    const handleBackClick = () => {
+        navigate(-1); // 이전 페이지로 이동
+    };
 
     return (
         <OrderDetailContainer>
@@ -44,9 +49,7 @@ const OrderDetail = () => {
                     </li>
                 ))}
             </ul>
-            <Link to="/orders">
-                <BackButton>뒤로가기</BackButton>
-            </Link>
+            <BackButton onClick={handleBackClick}>뒤로가기</BackButton>
         </OrderDetailContainer>
     );
 };

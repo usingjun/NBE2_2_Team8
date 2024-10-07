@@ -5,6 +5,10 @@ import styled from "styled-components";
 import CourseNewsList from "./CourseNewsList";
 import CourseInquiryList from "./CourseInquiryList";
 import CourseReview from "./course-review/CourseReview";
+import CourseNewsList from "../CourseNewsList";
+import CourseReview from "../course-review/CourseReview";
+import VideoList from "../video/VideoList"; // VideoList 컴포넌트 임포트
+
 
 // 기본 이미지 경로
 const defaultImage = "/images/course_default_img.png";
@@ -61,9 +65,11 @@ const CourseDetail = () => {
                     <CourseDetails>
                         <CourseTitle>{course.courseName}</CourseTitle>
                         <CourseDescription>{course.courseDescription}</CourseDescription>
-                        <Instructor onClick={() => navigate(`/members/instructor/${course.memberNickname}`)}>
-                            강사 : {course.memberNickname}
+                        <Instructor>
+                            <InstructorName>강사 : {course.memberNickname}</InstructorName>
+                            <StyledButton onClick={() => navigate(`/members/instructor/${course.memberNickname}`)}>강사 페이지</StyledButton>
                         </Instructor>
+
                     </CourseDetails>
                 </CourseInfo>
             )}
@@ -148,6 +154,13 @@ const CourseDescription = styled.p`
 const Instructor = styled.p`
     font-size: 1rem;
     color: #555;
+    margin-top: 1rem; /* 위쪽 여백 추가 */
+    display: flex;
+    align-items: center; /* 세로 정렬 */
+`;
+
+const InstructorName = styled.span`
+    margin-right: 1rem; /* 버튼과의 간격 추가 */
 `;
 
 const TabMenu = styled.div`
@@ -217,5 +230,26 @@ const DeleteButton = styled.button`
     cursor: pointer;
     &:hover {
         background-color: #c0392b;
+    }
+`;
+
+const StyledButton = styled.button`
+    padding: 0.75rem 1.5rem; /* 상하, 좌우 패딩 */
+    background-color: #3cb371; /* 버튼 기본 색상 */
+    color: white; /* 글자 색상 */
+    border: none; /* 경계선 없음 */
+    border-radius: 8px; /* 둥근 모서리 */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 그림자 효과 */
+    font-size: 1rem; /* 글자 크기 */
+    cursor: pointer; /* 마우스 포인터 */
+    transition: background-color 0.3s, transform 0.3s; /* 애니메이션 효과 */
+
+    &:hover {
+        background-color: #2a9d63; /* 호버 시 색상 변경 */
+        transform: translateY(-2px); /* 호버 시 약간 위로 이동 */
+    }
+
+    &:active {
+        transform: translateY(0); /* 클릭 시 원래 위치로 돌아옴 */
     }
 `;

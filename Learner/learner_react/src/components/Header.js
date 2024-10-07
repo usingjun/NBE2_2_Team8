@@ -55,8 +55,10 @@ const Header = ({ openModal }) => {
                         {isMenuOpen && (
                             <SubMenu>
                                 <SubMenuItem onClick={() => navigate('/내정보')}>내정보</SubMenuItem> {/* 내정보 클릭 시 마이페이지로 이동 */}
-                                <SubMenuItem onClick={() => navigate('/cart')}>장바구니</SubMenuItem>
+                                <SubMenuItem onClick={() => navigate('/courses/list')}>내 학습</SubMenuItem>
+                                <SubMenuItem onClick={() => navigate('/orders')}>장바구니</SubMenuItem>
                                 <SubMenuItem onClick={() => navigate('/edit-profile')}>회원정보 수정</SubMenuItem>
+                                <SubMenuItem onClick={() => navigate('/my-courses')}>내 수강 정보</SubMenuItem>
                                 <SubMenuItem onClick={handleLogout}>로그아웃</SubMenuItem>
                             </SubMenu>
                         )}
@@ -75,6 +77,7 @@ const Header = ({ openModal }) => {
 };
 
 export default Header;
+
 
 // 스타일 컴포넌트들
 
