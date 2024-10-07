@@ -3,15 +3,17 @@ import styled from "styled-components";
 
 const MyPage = () => {
     const [userInfo, setUserInfo] = useState(null);
+    const [myCourses, setMyCourses] = useState([]); // 사용자 강의 상태 추가
     const [selectedFile, setSelectedFile] = useState(null);
-    const [isHover, setIsHover] = useState(false); // hover 상태 추가
+    const [isHover, setIsHover] = useState(false);
 
     useEffect(() => {
-        const memberId = localStorage.getItem("memberId"); // 로컬 저장소에서 memberId 가져오기
+        const memberId = localStorage.getItem("memberId");
+
         const fetchUserInfo = async () => {
             try {
                 const response = await fetch(`http://localhost:8080/members/${memberId}`, {
-                    credentials: "include", // 쿠키 포함
+                    credentials: "include",
                 });
                 if (response.ok) {
                     const data = await response.json();
@@ -24,7 +26,24 @@ const MyPage = () => {
             }
         };
 
+        const fetchMyCourses = async () => {
+            try {
+                const response = await fetch(`http://localhost:8080/members/${memberId}/courses`, {
+                    credentials: "include",
+                });
+                if (response.ok) {
+                    const data = await response.json();
+                    setMyCourses(data); // 사용자 강의 정보 설정
+                } else {
+                    console.error("강의 정보 로드 실패:", response.status);
+                }
+            } catch (error) {
+                console.error("강의 정보 API 호출 중 오류 발생:", error);
+            }
+        };
+
         fetchUserInfo();
+        fetchMyCourses(); // 강의 정보 가져오기
     }, []);
 
     const handleLogout = () => {
@@ -37,7 +56,6 @@ const MyPage = () => {
         const file = event.target.files[0];
         if (file) {
             setSelectedFile(file);
-            // 이미지 업로드 요청
             const memberId = localStorage.getItem("memberId");
             const formData = new FormData();
             formData.append("file", file);
@@ -45,13 +63,13 @@ const MyPage = () => {
                 const response = await fetch(`http://localhost:8080/${memberId}/image`, {
                     method: "POST",
                     body: formData,
-                    credentials: "include", // 쿠키 포함
+                    credentials: "include",
                 });
                 if (response.ok) {
                     const data = await response.json();
                     setUserInfo((prevUserInfo) => ({
                         ...prevUserInfo,
-                        profileImage: data.profileImage, // 업로드된 이미지로 사용자 정보 업데이트
+                        profileImage: data.profileImage,
                     }));
                 } else {
                     console.error("이미지 업로드 실패:", response.status);
@@ -64,27 +82,26 @@ const MyPage = () => {
 
     const handleUploadClick = () => {
         const fileInput = document.getElementById("fileInput");
-        fileInput.click(); // 파일 업로드 창 열기
+        fileInput.click();
     };
 
     if (!userInfo) {
         return <LoadingMessage>로딩 중...</LoadingMessage>;
     }
 
-    // 프로필 이미지가 null일 경우 기본 이미지로 설정
     const profileImageSrc = userInfo.profileImage
-        ? `data:image/jpeg;base64,${userInfo.profileImage}` // base64 형식으로 변환
-        : "http://localhost:8080/images/default_profile.jpg"; // 기본 이미지 경로
+        ? `data:image/jpeg;base64,${userInfo.profileImage}`
+        : "http://localhost:8080/images/default_profile.jpg";
 
     return (
         <Container>
             <Title>마이페이지</Title>
             <ProfileSection
-                onMouseEnter={() => setIsHover(true)} // 마우스 엔터
-                onMouseLeave={() => setIsHover(false)} // 마우스 리브
+                onMouseEnter={() => setIsHover(true)}
+                onMouseLeave={() => setIsHover(false)}
             >
                 <ProfilePicture src={profileImageSrc} alt="Profile" />
-                {isHover && ( // hover 상태일 때만 버튼 보이기
+                {isHover && (
                     <UploadButton onClick={handleUploadClick}>
                         +
                     </UploadButton>
@@ -106,6 +123,20 @@ const MyPage = () => {
                 <AboutTitle>자기소개</AboutTitle>
                 <AboutContent>{userInfo.introduction || "자기소개가 없습니다."}</AboutContent>
             </AboutSection>
+            <MyCoursesSection>
+                <AboutTitle>내 강의 목록</AboutTitle>
+                {myCourses.length > 0 ? (
+                    <CourseList>
+                        {myCourses.map(course => (
+                            <CourseItem key={course.courseId}>
+                                {course.courseName}
+                            </CourseItem>
+                        ))}
+                    </CourseList>
+                ) : (
+                    <p>등록된 강의가 없습니다.</p>
+                )}
+            </MyCoursesSection>
             <ButtonContainer>
                 <StyledButton onClick={() => window.location.href = "/edit-profile"}>회원정보 수정</StyledButton>
                 <StyledButton onClick={handleLogout}>로그아웃</StyledButton>
@@ -134,25 +165,25 @@ const ProfileSection = styled.div`
     align-items: center;
     justify-content: center;
     margin-bottom: 3rem;
-    position: relative; // 상대 위치 설정
+    position: relative;
 `;
 
 const ProfilePicture = styled.img`
-    width: 200px;  // 크기 증가
-    height: 200px; // 크기 증가
-    border-radius: 50%; // 동그란 이미지
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
     margin-right: 2rem;
-    object-fit: cover; // 이미지 비율 유지
-    border: 5px solid #3cb371; // 동그란 테두리 색상
+    object-fit: cover;
+    border: 5px solid #3cb371;
 `;
 
 const UserInfo = styled.div`
     text-align: left;
-    font-size: 1.2rem; // 크기 감소
+    font-size: 1.2rem;
 `;
 
 const InfoItem = styled.p`
-    margin: 0.5rem 0; // 간격 조정
+    margin: 0.5rem 0;
 `;
 
 const AboutSection = styled.div`
@@ -161,7 +192,7 @@ const AboutSection = styled.div`
     border-radius: 5px;
     padding: 1.5rem;
     background-color: #f9f9f9;
-    text-align: left; // 왼쪽 정렬
+    text-align: left;
 `;
 
 const AboutTitle = styled.h2`
@@ -170,7 +201,29 @@ const AboutTitle = styled.h2`
 `;
 
 const AboutContent = styled.p`
-    font-size: 1.2rem; // 크기 증가
+    font-size: 1.2rem;
+`;
+
+const MyCoursesSection = styled.div`
+    margin: 2rem 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 1.5rem;
+    background-color: #f9f9f9;
+    text-align: left;
+`;
+
+const CourseList = styled.ul`
+    list-style-type: none;
+    padding: 0;
+`;
+
+const CourseItem = styled.li`
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #ddd;
+    &:last-child {
+        border-bottom: none; // 마지막 항목의 경계 제거
+    }
 `;
 
 const ButtonContainer = styled.div`
@@ -184,9 +237,9 @@ const StyledButton = styled.button`
     color: white;
     border: none;
     border-radius: 5px;
-    padding: 1rem 2rem; // 크기 증가
+    padding: 1rem 2rem;
     cursor: pointer;
-    font-size: 1rem; // 크기 유지
+    font-size: 1rem;
     &:hover {
         background-color: #218838;
     }
@@ -198,17 +251,17 @@ const LoadingMessage = styled.p`
 `;
 
 const UploadButton = styled.button`
-    position: absolute; // 절대 위치 설정
-    bottom: 10px; // 프로필 사진 아래쪽
-    right: 10px; // 프로필 사진 오른쪽
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
     background-color: #3cb371;
     color: white;
     border: none;
     border-radius: 50%;
-    width: 40px; // 버튼 크기
-    height: 40px; // 버튼 크기
+    width: 40px;
+    height: 40px;
     cursor: pointer;
-    font-size: 1.5rem; // 글자 크기
+    font-size: 1.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
