@@ -64,7 +64,7 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public void deleteCourse(Long courseId) {
-        courseRepository.deleteById(2L);
+        courseRepository.deleteById(courseId);
     }
 
     @Override
@@ -78,6 +78,21 @@ public class CourseServiceImpl implements CourseService {
 
         return courseDTOList;
     }
+
+    @Override
+    public List<CourseDTO> getCoursesByNickname(String nickname) {
+        List<Course> byMemberNickname = courseRepository.getByMemberNickname(nickname);
+        if (byMemberNickname != null && !byMemberNickname.isEmpty()) {
+            List<CourseDTO> courseDTOList = new ArrayList<>();
+            for (Course course : byMemberNickname) {
+                courseDTOList.add(new CourseDTO(course));
+            }
+            return courseDTOList;
+        } else {
+            return new ArrayList<>(); // 빈 리스트 반환
+        }
+    }
+
 
     // 강사 닉네임 반환
     public String getInstructorNicknameByCourseId(Long courseId) {

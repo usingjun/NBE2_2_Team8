@@ -1,9 +1,7 @@
 package edu.example.learner.courseabout.video.dto;
 
-import jakarta.persistence.Embeddable;
 import lombok.*;
 
-@Embeddable
 @Builder
 @Getter
 @Setter

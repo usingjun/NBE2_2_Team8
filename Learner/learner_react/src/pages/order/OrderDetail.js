@@ -44,7 +44,7 @@ const OrderDetail = () => {
                     </li>
                 ))}
             </ul>
-            <Link to="/orders">
+            <Link to="/learner_react/src/pages/order/Orders">
                 <BackButton>뒤로가기</BackButton>
             </Link>
         </OrderDetailContainer>
