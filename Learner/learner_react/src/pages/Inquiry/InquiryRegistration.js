@@ -1,6 +1,7 @@
 import React, { useState } from 'react'; // React 및 훅스 가져오기
 import { useNavigate } from 'react-router-dom'; // 페이지 이동을 위한 useNavigate 훅 가져오기
 import axios from 'axios'; // HTTP 요청을 위해 axios 가져오기
+import './Style/InquiryRegistration.css'
 
 const InquiryRegistration = () => {
     const [inquiryTitle, setInquiryTitle] = useState(''); // 문의 제목 상태
@@ -40,6 +41,10 @@ const InquiryRegistration = () => {
         }
     };
 
+    const handleCancel = () => {
+        navigate('/inquiries'); // 목록 페이지로 이동
+    };
+
     return (
         <div className="inquiry-registration">
             <h1>문의 작성</h1>
@@ -61,7 +66,10 @@ const InquiryRegistration = () => {
                         required // 필수 입력
                     />
                 </div>
-                <button type="submit">등록</button> {/* 폼 제출 버튼 */}
+                <div className="button-group">
+                    <button type="submit" className="submit-button">문의 등록</button>
+                    <button type="button" className="cancel-button" onClick={handleCancel}>취소</button>
+                </div>
             </form>
         </div>
     );

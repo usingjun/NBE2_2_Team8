@@ -1,59 +1,78 @@
-import React, { useState, useEffect } from 'react'; // React 및 훅스 가져오기
-import { useNavigate } from 'react-router-dom'; // 페이지 이동을 위한 useNavigate 훅 가져오기
-import axios from 'axios'; // HTTP 요청을 위해 axios 가져오기
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
+import './Style/InquiryList.css';
 
 const InquiryListPage = () => {
-    const [inquiries, setInquiries] = useState([]); // 문의 목록 데이터를 저장할 상태
-    const [sortBy, setSortBy] = useState('latest'); // 정렬 기준을 저장할 상태, 기본값은 '최신순'
-    const [filterStatus, setFilterStatus] = useState('ALL'); // 상태 필터링을 위한 상태
-    const [memberId, setMemberId] = useState(null); // LocalStorage에서 가져온 memberId 상태 저장
-    const navigate = useNavigate(); // 페이지 이동을 위한 navigate 함수 생성
+    const [inquiries, setInquiries] = useState([]);
+    const [sortBy, setSortBy] = useState('latest');
+    const [filterStatus, setFilterStatus] = useState('ALL');
+    const [memberId, setMemberId] = useState(null);
+    const [isMyInquiries, setIsMyInquiries] = useState(false); // 내 문의 모아보기 상태
+    const navigate = useNavigate();
 
-    // 컴포넌트가 마운트될 때 데이터 및 memberId를 가져오는 useEffect
     useEffect(() => {
-        // 문의 목록을 가져오는 비동기 함수
         const fetchInquiries = async () => {
             try {
-                const response = await axios.get('http://localhost:8080/inquiries'); // 서버에서 문의 목록 가져오기
-                setInquiries(response.data); // 가져온 데이터를 상태에 저장
+                const response = await axios.get('http://localhost:8080/inquiries');
+                setInquiries(response.data);
             } catch (error) {
-                // 에러 발생 시 더 자세한 정보를 콘솔에 출력
-                console.error('Failed to fetch inquiries:', error.response ? error.response.data : error.message); // 에러의 응답 데이터 또는 메시지를 출력
+                console.error('Failed to fetch inquiries:', error.response ? error.response.data : error.message);
             }
         };
 
-        // LocalStorage에서 memberId 가져오기
         const storedMemberId = localStorage.getItem('memberId');
         if (storedMemberId) {
-            setMemberId(storedMemberId); // memberId를 상태에 저장
+            setMemberId(storedMemberId);
         }
 
-        fetchInquiries(); // 문의 목록 가져오는 함수 호출
-    }, []); // 빈 배열을 두어 컴포넌트 마운트 시 한 번만 실행되도록 설정
+        fetchInquiries();
+    }, []);
 
-    // 정렬 기준이 변경되면 상태 업데이트하는 함수
+    // 내 문의를 가져오는 함수
+    const fetchMyInquiries = async () => {
+        if (!memberId) return; // memberId가 없으면 리턴
+
+        try {
+            const response = await axios.get(`http://localhost:8080/inquiries/member/${memberId}`); // memberId로 문의 조회
+            setInquiries(response.data);
+            setIsMyInquiries(true); // 내 문의 모아보기 상태 업데이트
+        } catch (error) {
+            console.error('Failed to fetch my inquiries:', error.response ? error.response.data : error.message);
+        }
+    };
+
+    // 전체 문의로 되돌리는 함수
+    const fetchAllInquiries = async () => {
+        try {
+            const response = await axios.get('http://localhost:8080/inquiries');
+            setInquiries(response.data);
+            setIsMyInquiries(false); // 전체 문의로 되돌리기
+        } catch (error) {
+            console.error('Failed to fetch inquiries:', error.response ? error.response.data : error.message);
+        }
+    };
+
     const handleSortChange = (e) => {
-        setSortBy(e.target.value); // 선택된 정렬 기준을 상태에 저장
+        setSortBy(e.target.value);
     };
 
-    // 상태 필터링 변경 핸들러
     const handleStatusFilterChange = (e) => {
-        setFilterStatus(e.target.value); // 선택된 상태 필터를 상태에 저장
+        setFilterStatus(e.target.value);
     };
 
-    // 문의 목록을 정렬하고 필터링하는 함수
     const filteredInquiries = inquiries.filter((inquiry) => {
-        if (filterStatus === 'ALL') return true; // 모든 상태를 보여줄 경우
-        return inquiry.inquiryStatus === filterStatus; // 선택된 상태와 일치하는 경우만
+        if (filterStatus === 'ALL') return true;
+        return inquiry.inquiryStatus === filterStatus;
     });
 
     const sortedInquiries = filteredInquiries.sort((a, b) => {
         if (sortBy === 'status') {
-            return a.inquiryStatus.localeCompare(b.inquiryStatus); // 상태별로 정렬
+            return a.inquiryStatus.localeCompare(b.inquiryStatus);
         } else if (sortBy === 'latest') {
-            return new Date(b.inquiryCreateDate) - new Date(a.inquiryCreateDate); // 최신순으로 정렬
+            return new Date(b.inquiryCreateDate) - new Date(a.inquiryCreateDate);
         }
-        return 0; // 기본적으로 변화 없음
+        return 0;
     });
 
     return (
@@ -61,7 +80,6 @@ const InquiryListPage = () => {
             <h1>문의 목록</h1>
             <div className="actions">
                 <label>
-                    {/* 정렬 기준 선택하는 드롭다운 */}
                     정렬 기준:
                     <select value={sortBy} onChange={handleSortChange}>
                         <option value="latest">최신순</option>
@@ -69,7 +87,6 @@ const InquiryListPage = () => {
                     </select>
                 </label>
                 <label>
-                    {/* 상태 필터링 선택하는 드롭다운 */}
                     상태 필터:
                     <select value={filterStatus} onChange={handleStatusFilterChange}>
                         <option value="ALL">모두</option>
@@ -79,14 +96,17 @@ const InquiryListPage = () => {
                         <option value="RESOLVED">RESOLVED</option>
                     </select>
                 </label>
-                {/* memberId가 있을 때만 문의 작성 버튼을 보여줌 */}
+                {/* 내 문의 모아보기 버튼 */}
+                <button onClick={isMyInquiries ? fetchAllInquiries : fetchMyInquiries}>
+                    {isMyInquiries ? '전체 문의 보기' : '내 문의 모아보기'}
+                </button>
                 {memberId && (
                     <button onClick={() => navigate('/inquiries/new')}>문의 작성</button>
                 )}
             </div>
 
-            {sortedInquiries.length === 0 ? ( // 문의 목록이 비어 있는 경우 조건부 렌더링
-                <p>등록된 문의가 없습니다.</p> // 문의가 없을 때 보여줄 문구
+            {sortedInquiries.length === 0 ? (
+                <p>등록된 문의가 없습니다.</p>
             ) : (
                 <table>
                     <thead>
@@ -100,11 +120,10 @@ const InquiryListPage = () => {
                     </tr>
                     </thead>
                     <tbody>
-                    {/* 문의 목록을 테이블로 표시 */}
                     {sortedInquiries.map((inquiry) => (
                         <tr
                             key={inquiry.inquiryId}
-                            onClick={() => navigate(`/inquiries/${inquiry.inquiryId}`)} // 문의 클릭 시 상세 페이지로 이동
+                            onClick={() => navigate(`/inquiries/${inquiry.inquiryId}`)}
                         >
                             <td>{inquiry.inquiryId}</td>
                             <td>{inquiry.inquiryTitle}</td>

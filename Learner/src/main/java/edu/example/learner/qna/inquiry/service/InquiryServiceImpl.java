@@ -26,6 +26,11 @@ public class InquiryServiceImpl implements InquiryService {
     }
 
     @Override
+    public List<InquiryDTO> readByMemberId(Long memberId) {
+        return inquiryRepository.findByMemberId(memberId).stream().map(InquiryDTO::new).collect(Collectors.toList());
+    }
+
+    @Override
     public List<InquiryDTO> readAll() {
         return inquiryRepository.findAll().stream().map(InquiryDTO::new).collect(Collectors.toList());
     }

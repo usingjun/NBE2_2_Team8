@@ -132,6 +132,7 @@ const styles = `
     width: 500px; /* 전체 폭을 더 넓혀줌 */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
     background-color: #ffffff; /* 배경 색상 */
+    margin-bottom: 3rem;
 }
 
 .circle-area {

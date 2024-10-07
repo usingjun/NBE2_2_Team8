@@ -21,6 +21,9 @@ import VideoRoutes from "./VideoRoutes";
 import YoutubePlayer from "./YoutubePlayer";
 import ResetPassword from "./components/ResetPassword"; // ResetPassword 컴포넌트 가져오기
 import MyCourses from './pages/MyCourses';
+import InquiryList from "./pages/Inquiry/InquiryList";
+import InquiryRegistration from "./pages/Inquiry/InquiryRegistration";
+import InquiryDetail from "./pages/Inquiry/InquiryDetail";
 
 function App() {
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -60,6 +63,9 @@ function App() {
                 <Route path="/members/instructor/:nickname/reviews/:reviewId" element={<InstructorReviewEdit />} /> {/* 강사 리뷰 수정 페이지 */}
                 <Route path="/reset-password/:uuid" element={<ResetPassword />} /> {/* 비밀번호 변경 */}
                 <Route path="/my-courses" element={<MyCourses />} />
+                <Route path="/inquiries" element={<InquiryList/>}/>
+                <Route path="/inquiries/new" element={<InquiryRegistration/>}/>
+                <Route path="/inquiries/:inquiryId" element={<InquiryDetail/>}/>
             </Routes>
         </Router>
     );

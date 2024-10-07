@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, {useEffect, useState, useCallback} from 'react';
 import axios from 'axios';
 
 const YearlyStudyTable = () => {
@@ -18,14 +18,14 @@ const YearlyStudyTable = () => {
     const fetchData = useCallback(async (year) => {
         try {
             const response = await axios.get(`http://localhost:8080/study-tables/${memberId}/yearly-summary?year=${year}`);
-            const { yearlyCompleted, yearlyStudyTime, yearlySummary } = response.data;
+            const {yearlyCompleted, yearlyStudyTime, yearlySummary} = response.data;
 
             setTotalCompleted(yearlyCompleted);
             setTotalStudyTime(yearlyStudyTime);
 
             const modifiedSummary = [];
             yearlySummary.forEach(([month, week, completed]) => {
-                modifiedSummary.push({ month, week, completed });
+                modifiedSummary.push({month, week, completed});
             });
 
             setYearlySummary(modifiedSummary);
@@ -60,10 +60,10 @@ const YearlyStudyTable = () => {
 
     return (
         <div className="yearly-study-table">
-            <h2 style={{ display: 'inline-block', marginRight: '20px' }}>연간 학습</h2>
-            <div className="year-navigation" style={{ display: 'flex', alignItems: 'center', float: 'right' }}>
+            <h2 style={{display: 'inline-block', marginRight: '20px'}}>연간 학습</h2>
+            <div className="year-navigation" style={{display: 'flex', alignItems: 'center', float: 'right'}}>
                 <div className="arrow left-arrow" onClick={handlePreviousYear}>{"<"}</div>
-                <span style={{ fontSize: '24px', fontWeight: 'bold', margin: '0 10px' }}>{year}</span>
+                <span style={{fontSize: '24px', fontWeight: 'bold', margin: '0 10px'}}>{year}</span>
                 <div className="arrow right-arrow" onClick={handleNextYear}>{">"}</div>
             </div>
             <table>
@@ -80,9 +80,9 @@ const YearlyStudyTable = () => {
                     <tr key={weekIndex}>
                         <td>{weekIndex + 1}주차</td>
                         {[...Array(12)].map((_, monthIndex) => {
-                            const completedEntry = yearlySummary.find(({ month, week }) =>
+                            const completedEntry = yearlySummary.find(({month, week}) =>
                                 month === monthIndex + 1 && week === weekIndex + 1
-                            ) || { completed: 0 };
+                            ) || {completed: 0};
                             const completed = completedEntry.completed;
                             const color = getColorByCompleted(completed);
                             return (
@@ -106,16 +106,17 @@ const YearlyStudyTable = () => {
                 ))}
                 </tbody>
             </table>
-            <div className="completion-summary" style={{ marginTop: '20px', display: 'flex', justifyContent: 'space-between' }}>
-                <h3>완료한 수업 수: {totalCompleted} 개</h3>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div className="completion-summary"
+                 style={{marginTop: '20px', display: 'flex', justifyContent: 'space-between'}}>
+                <h3>완료한 수업: {totalCompleted} 개</h3>
+                <div style={{display: 'flex', alignItems: 'center'}}>
                     {[
-                        { label: "0개", color: '#f0f0f0' },
-                        { label: "1~5개", color: '#c6e48b' },
-                        { label: "6~10개", color: '#b2e0b2' },
-                        { label: "11~20개", color: '#7ee6b7' },
-                        { label: "21개 이상", color: '#239a3b' },
-                    ].map(({ label, color }) => (
+                        {label: "0개", color: '#f0f0f0'},
+                        {label: "1~5개", color: '#c6e48b'},
+                        {label: "6~10개", color: '#b2e0b2'},
+                        {label: "11~20개", color: '#7ee6b7'},
+                        {label: "21개 이상", color: '#239a3b'},
+                    ].map(({label, color}) => (
                         <div key={label} style={{
                             backgroundColor: color,
                             width: '20px',
@@ -143,9 +144,11 @@ const styles = `
         max-width: 800px; /* 가로 길이 늘리기 */
         margin: auto; /* 가운데 정렬 */
         background-color: white; /* 배경색 변경: 흰색 */
+        border: 1px solid #e0e0e0; /* 테두리 색상 */
         border-radius: 8px; /* 모서리 둥글게 */
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
         position: relative; /* 자식 요소의 절대 위치 설정을 위한 relative 설정 */
+        margin-bottom: 3rem;
     }
     h2 {
         display: inline-block; /* 제목과 버튼이 같은 라인에 배치되도록 설정 */

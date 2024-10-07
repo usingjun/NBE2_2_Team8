@@ -1,22 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import './Style/InquiryDetail.css';
+import {jwtDecode} from 'jwt-decode';
 
 const InquiryDetail = () => {
-    const { inquiryId } = useParams(); // URL 파라미터에서 문의 ID 가져오기
-    const [inquiry, setInquiry] = useState(null); // 문의 상세 정보를 저장할 상태
-    const [answer, setAnswer] = useState(null); // 답변 정보를 저장할 상태
-    const [isEditing, setIsEditing] = useState(false); // 문의 수정 모드 여부 상태
-    const [isAnswerEditing, setIsAnswerEditing] = useState(false); // 답변 수정 모드 여부 상태
-    const [isAnswerCreating, setIsAnswerCreating] = useState(false); // 답변 작성 모드 여부 상태
-    const [title, setTitle] = useState(''); // 수정할 제목 상태
-    const [content, setContent] = useState(''); // 수정할 내용 상태
-    const [answerContent, setAnswerContent] = useState(''); // 수정할 답변 내용 상태
-    const [inquiryStatus, setInquiryStatus] = useState(''); // 문의 상태 변경을 위한 상태
-    const navigate = useNavigate(); // 페이지 이동을 위한 navigate 함수 생성
-    const memberIdFromStorage = localStorage.getItem('memberId'); // LocalStorage에서 memberId 가져오기
-    const memberId = memberIdFromStorage ? parseInt(memberIdFromStorage, 10) : null; // 숫자로 변환
-    const role = 'ADMIN'; // 테스트용 role
+    const { inquiryId } = useParams();
+    const [inquiry, setInquiry] = useState(null);
+    const [answer, setAnswer] = useState(null);
+    const [isEditing, setIsEditing] = useState(false);
+    const [isAnswerEditing, setIsAnswerEditing] = useState(false);
+    const [isAnswerCreating, setIsAnswerCreating] = useState(false);
+    const [title, setTitle] = useState('');
+    const [content, setContent] = useState('');
+    const [answerContent, setAnswerContent] = useState('');
+    const [inquiryStatus, setInquiryStatus] = useState('');
+    const navigate = useNavigate();
+    const memberIdFromStorage = localStorage.getItem('memberId');
+    const memberId = memberIdFromStorage ? parseInt(memberIdFromStorage, 10) : null;
+
+    const getRoleFromCookie = () => {
+        const cookies = document.cookie.split('; ');
+        const token = cookies.find(row => row.startsWith('Authorization=')).split('=')[1]; // 쿠키에서 JWT 가져오기
+
+        if (token) {
+            try {
+                const decodedToken = jwtDecode(token); // JWT 디코딩
+                return decodedToken.role; // 역할 정보 반환
+            } catch (error) {
+                console.error('JWT 디코딩 실패:', error);
+                return null;
+            }
+        }
+        return null;
+    };
+    const role = getRoleFromCookie().split('_')[1];
 
     const fetchInquiry = async () => {
         try {
@@ -36,13 +54,13 @@ const InquiryDetail = () => {
             setAnswer(response.data);
             setAnswerContent(response.data.answerContent);
         } catch (error) {
-            setAnswer(null); // 답변이 없을 경우
+            setAnswer(null);
         }
     };
 
     useEffect(() => {
-        fetchInquiry(); // 문의 상세 정보 가져오기
-        fetchAnswer(); // 답변 가져오기
+        fetchInquiry();
+        fetchAnswer();
     }, [inquiryId]);
 
     const handleDelete = async () => {
@@ -50,7 +68,7 @@ const InquiryDetail = () => {
         if (confirmDelete) {
             try {
                 await axios.delete(`http://localhost:8080/inquiries/${inquiryId}`);
-                navigate('/inquiries'); // 삭제 후 문의 목록 페이지로 이동
+                navigate('/inquiries');
             } catch (error) {
                 console.error('Failed to delete inquiry:', error);
             }
@@ -62,14 +80,13 @@ const InquiryDetail = () => {
         if (confirmDelete) {
             try {
                 await axios.delete(`http://localhost:8080/answers/${inquiryId}`);
-                setAnswer(null); // 답변 상태를 초기화 (삭제 후)
-                setAnswerContent(''); // 입력 칸을 초기화 (삭제 후)
-                // Inquiry 상태 업데이트
+                setAnswer(null);
+                setAnswerContent('');
                 await axios.put(`http://localhost:8080/inquiries/${inquiryId}`, {
                     inquiryTitle: title,
                     inquiryContent: content,
                     memberId: memberId,
-                    inquiryStatus: "CONFIRMING" // 선택된 상태로 업데이트
+                    inquiryStatus: "CONFIRMING"
                 });
             } catch (error) {
                 console.error('Failed to delete answer:', error);
@@ -78,17 +95,16 @@ const InquiryDetail = () => {
     };
 
     const handleEdit = () => {
-        setIsEditing(true); // 문의 수정 모드로 변경
+        setIsEditing(true);
     };
 
     const handleAnswerEdit = () => {
-        setAnswerContent(answer.answerContent); // 기존 답변 내용을 입력 칸에 설정
-        setIsAnswerEditing(true); // 답변 수정 모드로 변경
+        setAnswerContent(answer.answerContent);
+        setIsAnswerEditing(true);
     };
 
-
     const handleAnswerCreate = () => {
-        setIsAnswerCreating(true); // 답변 작성 모드로 변경
+        setIsAnswerCreating(true);
     };
 
     const handleUpdate = async () => {
@@ -98,169 +114,163 @@ const InquiryDetail = () => {
                 inquiryContent: content,
                 memberId: memberId
             });
-            setInquiry({ ...inquiry, inquiryTitle: title, inquiryContent: content }); // 상태 업데이트
-            setIsEditing(false); // 수정 모드 종료
+            setInquiry({ ...inquiry, inquiryTitle: title, inquiryContent: content });
+            setIsEditing(false);
         } catch (error) {
             console.error('Failed to update inquiry:', error);
         }
     };
 
-    // handleAnswerUpdate 함수
     const handleAnswerUpdate = async () => {
         try {
             await axios.put(`http://localhost:8080/answers/${answer.answerId}`, {
                 answerContent: answerContent,
             });
             setAnswer({ ...answer, answerContent: answerContent });
-
-            // Inquiry 상태 업데이트
             await axios.put(`http://localhost:8080/inquiries/${inquiryId}`, {
                 inquiryTitle: title,
                 inquiryContent: content,
                 memberId: memberId,
-                inquiryStatus: inquiryStatus // 선택된 상태로 업데이트
+                inquiryStatus: inquiryStatus
             });
-
-            // 문의 상세 정보 재요청
-            await fetchInquiry(); // 업데이트된 문의 정보 가져오기
-
-            setIsAnswerEditing(false); // 답변 수정 모드 종료
+            await fetchInquiry();
+            setIsAnswerEditing(false);
         } catch (error) {
             console.error('Failed to update answer:', error);
         }
     };
 
-    // handleAnswerSave 함수
     const handleAnswerSave = async () => {
         try {
             const response = await axios.post('http://localhost:8080/answers', {
                 inquiryId: inquiryId,
                 answerContent: answerContent,
             });
-            setAnswer(response.data); // 답변 생성 후 상태 업데이트
-
-            // Inquiry 상태 업데이트
+            setAnswer(response.data);
             await axios.put(`http://localhost:8080/inquiries/${inquiryId}`, {
                 inquiryTitle: title,
                 inquiryContent: content,
                 memberId: memberId,
-                inquiryStatus: inquiryStatus // 선택된 상태로 업데이트
+                inquiryStatus: inquiryStatus
             });
-
-            // 문의 상세 정보 재요청
-            await fetchInquiry(); // 업데이트된 문의 정보 가져오기
-
-            setIsAnswerCreating(false); // 답변 작성 모드 종료
-            setAnswerContent(''); // 입력 칸 초기화
+            await fetchInquiry();
+            setIsAnswerCreating(false);
+            setAnswerContent('');
         } catch (error) {
             console.error('Failed to save answer:', error);
         }
     };
 
     const handleBackToList = () => {
-        navigate('/inquiries'); // 목록 페이지로 이동
+        navigate('/inquiries');
     };
 
-    if (!inquiry) return <p>로딩 중...</p>; // 문의가 로딩 중일 경우
+    if (!inquiry) return <p>로딩 중...</p>;
 
     return (
         <div className="inquiry-detail">
             <h1>문의 상세 페이지</h1>
 
-            {/* 문의 상세 정보 영역 */}
-            <div className="inquiry-section">
-                <div>
-                    <strong>번호:</strong> {inquiry.inquiryId}
-                </div>
-                <div>
-                    <strong>제목:</strong> {isEditing ? <input value={title} onChange={(e) => setTitle(e.target.value)} /> : inquiry.inquiryTitle}
-                </div>
-                <div>
-                    <strong>작성자:</strong> {inquiry.memberNickname}
-                </div>
-                <div>
-                    <strong>작성일:</strong> {new Date(inquiry.inquiryCreateDate).toLocaleDateString()}
-                </div>
-                <div>
-                    <strong>수정일:</strong> {new Date(inquiry.inquiryUpdateDate).toLocaleDateString()}
-                </div>
-                <div>
-                    <strong>상태:</strong> {inquiry.inquiryStatus}
-                </div>
-                <div>
-                    <strong>내용:</strong> {isEditing ? <textarea value={content} onChange={(e) => setContent(e.target.value)} /> : inquiry.inquiryContent}
+            <div className="answer-area">
+                <div className="inquiry-title">
+                    <strong>제목:</strong>
+                    {isEditing ? (
+                        <input value={title} onChange={(e) => setTitle(e.target.value)}/>
+                    ) : (
+                        inquiry.inquiryTitle
+                    )}
                 </div>
 
-                {/* 문의 수정/삭제 버튼 */}
+                <div className="divider"></div>
+
+                <div className="inquiry-info">
+                    <div className="info-row"><strong>작성자:</strong> {inquiry.memberNickname}</div>
+                    <div className="info-row">
+                        <strong>작성일:</strong> {new Date(inquiry.inquiryCreateDate).toLocaleDateString()}</div>
+                    <div className="info-row">
+                        <strong>수정일:</strong> {new Date(inquiry.inquiryUpdateDate).toLocaleDateString()}</div>
+                    <div className="info-row"><strong>상태:</strong> {inquiry.inquiryStatus}</div>
+                </div>
+
+                <div className="divider"></div>
+
+                <div className="inquiry-content">
+                    <strong>내용:</strong>
+                    {isEditing ? (
+                        <textarea value={content} onChange={(e) => setContent(e.target.value)}/>
+                    ) : (
+                        <p>{inquiry.inquiryContent}</p>
+                    )}
+                </div>
+
                 {inquiry.memberId === memberId && (
                     <div className="inquiry-actions">
                         {isEditing ? (
-                            <button onClick={handleUpdate}>완료</button>
+                            <button className="edit-button" onClick={handleUpdate}>완료</button>
                         ) : (
-                            <button onClick={handleEdit}>수정</button>
+                            <button className="edit-button" onClick={handleEdit}>수정</button>
                         )}
-                        <button onClick={handleDelete}>삭제</button>
+                        <button className="delete-button" onClick={handleDelete}>삭제</button>
                     </div>
                 )}
             </div>
 
-            {/* 답변 표시 영역 */}
-            <div className="answer-section">
-                <h2>문의 답변</h2>
-                {answer ? (
-                    <div>
-                        <strong>답변 내용:</strong> {isAnswerEditing ? (
-                        <textarea value={answerContent} onChange={(e) => setAnswerContent(e.target.value)} />
+            <div className="answer-area">
+                <div className="answer-section">
+                    <h2>문의 답변</h2>
+                    <div className="divider"></div>
+                    {/* 시각적 구분선 추가 */}
+                    {answer ? (
+                        <div>
+                            <strong>답변 내용:</strong>
+                            {isAnswerEditing ? (
+                                <textarea value={answerContent} onChange={(e) => setAnswerContent(e.target.value)}/>
+                            ) : (
+                                <p>{answer.answerContent}</p>
+                            )}
+                            {role === 'ADMIN' && (
+                                <div className="answer-actions">
+                                    {isAnswerEditing ? (
+                                        <>
+                                            <select value={inquiryStatus}
+                                                    onChange={(e) => setInquiryStatus(e.target.value)}>
+                                                <option value="CONFIRMING">확인 중</option>
+                                                <option value="ANSWERED">답변 완료</option>
+                                                <option value="RESOLVED">해결됨</option>
+                                            </select>
+                                            <button onClick={handleAnswerUpdate}>수정 완료</button>
+                                            <button onClick={handleAnswerDelete}>삭제</button>
+                                        </>
+                                    ) : (
+                                        <button onClick={handleAnswerEdit}>답변 수정</button>
+                                    )}
+                                </div>
+                            )}
+                        </div>
                     ) : (
-                        answer.answerContent
+                        <div>
+                            <strong>답변이 없습니다.</strong>
+                            {role === 'ADMIN' && (
+                                <button onClick={handleAnswerCreate}>답변 작성</button>
+                            )}
+                        </div>
                     )}
-                        {role === 'ADMIN' && (
-                            <div className="answer-actions">
-                                {isAnswerEditing ? (
-                                    <>
-                                        <select value={inquiryStatus} onChange={(e) => setInquiryStatus(e.target.value)}>
-                                            <option value="CONFIRMING">CONFIRMING</option>
-                                            <option value="PENDING">PENDING</option>
-                                            <option value="ANSWERED">ANSWERED</option>
-                                            <option value="RESOLVED">RESOLVED</option>
-                                        </select>
-                                        <button onClick={handleAnswerUpdate}>답변 수정 완료</button>
-                                    </>
-                                ) : (
-                                    <button onClick={handleAnswerEdit}>답변 수정</button>
-                                )}
-                                <button onClick={handleAnswerDelete}>답변 삭제</button>
-                            </div>
-                        )}
-                    </div>
-                ) : (
-                    <div>
-                        <p>답변이 없습니다.</p>
-                        {role === 'ADMIN' && (
-                            <>
-                                {isAnswerCreating ? (
-                                    <>
-                                        <select value={inquiryStatus}
-                                                onChange={(e) => setInquiryStatus(e.target.value)}>
-                                            <option value="CONFIRMING">CONFIRMING</option>
-                                            <option value="PENDING">PENDING</option>
-                                            <option value="ANSWERED">ANSWERED</option>
-                                            <option value="RESOLVED">RESOLVED</option>
-                                        </select>
-                                        <textarea value={answerContent}
-                                                  onChange={(e) => setAnswerContent(e.target.value)}/>
-                                        <button onClick={handleAnswerSave}>답변 등록</button>
-                                    </>
-                                ) : (
-                                    <button onClick={handleAnswerCreate}>답변 등록</button>
-                                )}
-                            </>
-                        )}
-                    </div>
-                )}
+                    {isAnswerCreating && (
+                        <div>
+                        <textarea
+                            value={answerContent}
+                            onChange={(e) => setAnswerContent(e.target.value)}
+                            placeholder="답변을 작성하세요"
+                        />
+                            <button onClick={handleAnswerSave}>답변 등록</button>
+                        </div>
+                    )}
+                </div>
             </div>
 
-            <button onClick={handleBackToList}>목록으로 돌아가기</button>
+            <div className="back-button">
+                <button onClick={handleBackToList}>목록으로 돌아가기</button>
+            </div>
         </div>
     );
 };

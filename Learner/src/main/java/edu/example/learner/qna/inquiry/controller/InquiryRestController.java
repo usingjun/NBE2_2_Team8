@@ -2,11 +2,9 @@ package edu.example.learner.qna.inquiry.controller;
 
 import edu.example.learner.qna.answer.service.AnswerService;
 import edu.example.learner.qna.inquiry.dto.InquiryDTO;
-import edu.example.learner.qna.inquiry.entity.InquiryStatus;
 import edu.example.learner.qna.inquiry.service.InquiryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,11 +16,15 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class InquiryRestController {
     private final InquiryService inquiryService;
-    private final AnswerService answerService;
 
     @GetMapping("/{inquiryId}")
     public ResponseEntity<InquiryDTO> read(@PathVariable("inquiryId") Long inquiryId) {
         return ResponseEntity.ok(inquiryService.read(inquiryId));
+    }
+
+    @GetMapping("/member/{memberId}")
+    public ResponseEntity<List<InquiryDTO>> readByMember(@PathVariable("memberId") Long memberId) {
+        return ResponseEntity.ok(inquiryService.readByMemberId(memberId));
     }
 
     @GetMapping
