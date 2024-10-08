@@ -29,7 +29,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         log.info("--- requestURI : " + request.getRequestURI());
 
         // 필터링할 경로 설정
-        String[] doFilterPath = {"/course", "/members", "/order", "/reviews", "/video", "/news", "/like", "/course-inquiry"};
+        String[] doFilterPath = {"/course", "/members", "/order", "/reviews", "/video", "/news", "/like", "/course-inquiry", "/inquiries", "/answers", "study-table"};
         boolean doFilter = false;
 
         // 요청 URI 및 HTTP 메소드 확인
@@ -138,6 +138,12 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             case "/like":
                 return true; // 모든 요청에 대해 필터 적용
             case "/course-inquiry":
+                return isPostPutDeleteRequest;
+            case "/inquiries":
+                return isPostPutDeleteRequest;
+            case "/answers":
+                return true;
+            case "/study-table":
                 return isPostPutDeleteRequest;
             default:
                 return false; // 기본적으로 필터 적용 안 함
