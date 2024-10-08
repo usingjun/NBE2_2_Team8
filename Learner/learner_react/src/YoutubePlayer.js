@@ -31,7 +31,7 @@ const YoutubePlayer = () => {
 
             setIsLoading(true);
             try {
-                const response = await axios.get(`http://localhost:8080/course/video/${courseId}`);
+                const response = await axios.get(`http://localhost:8080/course/video/${courseId}`,{ withCredentials: true });
                 const videos = response.data;
                 setCourseVideos(videos);
 
