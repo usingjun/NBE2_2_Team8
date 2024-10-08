@@ -1,9 +1,7 @@
-import React, {useState} from "react";
-import {BrowserRouter as Router, Navigate, Route, Routes} from "react-router-dom";
+import React, { useState } from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import Header from "./components/Header";
 import Courses from "./pages/Courses";
-import PostCourse from "./pages/PostCourse";
-import PutCourse from "./pages/PutCourse";
 import SignUp from "./pages/SignUp";
 import LoginModal from "./components/LoginModal";
 import PostCourseInquiry from "./pages/PostCourseInquiry"
@@ -23,6 +21,9 @@ import VideoRoutes from "./VideoRoutes";
 import YoutubePlayer from "./YoutubePlayer";
 import ResetPassword from "./components/ResetPassword"; // ResetPassword 컴포넌트 가져오기
 import MyCourses from './pages/MyCourses';
+import InquiryList from "./pages/Inquiry/InquiryList";
+import InquiryDetail from "./pages/Inquiry/InquiryDetail";
+import InquiryRegistration from "./pages/Inquiry/InquiryRegistration";
 import OtherUserPage from "./pages/OtherUserPage";
 
 function App() {
@@ -66,6 +67,9 @@ function App() {
                 <Route path="/members/instructor/:nickname/reviews/:reviewId" element={<InstructorReviewEdit />} /> {/* 강사 리뷰 수정 페이지 */}
                 <Route path="/reset-password/:uuid" element={<ResetPassword />} /> {/* 비밀번호 변경 */}
                 <Route path="/my-courses" element={<MyCourses />} />
+                <Route path="/inquiries" element={<InquiryList/>}/>
+                <Route path="/inquiries/new" element={<InquiryRegistration/>}/>
+                <Route path="/inquiries/:inquiryId" element={<InquiryDetail/>}/>
                 <Route path="/members/:nickname/other" element={<OtherUserPage />} />
             </Routes>
         </Router>
