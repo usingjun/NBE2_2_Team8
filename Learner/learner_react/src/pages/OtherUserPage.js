@@ -10,7 +10,15 @@ const OtherUserPage = () => {
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/members/other/${nickname}`);
+                const token = localStorage.getItem("jwtToken"); // 저장된 키에 따라 변경
+
+                const response = await fetch(`http://localhost:8080/members/${nickname}/other`, {
+                    method: "GET",
+                    headers: {
+                        "Authorization": `Bearer ${token}` // 토큰 추가
+                    }
+                });
+
                 if (response.ok) {
                     const data = await response.json();
                     setUserInfo(data);

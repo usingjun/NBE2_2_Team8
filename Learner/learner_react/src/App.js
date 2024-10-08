@@ -48,7 +48,7 @@ function App() {
                 <Route path="/courses" element={<Courses />} /> {/* 수정된 경로 */}
                 <Route path="/courses/:courseId/post" element={<PostCourseInquiry />} />
                 <Route path="/courses/:courseId/news/:newsId" element={<CourseNews />} />
-                <Route path="/my-page" element={<MyPage />} />
+                <Route path="/내정보" element={<MyPage />} />
                 <Route path="/courses/:courseId/news/create" element={<CreateNews />} />
                 <Route path="/courses/:courseId/news/:newsId/edit" element={<UpdateNews />} />
                 <Route path="/edit-profile" element={<EditProfile />} />

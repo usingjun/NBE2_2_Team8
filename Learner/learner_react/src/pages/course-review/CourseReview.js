@@ -16,9 +16,9 @@ const CourseReview = ({ courseId }) => {
     }, []);
 
     useEffect(() => {
-        const token = localStorage.getItem("memberId");
-        if (token) {
-            fetch(`http://localhost:8080/members/${token}`, {
+        const memberId = localStorage.getItem("memberId");
+        if (memberId) {
+            fetch(`http://localhost:8080/members/${memberId}`, {
                 credentials: 'include',
             })
                 .then(res => res.json())
@@ -105,7 +105,7 @@ const CourseReview = ({ courseId }) => {
                             <p className="review-author">
                                 {/* userId와 review.writerId가 같으면 MyPage로, 다르면 OtherUserPage로 이동 */}
                                 <Link
-                                    to={userId === review.writerId ? `/my-page` : `/members/other/${review.writerName}`}>
+                                    to={userId === review.writerId ? `/내정보` : `/members/other/${review.writerName}`}>
                                     작성자: {review.writerName}
                                 </Link>
                             </p>

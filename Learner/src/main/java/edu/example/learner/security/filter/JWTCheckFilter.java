@@ -89,6 +89,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             // SecurityContext 처리
             String mid = claims.get("mid").toString();
             String role = claims.get("role").toString(); // 단일 역할 처리
+            log.info("권한 : " + role);
 
             // 토큰을 이용하여 인증된 정보 저장
             UsernamePasswordAuthenticationToken authToken
@@ -103,6 +104,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
             // OAuth2 인증 생략, 다음 필터로 요청 전달
             filterChain.doFilter(request, response);
+            log.info("end");
         } catch (Exception e) {
             handleException(response, e); // 예외 발생 시 처리
         }
