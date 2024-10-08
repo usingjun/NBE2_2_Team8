@@ -53,6 +53,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             ) {
                 log.info("--- JWT verification for path: " + requestURI);
 
+                log.info("path : " + path);
                 // 필터 적용 조건 메소드 호출
                 if (shouldFilterRequest(path, method, requestURI)) {
                     doFilter = true;
