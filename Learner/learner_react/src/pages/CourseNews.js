@@ -107,7 +107,7 @@ export default function CourseNews() {
 
             const likeRes = await fetch(`http://localhost:8080/course/${courseId}/news/${newsId}/like`, {
                 method: method,
-                withCredentials: true,
+                credentials: 'include', // Corrected option for CORS
                 headers: {
                     'Content-Type': 'application/json',
                 },
