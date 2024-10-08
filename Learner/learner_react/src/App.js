@@ -44,8 +44,6 @@ function App() {
             <Routes>
                 <Route path="/" element={<Navigate to="/courses" />} />
                 <Route path="/courses" element={<Courses />} />
-                <Route path="/post-course" element={<PostCourse />} />
-                <Route path="/put-course/:courseId" element={<PutCourse />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/courses" element={<Courses />} /> {/* 수정된 경로 */}
                 <Route path="/courses/:courseId/post" element={<PostCourseInquiry />} />
@@ -70,7 +68,7 @@ function App() {
                 <Route path="/inquiries" element={<InquiryList/>}/>
                 <Route path="/inquiries/new" element={<InquiryRegistration/>}/>
                 <Route path="/inquiries/:inquiryId" element={<InquiryDetail/>}/>
-                <Route path="/members/:nickname/other" element={<OtherUserPage />} />
+                <Route path="/members/other/:nickname" element={<OtherUserPage/>}/>
             </Routes>
         </Router>
     );

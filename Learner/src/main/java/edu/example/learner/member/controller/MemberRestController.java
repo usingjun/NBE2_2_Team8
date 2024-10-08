@@ -93,7 +93,7 @@ public class MemberRestController {
     }
 
     //다른 사용자 조회
-    @GetMapping("/{nickname}/other")
+    @GetMapping("/other/{nickname}")
     @Operation(summary = "다른 회원 조회", description = "다른 회원의 공개된 정보를 가져옵니다")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "다른 회원 조회에 성공하였습니다."),

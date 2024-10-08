@@ -105,7 +105,7 @@ const CourseReview = ({ courseId }) => {
                             <p className="review-author">
                                 {/* userId와 review.writerId가 같으면 MyPage로, 다르면 OtherUserPage로 이동 */}
                                 <Link
-                                    to={userId === review.writerId ? `/my-page` : `/members/${review.writerName}/other`}>
+                                    to={userId === review.writerId ? `/my-page` : `/members/other/${review.writerName}`}>
                                     작성자: {review.writerName}
                                 </Link>
                             </p>

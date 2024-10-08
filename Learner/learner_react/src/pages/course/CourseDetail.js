@@ -104,8 +104,13 @@ const CourseDetail = () => {
 
             {/* 탭에 따라 내용 변경 */}
             <TabContent>
-                {activeTab === "curriculum" && <p>커리큘럼 내용이 여기에 표시됩니다.</p>}
-                {activeTab === "reviews" && <p>수강평 내용이 여기에 표시됩니다.</p>}
+                {activeTab === "curriculum" && <VideoList /> } {/* VideoList 컴포넌트 추가 */}
+                {activeTab === "reviews" && (
+                    <>
+                        <CourseReview courseId={courseId}/>
+                    </>
+                )}
+
                 {activeTab === "questions" && <CourseInquiryList courseId={courseId} />}
                 {activeTab === "news" && <CourseNewsList courseId={courseId} />}
             </TabContent>

@@ -10,7 +10,7 @@ const OtherUserPage = () => {
     useEffect(() => {
         const fetchUserInfo = async () => {
             try {
-                const response = await fetch(`http://localhost:8080/members/${nickname}/other`);
+                const response = await fetch(`http://localhost:8080/members/other/${nickname}`);
                 if (response.ok) {
                     const data = await response.json();
                     setUserInfo(data);

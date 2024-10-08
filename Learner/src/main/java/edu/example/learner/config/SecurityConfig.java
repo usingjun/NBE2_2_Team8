@@ -68,9 +68,9 @@ public class SecurityConfig{
                         .requestMatchers("/join/*").permitAll()                                                                //로그인 및 회원가입 모두 허용
                         .requestMatchers("/find/*").permitAll()                                                                //비밀번호 찾기 및 아이디 찾기 모두 허용
                         //회원 권한 설정
-                        .requestMatchers("/member/{id}/other").permitAll()                                                     //다른 회원 프로필 보기
-                        .requestMatchers("/member/instructor").permitAll()                                                     //강사 프로필 보기
-                        .requestMatchers("/member/*").hasAnyRole("USER","INSTRUCTOR","ADMIN")                            //로그인 된 사용자만 회원정보 수정가능
+                        .requestMatchers("/members/other/*").permitAll()                                                     //다른 회원 프로필 보기
+                        .requestMatchers("/members/instructor/**").permitAll()                                                     //강사 프로필 보기
+                        .requestMatchers("/members/*").hasAnyRole("USER","INSTRUCTOR","ADMIN")                            //로그인 된 사용자만 회원정보 수정가능
                         .requestMatchers(HttpMethod.GET,"/members/list").hasRole("ADMIN")                                      //회원 목록 조회 권한 설정
                         //강의 권한 설정
                         .requestMatchers(HttpMethod.GET, "/course/**").permitAll()                                              // GET 요청 course 모두 허용
