@@ -15,6 +15,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
@@ -39,18 +41,21 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         log.info("method : " + method);
         log.info("requestURI : " + requestURI);
 
+        // URL 디코딩
+        String decodedURI = URLDecoder.decode(requestURI, StandardCharsets.UTF_8);
+        log.info("decodedURI : " + decodedURI);
 
         if((request.getMethod().equals("GET") && (
                 (   requestURI.matches("/course/\\d+") ||
                     requestURI.matches("/course/\\d+/member-nickname") ||
                     requestURI.matches("/course/video/\\d+") ||
                     requestURI.matches("/course/list") ||
-                    requestURI.matches("/members/other/\\w+") ||
-                    requestURI.matches("/members/instructor/\\w+")||
+                    decodedURI.matches("/members/[\\w가-힣]+/other") ||
+                    decodedURI.matches("/members/instructor/[\\w가-힣]+")||
                     requestURI.matches("/course/\\d+/news/\\d+") ||
                     requestURI.matches("/course/\\d+/news")   ||
                     requestURI.matches("/members/find/.*")  ||
-                    requestURI.matches("/members/instructor/\\w+/reviews/list") ||
+                    decodedURI.matches("/members/instructor/[\\w가-힣]+/reviews/list") ||
                     requestURI.matches("/inquiries")    ||
                     requestURI.matches("/course/\\d+/reviews/list") ||
                     requestURI.matches("/course/\\d+/course-inquiry/\\d+") ||
@@ -102,7 +107,6 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             // SecurityContext 처리
             String mid = claims.get("mid").toString();
             String role = claims.get("role").toString(); // 단일 역할 처리
-            log.info("권한 : " + role);
 
             log.info("권한 : " + role);
             // 토큰을 이용하여 인증된 정보 저장
@@ -118,7 +122,6 @@ public class JWTCheckFilter extends OncePerRequestFilter {
 
             // OAuth2 인증 생략, 다음 필터로 요청 전달
             filterChain.doFilter(request, response);
-            log.info("end");
         } catch (Exception e) {
             handleException(response, e); // 예외 발생 시 처리
         }
