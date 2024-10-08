@@ -50,15 +50,16 @@ public class JWTCheckFilter extends OncePerRequestFilter {
                     requestURI.matches("/course/\\d+/news/\\d+") ||
                     requestURI.matches("/course/\\d+/news")   ||
                     requestURI.matches("/members/find/.*")  ||
-                    requestURI.matches("/join/*") ||
                     requestURI.matches("/members/instructor/\\w+/reviews/list") ||
                     requestURI.matches("/inquiries")    ||
                     requestURI.matches("/course/\\d+/reviews/list") ||
                     requestURI.matches("/course/\\d+/course-inquiry/\\d+") ||
                     requestURI.matches("/course/\\d+/course-inquiry") ||
-                    requestURI.matches("/course/\\d+/course-answer/\\d+")
-                )
-        )))
+                    requestURI.matches("/course/\\d+/course-answer/\\d+") ||
+                    requestURI.startsWith("/images")
+                ))) || (request.getMethod().equals("POST") &&
+                (requestURI.matches("/join/.*") || requestURI.matches("/members/find/.*")))
+        )
         {
             log.info("JWT check passed");
             isPublicPath = true;
