@@ -90,6 +90,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             String mid = claims.get("mid").toString();
             String role = claims.get("role").toString(); // 단일 역할 처리
 
+            log.info("권한 : " + role );
             // 토큰을 이용하여 인증된 정보 저장
             UsernamePasswordAuthenticationToken authToken
                     = new UsernamePasswordAuthenticationToken(new CustomUserPrincipal(mid, role), null, List.of(new SimpleGrantedAuthority("ROLE_" + role)));
