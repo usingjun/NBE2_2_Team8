@@ -18,6 +18,8 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
+import static org.aspectj.weaver.tools.cache.SimpleCacheFactory.path;
+
 @RequiredArgsConstructor
 @Log4j2
 public class JWTCheckFilter extends OncePerRequestFilter {
@@ -28,9 +30,8 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         log.info("--- doFilterInternal() ");
         log.info("--- requestURI : " + request.getRequestURI());
 
-        // 필터링할 경로 설정
-        String[] doFilterPath = {"/course", "/members", "/order", "/reviews", "/video", "/news", "/like", "/course-inquiry", "/inquiries", "/answers", "study-table"};
-        boolean doFilter = false;
+
+        boolean isPublicPath = false;
 
         // 요청 URI 및 HTTP 메소드 확인
         String requestURI = request.getRequestURI();
@@ -38,25 +39,37 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         log.info("method : " + method);
         log.info("requestURI : " + requestURI);
 
-        // 필터링 로직
-        for (String path : doFilterPath) {
-            if (requestURI.startsWith(path)) {
-                log.info("--- JWT verification for path: " + requestURI);
 
-                // 필터 적용 조건 메소드 호출
-                if (shouldFilterRequest(path, method, requestURI)) {
-                    doFilter = true;
-                    break; // 조건에 맞으면 더 이상 확인하지 않음
-                }
-            }
+        if((request.getMethod().equals("GET") && (
+                (   requestURI.matches("/course/\\d+") ||
+                    requestURI.matches("/course/\\d+/member-nickname") ||
+                    requestURI.matches("/course/video/\\d+") ||
+                    requestURI.matches("/course/list") ||
+                    requestURI.matches("/members/\\w+/other") ||
+                    requestURI.matches("/members/instructor/\\w+/other")||
+                    requestURI.matches("/course/\\d+/news/\\d+") ||
+                    requestURI.matches("/course/\\d+/news")   ||
+                    requestURI.matches("/members/find/.*")  ||
+                    requestURI.matches("/members/instructor/\\w+/reviews/list") ||
+                    requestURI.matches("/inquiries")    ||
+                    requestURI.matches("/course/\\d+/reviews/list") ||
+                    requestURI.matches("/course/\\d+/course-inquiry/\\d+") ||
+                    requestURI.matches("/course/\\d+/course-inquiry") ||
+                    requestURI.matches("/course/\\d+/course-answer/\\d+") ||
+                    requestURI.startsWith("/images")
+                ))) || (request.getMethod().equals("POST") &&
+                (requestURI.matches("/join/.*") || requestURI.matches("/members/find/.*")))
+        )
+        {
+            log.info("JWT check passed");
+            isPublicPath = true;
         }
-        log.info("doFilter : " + doFilter);
 
-        // 필터를 적용하지 않는 경우, 다음 필터로 요청 전달
-        if (!doFilter) {
+        if (isPublicPath) {
             filterChain.doFilter(request, response);
             return;
         }
+
 
         // Authorization 쿠키에서 토큰 추출
         String authorization = null;
@@ -90,6 +103,7 @@ public class JWTCheckFilter extends OncePerRequestFilter {
             String mid = claims.get("mid").toString();
             String role = claims.get("role").toString(); // 단일 역할 처리
 
+            log.info("권한 : " + role);
             // 토큰을 이용하여 인증된 정보 저장
             UsernamePasswordAuthenticationToken authToken
                     = new UsernamePasswordAuthenticationToken(new CustomUserPrincipal(mid, role), null, List.of(new SimpleGrantedAuthority("ROLE_" + role)));
@@ -108,45 +122,11 @@ public class JWTCheckFilter extends OncePerRequestFilter {
         }
     }
 
+
     public void handleException(HttpServletResponse response, Exception e) throws IOException {
         log.info("--- handleException ---");
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType("application/json");
         response.getWriter().println("{\"error\": \"" + e.getMessage() + "\"}");
-    }
-
-    private boolean shouldFilterRequest(String path, String method, String requestURI) {
-        boolean isGetRequest = method.equals("GET");
-        boolean isPostPutDeleteRequest = method.equals("POST") || method.equals("PUT") || method.equals("DELETE") || method.equals("PATCH");
-
-        log.info("path : " + path);
-
-        switch (path) {
-            case "/course":
-                // /course 및 그 하위 경로는 GET 요청에 대해 필터를 적용하지 않음
-                return isPostPutDeleteRequest; // POST, PUT, DELETE 요청에 대해서만 필터 적용
-            case "/members":
-                return requestURI.matches("/members/\\d+(?!/other)(?!/instructor).*") && (isPostPutDeleteRequest || isGetRequest);
-            case "/reviews":
-                return isPostPutDeleteRequest;
-            case "/order":
-                return true; // 모든 요청에 대해 필터 적용
-            case "/video":
-                return true; // 모든 요청에 대해 필터 적용
-            case "/news":
-                return isPostPutDeleteRequest;
-            case "/like":
-                return true; // 모든 요청에 대해 필터 적용
-            case "/course-inquiry":
-                return isPostPutDeleteRequest;
-            case "/inquiries":
-                return isPostPutDeleteRequest;
-            case "/answers":
-                return true;
-            case "/study-table":
-                return isPostPutDeleteRequest;
-            default:
-                return false; // 기본적으로 필터 적용 안 함
-        }
     }
 }
