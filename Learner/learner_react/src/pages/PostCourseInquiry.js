@@ -37,10 +37,11 @@ const PostCourseInquiry = () => {
             inquiryTitle: title,  // 제목이 비어있거나 null이 아닌지 확인
             inquiryContent: content,  // 내용이 비어있지 않은지 확인
             inquiryStatus: "PENDING"  // 상태가 올바르게 설정되었는지 확인
-        })
+            }, { withCredentials: true })
             .then((response) => {
                 console.log("문의 등록 성공:", response.data);
                 navigate(`/courses/${courseId}`);
+
             })
             .catch((error) => {
                 console.error("문의 등록 실패:", error);

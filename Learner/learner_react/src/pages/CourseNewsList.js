@@ -50,7 +50,9 @@ const CourseNewsList = ({ courseId }) => {
                 setUserRole(decodedToken.role);
                 const email = decodedToken.mid;
 
-                const response = await fetch(`http://localhost:8080/member/nickname?email=${email}`);
+                const response = await fetch(`http://localhost:8080/member/nickname?email=${email}`, {
+                    credentials: 'include',
+                });
                 if (!response.ok) {
                     throw new Error("닉네임을 가져오는 데 실패했습니다.");
                 }
@@ -69,9 +71,9 @@ const CourseNewsList = ({ courseId }) => {
         //     userName,
         //     instructorName
         // });
-
-        return (userRole === 'ROLE_INSTRUCTOR' && userName === instructorName) ||
-            userRole === 'ROLE_ADMIN';
+        // console.log("User role:", userRole);
+        return (userRole === 'INSTRUCTOR' && userName === instructorName) ||
+            userRole === 'ADMIN';
     };
 
 
