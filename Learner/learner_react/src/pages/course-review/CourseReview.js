@@ -115,7 +115,7 @@ const CourseReview = ({ courseId }) => {
                             {userId === review.writerId && ( // userId와 review의 writerId가 일치할 때만 버튼 표시
                                 <>
                                     <button onClick={() => handleDelete(review.reviewId)} className="delete-button">삭제</button>
-                                    <Link to={`/courses/${courseId}/reviews/${review.reviewId}/edit`} className="edit-button">수정</Link>
+                                    <Link to={`/courses/${courseId}/reviews/${review.reviewId}`} className="edit-button">수정</Link>
                                 </>
                             )}
                         </div>

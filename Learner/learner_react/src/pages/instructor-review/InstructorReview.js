@@ -47,9 +47,9 @@ const InstructorReview = () => {
     };
 
     const fetchCourses = () => {
-        const token = localStorage.getItem("memberId");
-        if (token) {
-            fetch(`http://localhost:8080/courses/list/${token}`, {
+        const memberId = localStorage.getItem("memberId");
+        if (memberId) {
+            fetch(`http://localhost:8080/courses/list/${memberId}`, {
                 credentials: 'include',
             })
                 .then(res => res.json())
@@ -76,7 +76,7 @@ const InstructorReview = () => {
     }, [nickname]); // nickname에 따라 API 호출
 
     const handleDelete = (reviewId) => {
-        const token = localStorage.getItem("memberId");
+        const token = localStorage.getItem("Authorization");
         if (window.confirm("정말 삭제하시겠습니까?")) {
             fetch(`http://localhost:8080/members/instructor/${nickname}/reviews/${reviewId}`, {
                 method: "DELETE",

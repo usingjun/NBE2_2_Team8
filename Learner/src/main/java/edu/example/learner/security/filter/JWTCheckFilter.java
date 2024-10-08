@@ -45,8 +45,8 @@ public class JWTCheckFilter extends OncePerRequestFilter {
                     requestURI.matches("/course/\\d+/member-nickname") ||
                     requestURI.matches("/course/video/\\d+") ||
                     requestURI.matches("/course/list") ||
-                    requestURI.matches("/members/\\w+/other") ||
-                    requestURI.matches("/members/instructor/\\w+/other")||
+                    requestURI.matches("/members/other/\\w+") ||
+                    requestURI.matches("/members/instructor/\\w+")||
                     requestURI.matches("/course/\\d+/news/\\d+") ||
                     requestURI.matches("/course/\\d+/news")   ||
                     requestURI.matches("/members/find/.*")  ||

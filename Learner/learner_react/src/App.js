@@ -53,7 +53,7 @@ function App() {
                 <Route path="/courses/:courseId/news/:newsId/edit" element={<UpdateNews />} />
                 <Route path="/edit-profile" element={<EditProfile />} />
                 <Route path="/courses/:courseId/reviews/create" element={<CourseReviewCreate />} />
-                <Route path="/courses/:courseId/reviews/:reviewId/edit" element={<CourseReviewEdit />} />
+                <Route path="/courses/:courseId/reviews/:reviewId" element={<CourseReviewEdit />} />
                 <Route path="/members/instructor/:nickname" element={<Instructor />} />
                 <Route path="/members/instructor/:nickname/reviews/create" element={<InstructorReviewCreate />} />
                 <Route path="/members/instructor/:nickname/reviews/:reviewId" element={<InstructorReviewEdit />} />
