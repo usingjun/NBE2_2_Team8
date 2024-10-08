@@ -70,6 +70,7 @@ public class SecurityConfig{
                         //강의 문의 권한 설정
                         .requestMatchers(HttpMethod.GET, "/course-inquiry/**").permitAll()                                      // GET 요청 course 모두 허용
                         .requestMatchers(HttpMethod.POST, "/course-inquiry/**").hasAnyRole("USER", "INSTRUCTOR","ADMIN")          // POST 요청 course 권한 설정
+                        .requestMatchers(HttpMethod.POST, "/course/{courseId}/course-inquiry").hasAnyRole("USER","INSTRUCTOR","ADMIN")          // POST 요청 course 권한 설정
                         .requestMatchers(HttpMethod.DELETE, "/course-inquiry/**").hasAnyRole("INSTRUCTOR","ADMIN")        // DELETE 요청 course 권한 설정
                         //리뷰 권한 설정
                         .requestMatchers(HttpMethod.GET,"/reviews/**").permitAll()                                               // GET 요청 course 모두 허용
