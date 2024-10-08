@@ -1,12 +1,15 @@
 package edu.example.learner.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import edu.example.learner.courseabout.news.entity.HeartNews;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "member", indexes = @Index(columnList = "email"))
@@ -51,6 +54,8 @@ public class Member{
     @CreatedDate
     private LocalDateTime createDate;
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<HeartNews> heartNewsList = new ArrayList<>();
 
 
     public void changeEmail(String email) {

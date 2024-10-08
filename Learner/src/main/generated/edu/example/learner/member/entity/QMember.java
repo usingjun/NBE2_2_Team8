@@ -7,6 +7,7 @@ import com.querydsl.core.types.dsl.*;
 import com.querydsl.core.types.PathMetadata;
 import javax.annotation.processing.Generated;
 import com.querydsl.core.types.Path;
+import com.querydsl.core.types.dsl.PathInits;
 
 
 /**
@@ -22,6 +23,8 @@ public class QMember extends EntityPathBase<Member> {
     public final DateTimePath<java.time.LocalDateTime> createDate = createDateTime("createDate", java.time.LocalDateTime.class);
 
     public final StringPath email = createString("email");
+
+    public final ListPath<edu.example.learner.courseabout.news.entity.HeartNews, edu.example.learner.courseabout.news.entity.QHeartNews> heartNewsList = this.<edu.example.learner.courseabout.news.entity.HeartNews, edu.example.learner.courseabout.news.entity.QHeartNews>createList("heartNewsList", edu.example.learner.courseabout.news.entity.HeartNews.class, edu.example.learner.courseabout.news.entity.QHeartNews.class, PathInits.DIRECT2);
 
     public final StringPath imageType = createString("imageType");
 
