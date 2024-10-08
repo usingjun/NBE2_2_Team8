@@ -2,12 +2,10 @@ import React, {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
-import CourseNewsList from "./CourseNewsList";
-import CourseInquiryList from "./CourseInquiryList";
-import CourseReview from "./course-review/CourseReview";
 import CourseNewsList from "../CourseNewsList";
 import CourseReview from "../course-review/CourseReview";
 import VideoList from "../video/VideoList"; // VideoList 컴포넌트 임포트
+import CourseInquiryList from "../CourseInquiryList";
 
 
 // 기본 이미지 경로
