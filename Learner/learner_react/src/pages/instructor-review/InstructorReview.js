@@ -19,9 +19,13 @@ const InstructorReview = () => {
     }, []);
 
     useEffect(() => {
-        const token = localStorage.getItem("memberId");
-        if (token) {
-            fetch(`http://localhost:8080/members/${token}`, {
+        const memberId = localStorage.getItem("memberId");
+        const token = localStorage.getItem("Authorization");
+        if (memberId) {
+            fetch(`http://localhost:8080/members/${memberId}`, {
+                headers:{
+                    "Authorization": `Bearer ${token}`
+                },
                 credentials: 'include',
             })
                 .then(res => res.json())
@@ -143,7 +147,7 @@ const InstructorReview = () => {
                                 <p className="review-author">
                                     {/* userId와 review.writerId가 같으면 MyPage로, 다르면 OtherUserPage로 이동 */}
                                     <Link
-                                        to={userId === review.writerId ? `/my-page` : `/members/other/${review.writerName}`}>
+                                        to={userId === review.writerId ? `/내정보` : `/members/other/${review.writerName}`}>
                                         작성자: {review.writerName}
                                     </Link>
                                 </p>
@@ -282,6 +286,7 @@ const InstructorReview = () => {
                         color: white;
                         border: none;
                         border-radius: 5px;
+                        margin-top: 10px;
                         text-decoration: none; /* 링크 스타일 제거 */
                     }
 
