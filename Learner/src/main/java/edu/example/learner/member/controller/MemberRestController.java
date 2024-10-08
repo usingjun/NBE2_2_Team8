@@ -7,9 +7,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/members")
@@ -107,5 +110,13 @@ public class MemberRestController {
         log.info("--- myPageRead()");
         log.info(nickname);
         return ResponseEntity.ok(memberService.getInstructorInfo(nickname));
+    }
+
+    //회원 목록 조회
+    @GetMapping("/list")
+    public ResponseEntity <List<MemberDTO>> listMembers() {
+        log.info("--- myPageRead()");
+
+        return ResponseEntity.ok(memberService.getAllMembers());
     }
 }

@@ -23,15 +23,15 @@ public class CourseInquiryController {
         return ResponseEntity.ok(courseInquiryService.register(courseInquiryDTO));
     }
 
-    //전체 강의 문의 조회
-    @GetMapping
-    public ResponseEntity<List<CourseInquiryDTO>> getList(){
-        List<CourseInquiry> courseInquiries = courseInquiryService.readAll();
+    //강의 문의 리스트 조회
+    @GetMapping()
+    public ResponseEntity<List<CourseInquiryDTO>> getList(@PathVariable("courseId") Long courseId){
+        List<CourseInquiry> courseInquiries = courseInquiryService.readAll(courseId);
         List<CourseInquiryDTO> courseInquiryDTOS = courseInquiries
                 .stream()
                 .map(CourseInquiryDTO::new)
                 .toList();
-
+        log.info(courseInquiryDTOS);
         return ResponseEntity.ok(courseInquiryDTOS);
     }
 

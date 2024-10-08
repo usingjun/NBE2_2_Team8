@@ -5,7 +5,7 @@ import styled from "styled-components";
 import CourseNewsList from "../CourseNewsList";
 import CourseReview from "../course-review/CourseReview";
 import VideoList from "../video/VideoList"; // VideoList 컴포넌트 임포트
-
+import CourseInquiryList from "../CourseInquiryList";
 
 // 기본 이미지 경로
 const defaultImage = "/images/course_default_img.png";
@@ -15,12 +15,7 @@ const CourseDetail = () => {
     const navigate = useNavigate(); //useNavigate 추가
     const [course, setCourse] = useState(null);
     const [activeTab, setActiveTab] = useState("curriculum");
-    const [inquiries, setInquiries] = useState([]); // 강의 문의 데이터를 저장할 상태
-    const [selectedInquiry, setSelectedInquiry] = useState(null); // 선택된 강의 문의 상세 데이터
-    const [answers, setAnswers] = useState([]); // 강의 문의 답변 데이터
-    const [newAnswer, setNewAnswer] = useState(""); // 답변 입력 칸 데이터
-    const [loading, setLoading] = useState(false);
-    const [loadingDetail, setLoadingDetail] = useState(false); // 상세 로딩 상태
+
 
     useEffect(() => {
         // courseId를 이용해서 해당 강의 정보를 가져옴
@@ -33,64 +28,9 @@ const CourseDetail = () => {
             });
     }, [courseId]);
 
-    useEffect(() => {
-        if (activeTab === "questions") {
-            // 강의 문의 탭이 선택될 때 강의 문의 데이터 가져오기
-            setLoading(true);
-            axios.get(`http://localhost:8080/course-inquiry?courseId=${courseId}`)
-                .then((response) => {
-                    setInquiries(response.data); // 문의 데이터를 저장
-                    setLoading(false);
-                })
-                .catch((error) => {
-                    console.error("Error fetching the course inquiries:", error);
-                    setLoading(false);
-                });
-        }
-    }, [activeTab, courseId]);
 
     const handleTabChange = (tab) => {
         setActiveTab(tab);
-        setSelectedInquiry(null); // 탭 변경 시 문의 상세 정보 초기화
-    };
-
-    const handleInquiryClick = (inquiryId) => {
-        setLoadingDetail(true);
-        // 강의 문의 상세 정보 및 답변 가져오기
-        axios.get(`http://localhost:8080/course-inquiry/${inquiryId}`)
-            .then((response) => {
-                setSelectedInquiry(response.data); // 선택된 문의의 상세 데이터 저장
-                // 강의 문의 답변 가져오기
-                return axios.get(`http://localhost:8080/course-answer/${inquiryId}`);
-            })
-            .then((response) => {
-                setAnswers(response.data); // 답변 데이터 저장
-                setLoadingDetail(false);
-            })
-            .catch((error) => {
-                console.error("Error fetching inquiry details or answers:", error);
-                setLoadingDetail(false);
-            });
-    };
-
-    const handleAnswerSubmit = () => {
-        if (!newAnswer.trim()) return;
-        // 답변을 POST로 전송
-        axios.post("http://localhost:8080/course-answer", {
-            inquiryId: selectedInquiry.inquiryId,
-            answerContent: newAnswer
-        })
-            .then(() => {
-                // 답변이 성공적으로 등록되면 답변 목록을 업데이트
-                return axios.get(`http://localhost:8080/course-answer/${selectedInquiry.inquiryId}`);
-            })
-            .then((response) => {
-                setAnswers(response.data); // 새로운 답변 목록으로 업데이트
-                setNewAnswer(""); // 입력란 초기화
-            })
-            .catch((error) => {
-                console.error("Error posting the answer:", error);
-            });
     };
 
     return (
@@ -141,86 +81,8 @@ const CourseDetail = () => {
                     </>
                 )}
 
-                {activeTab === "questions" && (
-                    <>
-                        {loading ? (
-                            <p>로딩 중...</p>
-                        ) : (
-                            <>
-                                <ButtonContainer>
-                                    {selectedInquiry ? (
-                                        <WriteButton onClick={() => setSelectedInquiry(null)}>이전 목록으로</WriteButton> // 이전 목록으로 버튼
-                                    ) : (
-                                        <WriteButton onClick={() => navigate(`/courses/${courseId}/post`)}>글
-                                            작성하기</WriteButton> // 글 작성하기 버튼
-                                    )}
-                                </ButtonContainer>
-
-                                {selectedInquiry ? (
-                                    loadingDetail ? (
-                                        <p>문의 상세 정보를 로딩 중입니다...</p>
-                                    ) : (
-                                        <>
-                                            <InquiryDetail>
-                                                <h3>{selectedInquiry.inquiryTitle}</h3>
-                                                <p><strong>문의 내용:</strong> {selectedInquiry.inquiryContent}</p>
-                                                <p><strong>작성자:</strong> {selectedInquiry.memberId}</p>
-                                                <p>
-                                                    <strong>작성일:</strong> {new Date(selectedInquiry.createdDate).toLocaleDateString()}
-                                                </p>
-                                            </InquiryDetail>
-
-                                            {/* 답변 목록 */}
-                                            <AnswerList>
-                                                <h4>답변 목록</h4>
-                                                {answers.length > 0 ? (
-                                                    answers.map((answer) => (
-                                                        <AnswerItem key={answer.answerId}>
-                                                            <p><strong>답변 내용:</strong> {answer.answerContent}</p>
-                                                            <p>
-                                                                <strong>작성일:</strong> {new Date(answer.createdDate).toLocaleDateString()}
-                                                            </p>
-                                                        </AnswerItem>
-                                                    ))
-                                                ) : (
-                                                    <p>답변이 없습니다.</p>
-                                                )}
-                                            </AnswerList>
-
-                                            {/* 답변 작성 폼 */}
-                                            <AnswerForm>
-                                                <textarea
-                                                    value={newAnswer}
-                                                    onChange={(e) => setNewAnswer(e.target.value)}
-                                                    placeholder="답변 내용을 입력하세요"
-                                                />
-                                                <SubmitButton onClick={handleAnswerSubmit}>답변 달기</SubmitButton>
-                                            </AnswerForm>
-                                        </>
-                                    )
-                                ) : (
-                                    inquiries.length > 0 ? (
-                                        <InquiryList>
-                                            {inquiries.map((inquiry) => (
-                                                <InquiryItem key={inquiry.inquiryId}
-                                                             onClick={() => handleInquiryClick(inquiry.inquiryId)}>
-                                                    <p><strong>문의 제목:</strong> {inquiry.inquiryTitle}</p>
-                                                    <p><strong>작성자:</strong> {inquiry.memberId}</p>
-                                                    <p>
-                                                        <strong>작성일:</strong> {new Date(inquiry.createdDate).toLocaleDateString()}
-                                                    </p>
-                                                </InquiryItem>
-                                            ))}
-                                        </InquiryList>
-                                    ) : (
-                                        <p>문의가 없습니다.</p>
-                                    )
-                                )}
-                            </>
-                        )}
-                    </>
-                )}
-                {activeTab === "news" && <CourseNewsList courseId={courseId}/>}
+                {activeTab === "questions" && <CourseInquiryList courseId={courseId} />}
+                {activeTab === "news" && <CourseNewsList courseId={courseId} />}
             </TabContent>
         </DetailPage>
     );
@@ -303,85 +165,6 @@ const Separator = styled.div`
     height: 1px;
     background-color: #ddd;
     margin: 0; /* 구분선 간격 조정 */
-`;
-
-const InquiryList = styled.div`
-    margin-top: 1rem;
-`;
-
-const InquiryItem = styled.div`
-    margin-bottom: 1rem;
-    padding: 1rem;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-    cursor: pointer;
-`;
-
-const InquiryDetail = styled.div`
-    margin-top: 1rem;
-    padding: 1.5rem;
-    background-color: #fff;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-`;
-
-const AnswerList = styled.div`
-    margin-top: 1.5rem;
-`;
-
-const AnswerItem = styled.div`
-    margin-bottom: 1rem;
-    padding: 1rem;
-    background-color: #f9f9f9;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-`;
-
-const AnswerForm = styled.div`
-    margin-top: 2rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-    padding: 20px;  /* 내부 여백 추가 */
-    background-color: #f9f9f9;  /* 배경색 설정 */
-    border-radius: 10px;  /* 모서리 둥글게 */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  /* 그림자 추가 */
-    max-width: 800px;  /* 최대 너비 설정 */
-    width: 100%;  /* 너비를 100%로 설정 */
-    box-sizing: border-box;  /* 패딩 포함한 너비 계산 */
-`;
-
-const SubmitButton = styled.button`
-    padding: 0.75rem 1.5rem;
-    background-color: #3cb371;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    &:hover {
-        background-color: #2a9d63;
-    }
-`;
-
-const ButtonContainer = styled.div`
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 1rem;
-`;
-
-const WriteButton = styled.button`
-    padding: 0.75rem 1.5rem;
-    background-color: #3cb371;
-    color: #fff;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 1rem;
-    &:hover {
-        background-color: #2a9d63;
-    }
 `;
 
 const StyledButton = styled.button`
