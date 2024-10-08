@@ -17,7 +17,7 @@ const YearlyStudyTable = () => {
 
     const fetchData = useCallback(async (year) => {
         try {
-            const response = await axios.get(`http://localhost:8080/study-tables/${memberId}/yearly-summary?year=${year}`);
+            const response = await axios.get(`http://localhost:8080/study-tables/${memberId}/yearly-summary?year=${year}`, { withCredentials: true });
             const {yearlyCompleted, yearlyStudyTime, yearlySummary} = response.data;
 
             setTotalCompleted(yearlyCompleted);

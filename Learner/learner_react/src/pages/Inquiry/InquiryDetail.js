@@ -34,11 +34,11 @@ const InquiryDetail = () => {
         }
         return null;
     };
-    const role = getRoleFromCookie().split('_')[1];
+    const role = getRoleFromCookie();
 
     const fetchInquiry = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/inquiries/${inquiryId}`);
+            const response = await axios.get(`http://localhost:8080/inquiries/${inquiryId}`, { withCredentials: true });
             setInquiry(response.data);
             setTitle(response.data.inquiryTitle);
             setContent(response.data.inquiryContent);
@@ -50,7 +50,7 @@ const InquiryDetail = () => {
 
     const fetchAnswer = async () => {
         try {
-            const response = await axios.get(`http://localhost:8080/answers/${inquiryId}`);
+            const response = await axios.get(`http://localhost:8080/answers/${inquiryId}`, { withCredentials: true });
             setAnswer(response.data);
             setAnswerContent(response.data.answerContent);
         } catch (error) {
@@ -67,7 +67,7 @@ const InquiryDetail = () => {
         const confirmDelete = window.confirm('정말로 삭제하시겠습니까?');
         if (confirmDelete) {
             try {
-                await axios.delete(`http://localhost:8080/inquiries/${inquiryId}`);
+                await axios.delete(`http://localhost:8080/inquiries/${inquiryId}`, { withCredentials: true });
                 navigate('/inquiries');
             } catch (error) {
                 console.error('Failed to delete inquiry:', error);
@@ -79,7 +79,7 @@ const InquiryDetail = () => {
         const confirmDelete = window.confirm('정말로 답변을 삭제하시겠습니까?');
         if (confirmDelete) {
             try {
-                await axios.delete(`http://localhost:8080/answers/${inquiryId}`);
+                await axios.delete(`http://localhost:8080/answers/${inquiryId}`, { withCredentials: true });
                 setAnswer(null);
                 setAnswerContent('');
                 await axios.put(`http://localhost:8080/inquiries/${inquiryId}`, {
@@ -87,7 +87,7 @@ const InquiryDetail = () => {
                     inquiryContent: content,
                     memberId: memberId,
                     inquiryStatus: "CONFIRMING"
-                });
+                }, { withCredentials: true });
             } catch (error) {
                 console.error('Failed to delete answer:', error);
             }
@@ -113,7 +113,7 @@ const InquiryDetail = () => {
                 inquiryTitle: title,
                 inquiryContent: content,
                 memberId: memberId
-            });
+            }, { withCredentials: true });
             setInquiry({ ...inquiry, inquiryTitle: title, inquiryContent: content });
             setIsEditing(false);
         } catch (error) {
@@ -125,14 +125,14 @@ const InquiryDetail = () => {
         try {
             await axios.put(`http://localhost:8080/answers/${answer.answerId}`, {
                 answerContent: answerContent,
-            });
+            }, { withCredentials: true });
             setAnswer({ ...answer, answerContent: answerContent });
             await axios.put(`http://localhost:8080/inquiries/${inquiryId}`, {
                 inquiryTitle: title,
                 inquiryContent: content,
                 memberId: memberId,
                 inquiryStatus: inquiryStatus
-            });
+            }, { withCredentials: true });
             await fetchInquiry();
             setIsAnswerEditing(false);
         } catch (error) {
@@ -145,14 +145,14 @@ const InquiryDetail = () => {
             const response = await axios.post('http://localhost:8080/answers', {
                 inquiryId: inquiryId,
                 answerContent: answerContent,
-            });
+            }, { withCredentials: true });
             setAnswer(response.data);
             await axios.put(`http://localhost:8080/inquiries/${inquiryId}`, {
                 inquiryTitle: title,
                 inquiryContent: content,
                 memberId: memberId,
                 inquiryStatus: inquiryStatus
-            });
+            }, { withCredentials: true });
             await fetchInquiry();
             setIsAnswerCreating(false);
             setAnswerContent('');

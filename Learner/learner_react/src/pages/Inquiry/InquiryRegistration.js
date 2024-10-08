@@ -31,7 +31,7 @@ const InquiryRegistration = () => {
 
         try {
             // 서버에 문의 등록 요청 보내기
-            await axios.post('http://localhost:8080/inquiries', inquiryDTO);
+            await axios.post('http://localhost:8080/inquiries', inquiryDTO, { withCredentials: true });
             alert('문의가 등록되었습니다.'); // 성공 시 메시지
             navigate('/inquiries'); // 문의 목록 페이지로 이동
         } catch (error) {

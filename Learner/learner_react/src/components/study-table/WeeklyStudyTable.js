@@ -21,7 +21,7 @@ const WeeklyStudyTable = () => {
         if (!memberId) return; // memberId가 없으면 fetch하지 않음
         try {
             const formattedDate = selectedDate.toISOString().split('T')[0]; // 선택한 날짜를 "YYYY-MM-DD" 형식으로 변환
-            const response = await axios.get(`http://localhost:8080/study-tables/${memberId}/weekly-summary?date=${formattedDate}`); // 날짜를 query parameter로 전송
+            const response = await axios.get(`http://localhost:8080/study-tables/${memberId}/weekly-summary?date=${formattedDate}`, { withCredentials: true }); // 날짜를 query parameter로 전송
 
             const { weeklyStudyTime, weeklyCompleted, weeklySummary } = response.data;
             setTotalStudyTime(weeklyStudyTime); // 총 학습 시간 설정
