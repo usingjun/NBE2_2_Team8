@@ -101,6 +101,7 @@ public class SecurityConfig{
                         .requestMatchers(HttpMethod.POST,"/news/**").hasAnyRole("INSTRUCTOR","ADMIN")                   //POST 요청 news 권한 설정
                         .requestMatchers(HttpMethod.DELETE,"/news/**").hasAnyRole("INSTRUCTOR","ADMIN")                 //DELETE 요청 news 권한 설정
                         //좋아요
+                        .requestMatchers(HttpMethod.GET, "/like/**").permitAll()                                                            //좋아요 요청 모두 허용
                         .requestMatchers("/like/**").hasAnyRole("USER","INSTRUCTOR","ADMIN")                            //좋아요 요청 모두 허용
                         //문의 권한 설정
                         .requestMatchers(HttpMethod.GET,"/inquiries/**").permitAll()
