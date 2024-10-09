@@ -2,12 +2,11 @@ import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
-import { jwtDecode } from "jwt-decode";
-import Cookies from "js-cookie";
-import { handlePlayClick } from "./HandlePlayClick";
+import { jwtDecode } from "jwt-decode"; // named import
+import Cookies from "js-cookie"; // 쿠키 관리 라이브러리 추가
+import { handlePlayClick } from "./HandlePlayClick"; // HandlePlayClick 함수 가져오기
 
 const Course_Url = "http://localhost:8080/course";
-const Video_Url = "http://localhost:8080/video";
 
 const VideoList = () => {
     const { courseId } = useParams();
@@ -15,30 +14,32 @@ const VideoList = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-    const [role, setRole] = useState(null);
-    const [memberNickname, setMemberNickName] = useState(null);
+    const [role, setRole] = useState(null); // 사용자 역할 상태 추가
+    const [memberNickname, setMemberNickName] = useState(null); // 사용자 ID 상태 추가
 
     useEffect(() => {
+        // JWT 디코딩 함수
         const decodeJwt = (token) => {
             try {
-                return jwtDecode(token);
+                return jwtDecode(token); // named import로 변경
             } catch (error) {
                 console.error("JWT 디코딩 오류:", error);
                 return null;
             }
         };
 
-        const token = Cookies.get("Authorization");
+        // 사용자 역할과 ID 가져오기
+        const token = Cookies.get("Authorization"); // 쿠키에서 토큰 가져오기
         if (token) {
             const decodedToken = decodeJwt(token);
-            setRole(decodedToken?.role);
-            setMemberNickName(decodedToken?.mid);
+            setRole(decodedToken?.role); // 사용자 역할 설정
+            setMemberNickName(decodedToken?.mid); // 사용자 ID 설정
         }
 
         const fetchVideos = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`${Course_Url}/video/${courseId}`, { withCredentials: true });
+                const response = await axios.get(`${Course_Url}/video/${courseId}`);
                 setVideos(response.data);
             } catch (error) {
                 console.error("비디오 목록 가져오는 중 오류 발생:", error.response ? error.response.data : error.message);
@@ -51,20 +52,8 @@ const VideoList = () => {
         fetchVideos();
     }, [courseId]);
 
-    const handleDeleteClick = async (videoId) => {
-        if (window.confirm("정말로 이 비디오를 삭제하시겠습니까?")) {
-            try {
-                await axios.delete(`${Video_Url}/${videoId}`, { withCredentials: true });
-                setVideos(videos.filter(video => video.video_Id !== videoId));
-            } catch (error) {
-                console.error("비디오 삭제 중 오류 발생:", error);
-                setError("비디오를 삭제하는 데 실패했습니다.");
-            }
-        }
-    };
-
-    if (loading) return <LoadingMessage>로딩 중...</LoadingMessage>;
-    if (error) return <ErrorMessage>{error}</ErrorMessage>;
+    if (loading) return <Message>로딩 중...</Message>;
+    if (error) return <Message $error>{error}</Message>;
 
     return (
         <Container>
@@ -73,7 +62,7 @@ const VideoList = () => {
                 videos.map((video, index) => (
                     <VideoItem
                         key={video.video_Id}
-                        onClick={() => handlePlayClick(courseId, video, navigate, setError, role, memberNickname)}
+                        onClick={() => handlePlayClick(courseId, video, navigate, setError, role, memberNickname)} // 전체 항목 클릭 시 재생
                     >
                         <VideoInfo>
                             <Title>{index + 1}. {video.description}</Title>
@@ -121,7 +110,7 @@ const VideoItem = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    cursor: pointer;
+    cursor: pointer; // 커서를 포인터로 변경하여 클릭 가능함을 나타냄
 `;
 
 const VideoInfo = styled.div`
@@ -131,19 +120,7 @@ const VideoInfo = styled.div`
 const Title = styled.h3`
     font-size: 1.2rem;
     color: #333;
-    margin: 0;
-`;
-
-const LoadingMessage = styled.p`
-    text-align: center;
-    color: #007bff;
-    font-size: 1.2rem;
-`;
-
-const ErrorMessage = styled.p`
-    text-align: center;
-    color: red;
-    font-weight: bold;
+    margin: 0; // 마진 제거
 `;
 
 export default VideoList;

@@ -3,7 +3,6 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { jwtDecode } from "jwt-decode";
-import app from "../../App";
 
 const Course_Url = "http://localhost:8080/course";
 
@@ -11,7 +10,7 @@ const CourseCreate = () => {
     const [courseName, setCourseName] = useState("");
     const [courseDescription, setCourseDescription] = useState("");
     const [coursePrice, setCoursePrice] = useState(0);
-    const [courseLevel, setCourseLevel] = useState(1);
+    const [courseLevel, setCourseLevel] = useState(1); // 기본값 1
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
@@ -39,8 +38,12 @@ const CourseCreate = () => {
                 courseLevel,
                 memberNickname,
             };
-            await axios.post(Course_Url, payload,{ withCredentials: true } );
-            navigate("/course/list");
+
+            await axios.post(Course_Url, payload, { withCredentials: true });
+
+            // 성공 메시지와 페이지 리디렉션
+            alert("강의 생성에 성공하였습니다."); // alert 추가
+            navigate("/courses/list"); // 상대 경로로 수정
         } catch (err) {
             setError("강좌 생성에 실패했습니다.");
         }

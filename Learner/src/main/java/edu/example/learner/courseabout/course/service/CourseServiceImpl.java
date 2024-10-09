@@ -7,7 +7,12 @@ import edu.example.learner.courseabout.course.entity.CourseAttribute;
 import edu.example.learner.courseabout.course.entity.MemberCourse;
 import edu.example.learner.courseabout.course.repository.CourseRepository;
 import edu.example.learner.courseabout.course.repository.MemberCourseRepository;
+import edu.example.learner.courseabout.courseqna.repository.CourseInquiryRepository;
+import edu.example.learner.courseabout.courseqna.service.CourseInquiryService;
+import edu.example.learner.courseabout.coursereview.repository.ReviewRepository;
 import edu.example.learner.courseabout.exception.CourseException;
+import edu.example.learner.courseabout.exception.CourseInquiryException;
+import edu.example.learner.courseabout.exception.ReviewException;
 import edu.example.learner.member.entity.Member;
 import edu.example.learner.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
@@ -31,28 +36,35 @@ public class CourseServiceImpl implements CourseService {
     private final MemberRepository memberRepository;
 
     @Override
-    public CourseDTO addCourse(CourseDTO courseDTO, String memberNickName) {
+    public CourseDTO addCourse(CourseDTO courseDTO) {
         log.info("add course");
         try {
-            Course course = Course.builder()
-                    .member(Member.builder().build())
-                    .courseName(courseDTO.getCourseName())
-                    .courseDescription(courseDTO.getCourseDescription())
-                    .coursePrice(courseDTO.getCoursePrice())
-                    .courseLevel(courseDTO.getCourseLevel())
-                    .member(memberRepository.getMemberByNickName(courseDTO.getMemberNickname()).get())
-                    .courseAttribute(CourseAttribute.ETC)
-                    .sale(false)
-                    .build();
+            Optional<Member> findMember = memberRepository.getMemberByNickName(courseDTO.getMemberNickname());
+            if(findMember.isPresent()) {
+                Member member = findMember.get  ();
 
-            log.info(course.toString());
+                log.info("member: {}", member);
 
-            courseRepository.save(course);
+                Course course = Course.builder()
+                        .courseName(courseDTO.getCourseName())
+                        .courseDescription(courseDTO.getCourseDescription())
+                        .coursePrice(courseDTO.getCoursePrice())
+                        .courseLevel(courseDTO.getCourseLevel())
+                        .member(member)
+                        .courseAttribute(CourseAttribute.ETC)
+                        .sale(false)
+                        .build();
+
+
+                courseRepository.save(course);
+            } else {
+                 throw MemberException.MEMBER_NOT_FOUND.getMemberTaskException();
+            }
         }catch (Exception e){
             throw CourseException.COURSE_ADD_FAILED.getMemberTaskException();
         }
 
-        log.info("successfully added course " + courseDTO);
+        log.info("successfully added course ");
 
        return courseDTO;
     }
