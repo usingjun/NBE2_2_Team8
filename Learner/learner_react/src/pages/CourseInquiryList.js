@@ -49,6 +49,7 @@ const CourseInquiryList = ({ courseId }) => {
             const normalizedRole = decodedToken.role.toLowerCase();
             setUserRole(normalizedRole);
             setUserId(decodedToken.mid);
+            console.log("Role : ", normalizedRole)
         }
     };
 
@@ -173,7 +174,8 @@ const CourseInquiryList = ({ courseId }) => {
 
     // 답변 삭제
     const handleDeleteAnswer = (answerId, answerMemberId) => {
-        if (answerMemberId !== userId) {
+        // answerMemberId와 userId가 일치하는지 확인
+        if (answerMemberId !== userId && userRole !== "admin" && userRole !== "instructor") {
             alert("작성자만 답변을 삭제할 수 있습니다.");
             return;
         }
@@ -189,6 +191,13 @@ const CourseInquiryList = ({ courseId }) => {
                     console.error("Error deleting answer:", error);
                 });
         }
+    };
+
+
+    // 답변 수정 취소 함수 추가
+    const handleCancelEdit = () => {
+        setEditAnswerId(null);  // 수정 상태 해제
+        setUpdatedAnswer("");   // 입력란 초기화
     };
 
     // 작성자 프로필 이동
@@ -219,7 +228,7 @@ const CourseInquiryList = ({ courseId }) => {
                         {selectedInquiry ? (
                             <>
                                 <BeforeButton onClick={() => setSelectedInquiry(null)}>이전 목록으로</BeforeButton>
-                                {(userRole === "role_admin" || userRole === "role_instructor") && (
+                                {(userRole === "admin" || userRole === "instructor") && (
                                     <DeleteInquiryButton onClick={() => handleDeleteInquiry(selectedInquiry.inquiryId)}>
                                         문의 삭제
                                     </DeleteInquiryButton>
@@ -256,7 +265,7 @@ const CourseInquiryList = ({ courseId }) => {
                                     </p>
                                 </InquiryDetail>
 
-                                {(userRole === "role_admin" || userRole === "role_instructor") && (
+                                {(userRole === "admin" || userRole === "instructor") && (
                                     <StatusSelect value={inquiryStatus} onChange={(e) => handleStatusChange(e.target.value)}>
                                         <option value="PENDING">PENDING</option>
                                         <option value="ANSWERED">ANSWERED</option>
@@ -274,36 +283,51 @@ const CourseInquiryList = ({ courseId }) => {
 
                                             return (
                                                 <AnswerItem key={answer.answerId}>
-                                                    <p>{answer.answerContent}</p>
-                                                    <p style={{fontSize: "0.9rem", color: "#555", marginTop: "3rem"}}>
-                                                        <ProfileImage
-                                                            src={answerProfileImageSrc}
-                                                            alt="작성자 프로필"
-                                                        />
-                                                        <span
-                                                            style={{
-                                                                cursor: "pointer",
-                                                                textDecoration : "underline",
-                                                                color: "blue"
-                                                            }}
-                                                            onClick={() => handleMemberClick(answer.member.memberId)}
-                                                        >
-                                                            작성자: {answer.member.nickname || '알 수 없음'}
-                                                        </span>
-                                                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 작성일:{" "}
-                                                        {new Date(answer.answerCreateDate).toLocaleDateString()}
-                                                    </p>
-                                                    {(userRole === "role_admin" || userRole === "role_instructor") && (
+                                                    {editAnswerId === answer.answerId ? (
+                                                        // 수정 폼
                                                         <>
-                                                            <AnswerButton onClick={() => handleEditAnswerClick(answer)}>
-                                                                수정
-                                                            </AnswerButton>
-                                                            <AnswerButton
-                                                                onClick={() => handleDeleteAnswer(answer.answerId, answer.member.memberId)}
-                                                                style={{ marginLeft: "10px" }}
-                                                            >
-                                                                삭제
-                                                            </AnswerButton>
+                                                            <textarea
+                                                                style={{ width: "100%", height: "100px", fontSize: "1rem" }}
+                                                                value={updatedAnswer}
+                                                                onChange={(e) => setUpdatedAnswer(e.target.value)} // 수정된 내용 반영
+                                                            />
+                                                            <UpdateSubmitButton onClick={() => handleEditAnswerSubmit(answer.answerId)}>
+                                                                수정 제출
+                                                            </UpdateSubmitButton>
+                                                            <CancelButton onClick={handleCancelEdit}>
+                                                                취소
+                                                            </CancelButton>
+                                                        </>
+                                                    ) : (
+                                                        // 수정 중이 아닐 때 기존 답변 표시
+                                                        <>
+                                                            <p>{answer.answerContent}</p>
+                                                            <p style={{fontSize: "0.9rem", color: "#555", marginTop: "3rem"}}>
+                                                                <ProfileImage
+                                                                    src={answerProfileImageSrc}
+                                                                    alt="작성자 프로필"
+                                                                />
+                                                                <span
+                                                                    style={{ cursor: "pointer", textDecoration: "underline", color: "blue" }}
+                                                                    onClick={() => handleMemberClick(answer.member.memberId)}
+                                                                >
+                                                                    작성자: {answer.member.nickname || '알 수 없음'}
+                                                                </span>
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 작성일: {new Date(answer.answerCreateDate).toLocaleDateString()}
+                                                            </p>
+                                                            {(userRole === "admin" || userRole === "instructor") && (
+                                                                <>
+                                                                    <AnswerButton onClick={() => handleEditAnswerClick(answer)}>
+                                                                        수정
+                                                                    </AnswerButton>
+                                                                    <AnswerButton
+                                                                        onClick={() => handleDeleteAnswer(answer.answerId, answer.member.memberId)}
+                                                                        style={{ marginLeft: "10px" }}
+                                                                    >
+                                                                        삭제
+                                                                    </AnswerButton>
+                                                                </>
+                                                            )}
                                                         </>
                                                     )}
                                                 </AnswerItem>
