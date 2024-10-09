@@ -45,7 +45,7 @@ const OrderDetail = () => {
             <ul>
                 {order.orderItemDTOList.map((item, index) => (
                     <li key={index}>
-                        강의 ID: {item.courseId}, 가격: {item.price} 원
+                        강의 ID: {item.courseId}, 강의 이름: {item.courseName}, 가격: {item.price} 원
                     </li>
                 ))}
             </ul>

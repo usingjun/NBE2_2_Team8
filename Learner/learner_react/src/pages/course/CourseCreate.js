@@ -86,17 +86,14 @@ const CourseCreate = () => {
 
                 <Label>
                     강좌 레벨:
-                    <Select
+                    <Input
+                        type="number"
                         value={courseLevel}
                         onChange={(e) => setCourseLevel(Number(e.target.value))}
+                        min="1"
+                        max="5"
                         required
-                    >
-                        <option value={1}>1</option>
-                        <option value={2}>2</option>
-                        <option value={3}>3</option>
-                        <option value={4}>4</option>
-                        <option value={5}>5</option>
-                    </Select>
+                    />
                 </Label>
 
                 <Button type="submit">생성</Button>
@@ -121,12 +118,6 @@ const Label = styled.label`
 `;
 
 const Input = styled.input`
-    width: 100%;
-    padding: 0.5rem;
-    margin-top: 0.5rem;
-`;
-
-const Select = styled.select`
     width: 100%;
     padding: 0.5rem;
     margin-top: 0.5rem;

@@ -31,7 +31,7 @@ const UpdateVideo = () => {
         e.preventDefault();
         try {
             await axios.put(`${Video_Url}/${videoId}`, video,{ withCredentials: true });
-            navigate(`/videos/${video.course_Id}`); // 비디오 목록으로 이동
+            navigate(`/video/Instructor/${video.course_Id}`); // 비디오 목록으로 이동
         } catch (error) {
             console.error("비디오 수정 중 오류 발생:", error);
         }

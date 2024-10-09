@@ -10,7 +10,7 @@ const CourseList = () => {
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [role, setRole] = useState(null); // 초기값을 null로 설정
+    const [role, setRole] = useState(null);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -24,9 +24,9 @@ const CourseList = () => {
 
                 if (token) {
                     const decodedToken = jwtDecode(token);
-                    const nickname = decodedToken.mid; // 쿠키에서 가져온 닉네임
-                    const userRole = decodedToken.role; // 토큰에서 역할 가져오기
-                    setRole(userRole); // 역할 상태 업데이트
+                    const nickname = decodedToken.mid;
+                    const userRole = decodedToken.role;
+                    setRole(userRole);
                     const response = await axios.get(`${Course_Url}/instruct/list/${nickname}`, { withCredentials: true });
                     setCourses(response.data);
                 } else {
@@ -44,14 +44,13 @@ const CourseList = () => {
     }, []);
 
     const handleUpdateClick = (courseId) => {
-        navigate(`/courses/update/${courseId}`); // courseId를 URL에 포함
+        navigate(`/courses/update/${courseId}`);
     };
-
 
     const handleDeleteClick = async (courseId) => {
         if (window.confirm("정말로 이 강좌를 삭제하시겠습니까?")) {
             try {
-                await axios.delete(`${Course_Url}/${courseId}` , { withCredentials: true });
+                await axios.delete(`${Course_Url}/${courseId}`, { withCredentials: true });
                 setCourses(courses.filter(course => course.courseId !== courseId));
             } catch (error) {
                 console.error("강좌 삭제 중 오류 발생:", error);
@@ -62,6 +61,10 @@ const CourseList = () => {
 
     const handleCourseDetailClick = (courseId) => {
         navigate(`/courses/${courseId}`);
+    };
+
+    const handleVideoEditClick = (courseId) => {
+        navigate(`/video/Instructor/${courseId}`);
     };
 
     if (loading) return <LoadingMessage>로딩 중...</LoadingMessage>;
@@ -87,8 +90,9 @@ const CourseList = () => {
                         </CourseDetails>
                         <ButtonContainer>
                             <StyledButton onClick={() => handleUpdateClick(course.courseId)} secondary>수정</StyledButton>
-                            <StyledButton onClick={() => handleDeleteClick(course.courseId)} secondary>삭제</StyledButton>
+                            <StyledButton onClick={() => handleDeleteClick(course.courseId)} delete>삭제</StyledButton>
                             <StyledButton onClick={() => handleCourseDetailClick(course.courseId)}>상세정보</StyledButton>
+                            <StyledButton onClick={() => handleVideoEditClick(course.courseId)} secondary>비디오 수정</StyledButton>
                         </ButtonContainer>
                     </CourseItem>
                 ))
@@ -149,7 +153,11 @@ const ButtonContainer = styled.div`
 
 const StyledButton = styled.button`
     padding: 0.5rem 1rem;
-    background-color: ${props => (props.primary ? "#007bff" : props.secondary ? "#dc3545" : "#007bff")};
+    background-color: ${props =>
+            props.primary ? "#007bff" :
+                    props.secondary ? "#6c757d" :
+                            props.delete ? "#dc3545" : "#28a745"
+    };
     color: white;
     border: none;
     border-radius: 4px;
@@ -157,7 +165,11 @@ const StyledButton = styled.button`
     transition: background-color 0.3s;
 
     &:hover {
-        background-color: ${props => (props.primary ? "#0056b3" : props.secondary ? "#c82333" : "#0056b3")};
+        background-color: ${props =>
+                props.primary ? "#0056b3" :
+                        props.secondary ? "#5a6268" :
+                                props.delete ? "#c82333" : "#218838"
+        };
     }
 `;
 

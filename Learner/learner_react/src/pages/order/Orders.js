@@ -6,7 +6,7 @@ import styled from "styled-components";
 const Order_Url = "http://localhost:8080/order";
 
 const Orders = () => {
-    const [orders, setOrders] = useState([]); // orders의 초기값을 빈 배열로 설정
+    const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const memberId = localStorage.getItem("memberId");
@@ -22,19 +22,17 @@ const Orders = () => {
             }
             try {
                 const response = await axios.get(`${Order_Url}/list/${memberId}`, { withCredentials: true });
-
-                // 응답 데이터가 배열인지 확인
                 if (Array.isArray(response.data)) {
                     setOrders(response.data);
                 } else {
                     console.error('주문 응답이 배열이 아닙니다:', response.data);
                     setError("주문 목록을 가져오는 데 실패했습니다.");
-                    setOrders([]); // 배열이 아닐 경우 빈 배열 설정
+                    setOrders([]);
                 }
             } catch (error) {
                 console.error("주문 가져오는 중 오류 발생:", error);
                 setError("주문 목록을 가져오는 데 실패했습니다.");
-                setOrders([]); // 에러 발생 시 빈 배열 설정
+                setOrders([]);
             } finally {
                 setLoading(false);
             }
@@ -43,20 +41,22 @@ const Orders = () => {
     }, [memberId]);
 
     const handleUpdateClick = (orderId) => {
-        navigate(`/orders/update/${orderId}`,{ withCredentials: true });
+        navigate(`/orders/update/${orderId}`);
     };
 
     const handleDeleteClick = (orderId) => {
         if (window.confirm("정말로 이 주문을 삭제하시겠습니까?")) {
-            navigate(`/orders/delete/${orderId}`,{ withCredentials: true });
+            navigate(`/orders/delete/${orderId}`);
         }
     };
 
     const handlePurchase = async (orderId) => {
         const memberId = localStorage.getItem("memberId");
         try {
-            const response = await axios.post(`${Order_Url}/purchase/${orderId}`, { orderId, memberId },{ withCredentials: true });
+            const response = await axios.post(`${Order_Url}/purchase/${orderId}`, { orderId, memberId }, { withCredentials: true });
             alert("결제가 완료되었습니다. 주문 ID: " + response.data.orderId);
+            // 성공적으로 결제 후 해당 주문 제거
+            setOrders(orders.filter(order => order.orderId !== orderId));
         } catch (error) {
             console.error("결제 중 오류 발생:", error);
             alert("결제에 실패했습니다.");
@@ -77,14 +77,15 @@ const Orders = () => {
                     <OrderItem key={order.orderId}>
                         <p>주문 ID: <strong>{order.orderId}</strong></p>
                         <p>주문 날짜: <strong>{new Date(order.createdDate).toLocaleDateString()}</strong></p>
+                        <p>강의: <strong>{order.orderItemDTOList.map(item => item.courseName).join(', ')}</strong></p>
                         <p>총 금액: <strong>{order.totalPrice} 원</strong></p>
                         <ButtonContainer>
-                            <StyledButton onClick={() => handleUpdateClick(order.orderId)} secondary>수정</StyledButton>
+                            <StyledButton onClick={() => handleUpdateClick(order.orderId)} update>수정</StyledButton>
                             <Link to={`/orders/${order.orderId}`}>
                                 <StyledButton>상세보기</StyledButton>
                             </Link>
-                            <StyledButton onClick={() => handlePurchase(order.orderId)} primary>구매</StyledButton>
-                            <StyledButton onClick={() => handleDeleteClick(order.orderId)} secondary>삭제</StyledButton>
+                            <StyledButton onClick={() => handlePurchase(order.orderId)} purchase>구매</StyledButton>
+                            <StyledButton onClick={() => handleDeleteClick(order.orderId)} delete>삭제</StyledButton>
                         </ButtonContainer>
                     </OrderItem>
                 ))
@@ -94,8 +95,6 @@ const Orders = () => {
         </OrderList>
     );
 };
-
-export default Orders;
 
 // 스타일 컴포넌트들
 const OrderList = styled.div`
@@ -141,14 +140,26 @@ const ButtonContainer = styled.div`
 
 const StyledButton = styled.button`
     padding: 0.5rem 1rem;
-    background-color: ${props => (props.primary ? "#007bff" : props.secondary ? "#dc3545" : "#007bff")};
-    color: white;
-    border: none;
+    background-color: ${props =>
+            props.primary ? "#007bff" :
+                    props.delete ? "#dc3545" :
+                            props.purchase ? "#28a745" :
+                                    props.update ? "#ffc107" : "#6c757d"
+    };
+    color: ${props => props.purchase ? "white" : "white"};
+    border: ${props => props.purchase ? "none" : "none"};
     border-radius: 4px;
     cursor: pointer;
     transition: background-color 0.3s;
 
     &:hover {
-        background-color: ${props => (props.primary ? "#0056b3" : props.secondary ? "#c82333" : "#0056b3")};
+        background-color: ${props =>
+                props.primary ? "#0056b3" :
+                        props.delete ? "#c82333" :
+                                props.purchase ? "#218838" :
+                                        props.update ? "#e0a800" : "#5a6268"
+        };
     }
 `;
+
+export default Orders;
