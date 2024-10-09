@@ -3,7 +3,9 @@ package edu.example.learner.studytable.controller;
 import edu.example.learner.studytable.dto.StudyTableDTO;
 import edu.example.learner.studytable.service.StudyTableService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -38,12 +40,21 @@ public class StudyTableController {
 
     @PostMapping
     public ResponseEntity<StudyTableDTO> create(@Validated @RequestBody StudyTableDTO studyTableDTO) {
+        if (studyTableService.readByDate(studyTableDTO.getMemberId())) {
+            return ResponseEntity.ok(studyTableDTO);
+        }
         return ResponseEntity.ok(studyTableService.register(studyTableDTO));
     }
 
     @PutMapping("/{studyTableId}")
     public ResponseEntity<StudyTableDTO> update(@Validated @RequestBody StudyTableDTO studyTableDTO, @PathVariable("studyTableId") Long studyTableId) {
         studyTableDTO.setStudyTableId(studyTableId);
+        return ResponseEntity.ok(studyTableService.update(studyTableDTO));
+    }
+
+    @PutMapping("/today")
+    public ResponseEntity<StudyTableDTO> updateWithDate(@RequestBody StudyTableDTO studyTableDTO) {
+        studyTableDTO.setStudyTableId(studyTableService.readDTOByDate(studyTableDTO.getMemberId()).getStudyTableId());
         return ResponseEntity.ok(studyTableService.update(studyTableDTO));
     }
 
