@@ -204,7 +204,7 @@ const CourseInquiryList = ({ courseId }) => {
             });
     };
 
-    //로필 이미지 처리 방식
+    //프로필 이미지 처리 방식
     const profileImageSrc = selectedInquiry && selectedInquiry.profileImage
         ? `data:image/jpeg;base64,${selectedInquiry.profileImage}`
         : "http://localhost:8080/images/default_profile.jpg";
@@ -334,9 +334,9 @@ const CourseInquiryList = ({ courseId }) => {
                             <InquiryList>
                                 {inquiries.map((inquiry) => {
                                     // inquiry 별로 개별적으로 inquiryProfileImageSrc 생성
-                                    const inquiryProfileImageSrc = inquiry && inquiry.member && inquiry.member.profileImage
-                                        ? `data:image/jpeg;base64,${inquiry.member.profileImage}`
-                                        : "/images/default_user_img.png"; // 기본 이미지 경로
+                                    const inquiryProfileImageSrc = inquiry && inquiry.profileImage
+                                        ? `data:image/jpeg;base64,${inquiry.profileImage}`
+                                        : "http://localhost:8080/images/default_profile.jpg"; // 기본 이미지 경로
 
                                     return (
                                         <InquiryItem key={inquiry.inquiryId} onClick={() => handleInquiryClick(inquiry.inquiryId)}>
