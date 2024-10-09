@@ -42,7 +42,6 @@ public class InquiryRepositoryTests {
                 Inquiry.builder()
                         .inquiryTitle("inquiry title")
                         .inquiryContent("inquiry content")
-                        .inquiryStatus(InquiryStatus.ANSWERED.name())
                         .member(member)
                         .build()
         );
@@ -55,7 +54,6 @@ public class InquiryRepositoryTests {
         Inquiry inquiry = Inquiry.builder()
                 .inquiryTitle("inquiry test title")
                 .inquiryContent("inquiry test content")
-                .inquiryStatus(InquiryStatus.CONFIRMING.name())
                 .member(Member.builder().memberId(1L).build())
                 .build();
 
@@ -99,7 +97,6 @@ public class InquiryRepositoryTests {
         //WHEN
         inquiry.changeInquiryTitle("new inquiry title");
         inquiry.changeInquiryContent("new inquiry content");
-        inquiry.changeInquiryStatus(InquiryStatus.RESOLVED.name());
         Inquiry updatedInquiry = inquiryRepository.findById(inquiryId).get();
 
         //THEN

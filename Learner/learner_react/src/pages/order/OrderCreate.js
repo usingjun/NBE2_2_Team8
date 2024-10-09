@@ -14,7 +14,7 @@ const OrderCreate = () => {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const response = await axios.get("http://localhost:8080/course/list",{ withCredentials: true});
+                const response = await axios.get("http://localhost:8080/course/list");
                 setCourses(response.data);
             } catch (error) {
                 console.error("Error fetching courses:", error);
@@ -45,10 +45,10 @@ const OrderCreate = () => {
         event.preventDefault();
         try {
             const response = await axios.post(`http://localhost:8080/order/${memberId}`, {
+                orderItemDTOList: orderItems,
                 memberId: memberId,
-            },{
-                withCredentials: true, // 쿠키 포함 설정
-            });
+            }, { withCredentials: true });
+
             setError("주문이 성공적으로 생성되었습니다!");
 
             setTimeout(() => {
