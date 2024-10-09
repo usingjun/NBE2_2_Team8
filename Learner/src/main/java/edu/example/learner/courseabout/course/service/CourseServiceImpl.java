@@ -7,12 +7,7 @@ import edu.example.learner.courseabout.course.entity.CourseAttribute;
 import edu.example.learner.courseabout.course.entity.MemberCourse;
 import edu.example.learner.courseabout.course.repository.CourseRepository;
 import edu.example.learner.courseabout.course.repository.MemberCourseRepository;
-import edu.example.learner.courseabout.courseqna.repository.CourseInquiryRepository;
-import edu.example.learner.courseabout.courseqna.service.CourseInquiryService;
-import edu.example.learner.courseabout.coursereview.repository.ReviewRepository;
 import edu.example.learner.courseabout.exception.CourseException;
-import edu.example.learner.courseabout.exception.CourseInquiryException;
-import edu.example.learner.courseabout.exception.ReviewException;
 import edu.example.learner.member.entity.Member;
 import edu.example.learner.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
@@ -36,10 +31,11 @@ public class CourseServiceImpl implements CourseService {
     private final MemberRepository memberRepository;
 
     @Override
-    public CourseDTO addCourse(CourseDTO courseDTO) {
+    public CourseDTO addCourse(CourseDTO courseDTO, String memberNickName) {
         log.info("add course");
         try {
             Course course = Course.builder()
+                    .member(Member.builder().build())
                     .courseName(courseDTO.getCourseName())
                     .courseDescription(courseDTO.getCourseDescription())
                     .coursePrice(courseDTO.getCoursePrice())
