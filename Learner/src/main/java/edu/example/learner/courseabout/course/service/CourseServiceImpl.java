@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Optional;
 
 
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -54,8 +55,6 @@ public class CourseServiceImpl implements CourseService {
                         .courseAttribute(CourseAttribute.ETC)
                         .sale(false)
                         .build();
-
-
                 courseRepository.save(course);
             } else {
                  throw MemberException.MEMBER_NOT_FOUND.getMemberTaskException();

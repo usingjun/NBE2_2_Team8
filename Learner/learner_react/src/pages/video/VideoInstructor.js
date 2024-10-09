@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
-import { jwtDecode } from "jwt-decode"; // named import
-import Cookies from "js-cookie"; // 쿠키 관리 라이브러리 추가
-import { handlePlayClick } from "./HandlePlayClick"; // HandlePlayClick 함수 가져오기
+import { jwtDecode } from "jwt-decode";
+import Cookies from "js-cookie";
+import { handlePlayClick } from "./HandlePlayClick";
 
 const Course_Url = "http://localhost:8080/course";
+const Video_Url = "http://localhost:8080/video";
 
 const VideoList = () => {
     const { courseId } = useParams();
@@ -14,26 +15,24 @@ const VideoList = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
-    const [role, setRole] = useState(null); // 사용자 역할 상태 추가
-    const [memberNickname, setMemberNickName] = useState(null); // 사용자 ID 상태 추가
+    const [role, setRole] = useState(null);
+    const [memberNickname, setMemberNickName] = useState(null);
 
     useEffect(() => {
-        // JWT 디코딩 함수
         const decodeJwt = (token) => {
             try {
-                return jwtDecode(token); // named import로 변경
+                return jwtDecode(token);
             } catch (error) {
                 console.error("JWT 디코딩 오류:", error);
                 return null;
             }
         };
 
-        // 사용자 역할과 ID 가져오기
-        const token = Cookies.get("Authorization"); // 쿠키에서 토큰 가져오기
+        const token = Cookies.get("Authorization");
         if (token) {
             const decodedToken = decodeJwt(token);
-            setRole(decodedToken?.role); // 사용자 역할 설정
-            setMemberNickName(decodedToken?.mid); // 사용자 ID 설정
+            setRole(decodedToken?.role);
+            setMemberNickName(decodedToken?.mid);
         }
 
         const fetchVideos = async () => {
@@ -52,26 +51,45 @@ const VideoList = () => {
         fetchVideos();
     }, [courseId]);
 
+    const handleDeleteClick = async (videoId) => {
+        if (window.confirm("정말로 이 비디오를 삭제하시겠습니까?")) {
+            try {
+                await axios.delete(`${Video_Url}/${videoId}`,{ withCredentials: true });
+                setVideos(videos.filter(video => video.video_Id !== videoId));
+            } catch (error) {
+                console.error("비디오 삭제 중 오류 발생:", error);
+                setError("비디오 삭제에 실패했습니다.");
+            }
+        }
+    };
+
     if (loading) return <Message>로딩 중...</Message>;
     if (error) return <Message $error>{error}</Message>;
 
     return (
         <Container>
             <Header>비디오 목록</Header>
+            {role === "INSTRUCTOR" && (
+                <Link to={`/video/create/${courseId}`}>
+                    <StyledButton>비디오 추가</StyledButton>
+                </Link>
+            )}
             {videos.length > 0 ? (
                 videos.map((video, index) => (
-                    <VideoItem
-                        key={video.video_Id}
-                        onClick={() => handlePlayClick(courseId, video, navigate, setError, role, memberNickname)} // 전체 항목 클릭 시 재생
-                    >
+                    <VideoItem key={video.video_Id}>
                         <VideoInfo>
                             <Title>{index + 1}. {video.description}</Title>
                         </VideoInfo>
+                        <ButtonContainer>
+                            <StyledButton onClick={() => navigate(`/video/update/${video.video_Id}`)}>수정</StyledButton>
+                            <StyledButton onClick={() => handleDeleteClick(video.video_Id)}>삭제</StyledButton>
+                        </ButtonContainer>
                     </VideoItem>
                 ))
             ) : (
                 <Message>비디오가 없습니다.</Message>
             )}
+
         </Container>
     );
 };
@@ -110,7 +128,7 @@ const VideoItem = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    cursor: pointer; // 커서를 포인터로 변경하여 클릭 가능함을 나타냄
+    cursor: pointer;
 `;
 
 const VideoInfo = styled.div`
@@ -120,7 +138,26 @@ const VideoInfo = styled.div`
 const Title = styled.h3`
     font-size: 1.2rem;
     color: #333;
-    margin: 0; // 마진 제거
+    margin: 0;
+`;
+
+const ButtonContainer = styled.div`
+    display: flex;
+    gap: 10px; // 버튼 간 간격
+`;
+
+const StyledButton = styled.button`
+    padding: 0.5rem 1rem;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+
+    &:hover {
+        background-color: #0056b3;
+    }
 `;
 
 export default VideoList;
