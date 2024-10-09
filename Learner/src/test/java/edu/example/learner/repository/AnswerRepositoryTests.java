@@ -47,7 +47,6 @@ public class AnswerRepositoryTests {
                 Inquiry.builder()
                         .inquiryTitle("inquiry title")
                         .inquiryContent("inquiry content")
-                        .inquiryStatus(InquiryStatus.ANSWERED.name())
                         .member(member)
                         .build()
         );

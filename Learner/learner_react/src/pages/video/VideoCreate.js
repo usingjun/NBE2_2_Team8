@@ -9,21 +9,18 @@ const AddVideo = ({ courseId }) => {
     const [title, setTitle] = useState("");
     const [url, setUrl] = useState("");
     const [description, setDescription] = useState("");
-    const [totalVideoDuration, setTotalVideoDuration] = useState(0);
-    const [currentVideoTime, setCurrentVideoTime] = useState(0);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
+            console.log("courseId= ",courseId)
             await axios.post(Video_Url, {
                 title,
                 url,
                 description,
                 course_Id: courseId,
-                totalVideoDuration,
-                currentVideoTime
-            });
+            }, { withCredentials: true });
             navigate(`/videos/${courseId}`); // 비디오 목록으로 이동
         } catch (error) {
             console.error("비디오 추가 중 오류 발생:", error);
@@ -45,14 +42,6 @@ const AddVideo = ({ courseId }) => {
                 <Label>
                     설명:
                     <Input type="text" value={description} onChange={(e) => setDescription(e.target.value)} />
-                </Label>
-                <Label>
-                    전체 동영상 시간:
-                    <Input type="number" value={totalVideoDuration} onChange={(e) => setTotalVideoDuration(e.target.value)} />
-                </Label>
-                <Label>
-                    현재 동영상 시간:
-                    <Input type="number" value={currentVideoTime} onChange={(e) => setCurrentVideoTime(e.target.value)} />
                 </Label>
                 <Button type="submit">추가</Button>
             </form>

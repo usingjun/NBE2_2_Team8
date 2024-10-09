@@ -14,7 +14,7 @@ const CourseCreate = () => {
         e.preventDefault();
         try {
             const memberId = localStorage.getItem("memberId");
-            await axios.post(Course_Url, { courseName, memberId });
+            await axios.post(Course_Url, { courseName, memberId },{ withCredentials: true });
             navigate("/course/list");
         } catch (err) {
             setError("강좌 생성에 실패했습니다.");

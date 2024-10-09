@@ -65,6 +65,7 @@ public class CourseController {
         return ResponseEntity.ok(courseService.readAll());
     }
 
+
     @GetMapping("/video/{courseId}")
     @Operation(summary = "강의의 비디오 목록 조회", description = "강의 ID로 해당 강의에 포함된 비디오 목록을 조회합니다.")
     @ApiResponses(value = {
@@ -99,7 +100,7 @@ public class CourseController {
         return ResponseEntity.ok(Map.of("delete", "success"));
     }
 
-    @GetMapping("{memberId}/list")
+    @GetMapping("/{memberId}/list")
     @Operation(summary = "내 수강 정보 조회", description = "회원 ID로 해당 회원의 수강 정보를 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "수강 정보가 성공적으로 조회되었습니다."),

@@ -22,7 +22,7 @@ const CourseList = () => {
                 return;
             }
             try {
-                const response = await axios.get(`${Course_Url}/list/${memberId}`);
+                const response = await axios.get(`${Course_Url}/list/${memberId}`,{ withCredentials: true });
                 setCourses(response.data);
             } catch (error) {
                 console.error("강좌 목록 가져오는 중 오류 발생:", error);
@@ -42,7 +42,7 @@ const CourseList = () => {
     const handleDeleteClick = async (courseId) => {
         if (window.confirm("정말로 이 강좌를 삭제하시겠습니까?")) {
             try {
-                await axios.delete(`${Course_Url}/${courseId}`);
+                await axios.delete(`${Course_Url}/${courseId}`,{ withCredentials: true });
                 setCourses(courses.filter(course => course.courseId !== courseId));
             } catch (error) {
                 console.error("강좌 삭제 중 오류 발생:", error);

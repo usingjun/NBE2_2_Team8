@@ -18,7 +18,7 @@ const VideoList = () => {
         const fetchVideos = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`${Course_Url}/video/${courseId}`);
+                const response = await axios.get(`${Course_Url}/video/${courseId}`,{ withCredentials: true });
                 setVideos(response.data);
             } catch (error) {
                 console.error("비디오 목록 가져오는 중 오류 발생:", error);
@@ -40,7 +40,7 @@ const VideoList = () => {
     const handleDeleteClick = async (videoId) => {
         if (window.confirm("정말로 이 비디오를 삭제하시겠습니까?")) {
             try {
-                await axios.delete(`${Video_Url}/${videoId}`);
+                await axios.delete(`${Video_Url}/${videoId}`,{ withCredentials: true });
                 setVideos(videos.filter(video => video.video_Id !== videoId));
             } catch (error) {
                 console.error("비디오 삭제 중 오류 발생:", error);

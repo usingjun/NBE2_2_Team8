@@ -52,7 +52,6 @@ public class OrderRepositoryTests {
         Course course = new Course();
         course.changeCourseName("새 강의");
         course.changeCourseDescription("새 강의 설명");
-        course.changeInstructorName("새 강사");
         course.changePrice(10000L);
         course.changeCourseLevel(2);
         course.changeCourseStatus(CourseAttribute.C);
