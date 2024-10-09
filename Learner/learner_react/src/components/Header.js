@@ -8,6 +8,7 @@ const Header = ({ openModal }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false); // 로그인 상태
     const [isMenuOpen, setIsMenuOpen] = useState(false); // 하위 메뉴 상태
     const [searchId, setSearchId] = useState(""); // 검색어 상태 추가
+    const [role, setRole] = useState(""); // 사용자 역할 상태 추가
 
     useEffect(() => {
         const cookies = document.cookie.split('; ').find(row => row.startsWith('Authorization='));
@@ -15,6 +16,9 @@ const Header = ({ openModal }) => {
             const token = cookies.split('=')[1];
             if (token) {
                 setIsLoggedIn(true);
+                // JWT 디코딩 (예: jwt-decode 라이브러리 사용)
+                const payload = JSON.parse(atob(token.split('.')[1])); // JWT의 payload 디코딩
+                setRole(payload.role); // 역할 설정
             }
         }
     }, []);
@@ -66,7 +70,9 @@ const Header = ({ openModal }) => {
                         {isMenuOpen && (
                             <SubMenu>
                                 <SubMenuItem onClick={() => navigate('/내정보')}>내정보</SubMenuItem>
-                                <SubMenuItem onClick={() => navigate('/courses/list')}>내 학습</SubMenuItem>
+                                {role === 'INSTRUCTOR' && ( // INSTRUCTOR 역할인 경우에만 표시
+                                    <SubMenuItem onClick={() => navigate('/courses/list')}>내 강의</SubMenuItem>
+                                )}
                                 <SubMenuItem onClick={() => navigate('/orders')}>장바구니</SubMenuItem>
                                 <SubMenuItem onClick={() => navigate('/edit-profile')}>회원정보 수정</SubMenuItem>
                                 <SubMenuItem onClick={() => navigate('/my-courses')}>내 수강 정보</SubMenuItem>
@@ -90,7 +96,6 @@ const Header = ({ openModal }) => {
 export default Header;
 
 // 스타일 컴포넌트들 (기존과 동일)
-
 
 const NavBar = styled.nav`
     display: flex;

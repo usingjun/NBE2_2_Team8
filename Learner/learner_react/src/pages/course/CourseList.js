@@ -22,7 +22,7 @@ const CourseList = () => {
                 return;
             }
             try {
-                const response = await axios.get(`${Course_Url}/list/${memberId}`);
+                const response = await axios.get(`${Course_Url}/list/${memberId}` ,{ withCredentials: true } );
                 setCourses(response.data);
             } catch (error) {
                 console.error("강좌 목록 가져오는 중 오류 발생:", error);

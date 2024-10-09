@@ -7,7 +7,7 @@ import CourseDetail from './pages/course/CourseDetail';
 
 const CourseRoutes = () => (
     <Routes>
-        <Route path="/courses/list" element={<CourseList />} />
+        <Route path="/courses/management" element={<CourseList />} />
         <Route path="/courses/create" element={<CourseCreate />} />
         <Route path="/courses/update/:courseId" element={<CourseUpdate />} />
         <Route path="/courses/:courseId" element={<CourseDetail />} />

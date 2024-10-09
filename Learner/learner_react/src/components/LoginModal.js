@@ -1,9 +1,9 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
 import FindEmail from "./FindEmail";
 import PasswordSendEmail from "./PasswordSendEmail";
 
-const LoginModal = ({closeModal}) => {
+const LoginModal = ({ closeModal }) => {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showFindEmail, setShowFindEmail] = useState(false);
@@ -26,7 +26,7 @@ const LoginModal = ({closeModal}) => {
             });
 
             if (response.ok) {
-                const {memberId} = await response.json();
+                const { memberId } = await response.json();
                 console.log("로그인 성공, memberId:", memberId);
                 localStorage.setItem("memberId", memberId);
                 alert("로그인에 성공하셨습니다.");
@@ -49,6 +49,11 @@ const LoginModal = ({closeModal}) => {
 
     const handleGoogleClick = () => {
         window.location.href = "http://localhost:8080/oauth2/authorization/google";
+    };
+
+    const handleSignupClick = () => {
+        // 회원가입 버튼 클릭 시 페이지 이동
+        window.location.href = "http://localhost:3000/signup";
     };
 
     return (
@@ -79,26 +84,26 @@ const LoginModal = ({closeModal}) => {
                         <ButtonLink onClick={() => setShowResetPassword(true)}>
                             비밀번호 찾기
                         </ButtonLink> |
-                        <ButtonLink>회원가입</ButtonLink>
+                        <ButtonLink onClick={handleSignupClick}>회원가입</ButtonLink> {/* 수정된 부분 */}
                     </PasswordOptions>
 
                     <SocialLoginContainer>
                         <SocialLoginButton onClick={handleGoogleClick}>
-                            <Icon src="http://localhost:8080/images/google_login.png" alt="Google Logo"/>
+                            <Icon src="http://localhost:8080/images/google_login.png" alt="Google Logo" />
                         </SocialLoginButton>
                         <SocialLoginButton onClick={handleNaverClick}>
-                            <Icon src="http://localhost:8080/images/naver_login.png" alt="Naver Logo"/>
+                            <Icon src="http://localhost:8080/images/naver_login.png" alt="Naver Logo" />
                         </SocialLoginButton>
                     </SocialLoginContainer>
                 </ModalContainer>
             </ModalBackground>
 
             {showFindEmail && (
-                <FindEmail closeModal={() => setShowFindEmail(false)}/>
+                <FindEmail closeModal={() => setShowFindEmail(false)} />
             )}
 
             {showResetPassword && (
-                <PasswordSendEmail closeModal={() => setShowResetPassword(false)}/>
+                <PasswordSendEmail closeModal={() => setShowResetPassword(false)} />
             )}
         </>
     );
@@ -132,19 +137,18 @@ const CloseButton = styled.button`
     position: absolute;
     top: 10px;
     right: 10px;
-    background: rgba(0, 0, 0, 0.1); // 배경을 약간 어둡게
+    background: rgba(0, 0, 0, 0.1);
     border: none;
-    border-radius: 5px; // 둥글게
+    border-radius: 5px;
     font-size: 1.5rem;
     cursor: pointer;
-    padding: 5px; // 여백 추가
+    padding: 5px;
     transition: background-color 0.3s;
 
     &:hover {
-        background-color: rgba(0, 0, 0, 0.2); // 호버 효과 추가
+        background-color: rgba(0, 0, 0, 0.2);
     }
 `;
-
 
 const Logo = styled.h1`
     font-size: 1.8rem;
@@ -207,11 +211,11 @@ const SocialLoginButton = styled.div`
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    border: none; // border 제거
+    border: none;
 `;
 
 const Icon = styled.img`
-    width: 120px; // Google 로그인 버튼의 너비
-    height: 40px; // Google 로그인 버튼의 높이
-    object-fit: contain; // 비율 유지
+    width: 120px;
+    height: 40px;
+    object-fit: contain;
 `;

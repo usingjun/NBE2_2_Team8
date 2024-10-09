@@ -161,16 +161,4 @@ public class MemberRestController {
 
         return ResponseEntity.ok(memberService.getAllMembers());
     }
-
-    @GetMapping("/nickname")
-    @Operation(summary = "이메일로 닉네임 조회", description = "이메일로 닉네임을 조회합니다.")
-    public ResponseEntity<String> getNickname(@RequestParam String email) {
-        String nickname = memberService.getNicknameByEmail(email);
-
-        if (nickname != null) {
-            return ResponseEntity.ok(nickname);  // 닉네임을 성공적으로 반환
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("닉네임을 찾을 수 없습니다.");
-        }
-    }
 }
