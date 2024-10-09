@@ -433,8 +433,10 @@ const SubmitButton = styled.button`
     }
 `;
 
-const AnswerButton = styled.button`
+const UpdateSubmitButton = styled.button`
     padding: 0.25rem 0.75rem;
+    margin-top: 0.5rem;
+    margin-right: 0.5rem;
     background-color: #3cb371;
     color: white;
     border: none;
@@ -445,13 +447,16 @@ const AnswerButton = styled.button`
     }
 `;
 
-const ProfileImage = styled.img`
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-    margin-right: 5px;
-    object-fit: cover;
-    vertical-align: middle;
+const CancelButton = styled.button`
+    padding: 0.255rem 0.75rem;
+    background-color: #ccc;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    &:hover {
+        background-color: #bbb;
+    }
 `;
 
 const ButtonContainer = styled.div`
@@ -504,4 +509,25 @@ const StatusSelect = styled.select`
     margin-top: 1rem;
     padding: 0.5rem;
     font-size: 1rem;
+`;
+
+const AnswerButton = styled.button`
+    padding: 0.25rem 0.75rem;
+    background-color: #3cb371;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    &:hover {
+        background-color: #2a9d63;
+    }
+`;
+
+const ProfileImage = styled.img`
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    margin-right: 5px;
+    object-fit: cover;
+    vertical-align: middle;
 `;
