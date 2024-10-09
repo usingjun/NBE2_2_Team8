@@ -11,12 +11,14 @@ const MyCourses = () => {
         if (memberId) {
             fetch(`http://localhost:8080/course/${memberId}/list` , { credentials: 'include' })
                 .then(response => response.json())
+
                 .then(data => setCourses(data))
                 .catch(error => console.error('Error fetching courses:', error));
         } else {
             console.error('memberId not found in localStorage');
         }
     }, []);
+
 
     const handleCourseClick = (courseId) => {
         navigate(`/courses/${courseId}`); // Navigate to the course detail page
