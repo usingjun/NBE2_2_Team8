@@ -1,34 +1,56 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom"; // useParams 추가
 import styled from "styled-components";
+import { jwtDecode } from "jwt-decode";
+
 
 const Video_Url = "http://localhost:8080/video";
 
-const AddVideo = ({ courseId }) => {
+const AddVideo = ( ) => {
+    const { courseId } = useParams();
     const [title, setTitle] = useState("");
     const [url, setUrl] = useState("");
     const [description, setDescription] = useState("");
-    const [totalVideoDuration, setTotalVideoDuration] = useState(0);
-    const [currentVideoTime, setCurrentVideoTime] = useState(0);
     const navigate = useNavigate();
+    const [error, setError] = useState(null);
+
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.post(Video_Url, {
+            // 쿠키에서 Authorization 토큰을 가져오는 로직
+            const token = document.cookie
+                .split("; ")
+                .find(row => row.startsWith("Authorization="))
+                ?.split("=")[1];
+
+            if (!token) {
+                throw new Error("Authorization 토큰이 없습니다.");
+            }
+
+            // JWT 디코딩하여 mid 추출
+            const decodedToken = jwtDecode(token);
+            const memberNickname = decodedToken.mid;
+            const role = decodedToken.role;
+
+            const payload = {
+                course_Id: courseId,
                 title,
                 url,
                 description,
-                course_Id: courseId,
-                totalVideoDuration,
-                currentVideoTime
-            });
-            navigate(`/videos/${courseId}`); // 비디오 목록으로 이동
-        } catch (error) {
-            console.error("비디오 추가 중 오류 발생:", error);
+            };
+
+            await axios.post('http://localhost:8080/video', payload, { withCredentials: true });
+
+            // 성공 메시지와 페이지 리디렉션
+            alert("강의 생성에 성공하였습니다."); // alert 추가
+            navigate("/courses/list"); // 상대 경로로 수정
+        } catch (err) {
+            setError("강좌 생성에 실패했습니다.");
         }
     };
+
 
     return (
         <FormContainer>
@@ -45,14 +67,6 @@ const AddVideo = ({ courseId }) => {
                 <Label>
                     설명:
                     <Input type="text" value={description} onChange={(e) => setDescription(e.target.value)} />
-                </Label>
-                <Label>
-                    전체 동영상 시간:
-                    <Input type="number" value={totalVideoDuration} onChange={(e) => setTotalVideoDuration(e.target.value)} />
-                </Label>
-                <Label>
-                    현재 동영상 시간:
-                    <Input type="number" value={currentVideoTime} onChange={(e) => setCurrentVideoTime(e.target.value)} />
                 </Label>
                 <Button type="submit">추가</Button>
             </form>

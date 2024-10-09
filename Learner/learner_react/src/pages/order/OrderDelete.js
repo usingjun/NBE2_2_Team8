@@ -12,7 +12,7 @@ const OrderDelete = () => {
     useEffect(() => {
         const deleteOrder = async () => {
             try {
-                await axios.delete(`http://localhost:8080/order/${orderId}`);
+                await axios.delete(`http://localhost:8080/order/${orderId}`,{ withCredentials: true});
                 alert("주문이 삭제되었습니다.");
                 navigate("/orders"); // 주문 목록 페이지로 리디렉션
             } catch (error) {

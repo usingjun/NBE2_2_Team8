@@ -12,6 +12,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import static jakarta.persistence.GenerationType.*;
 import static lombok.AccessLevel.PROTECTED;
@@ -52,6 +54,10 @@ public class NewsEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "course_id")
     private Course courseNews;
+
+    @OneToMany(mappedBy = "newsEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<HeartNews> heartNewsList = new ArrayList<>();
+
 
     public void changeNewsName(String newsName) {
         this.newsName = newsName;

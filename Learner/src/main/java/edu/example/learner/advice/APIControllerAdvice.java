@@ -2,6 +2,7 @@ package edu.example.learner.advice;
 
 import edu.example.learner.courseabout.exception.HeartNewsAlreadyExistsException;
 import edu.example.learner.courseabout.exception.NotFoundException;
+import edu.example.learner.courseabout.exception.ReviewException;
 import edu.example.learner.courseabout.exception.ReviewTaskException;
 import edu.example.learner.courseabout.order.exception.OrderTaskException;
 import edu.example.learner.member.exception.LoginException;
@@ -56,6 +57,18 @@ public class APIControllerAdvice {
         return ResponseEntity.status(e.getStatusCode()).body(errMap);
     }
 
+    @ExceptionHandler(ReviewTaskException.class)
+    public ResponseEntity<?> handleLoginException(ReviewTaskException e) {
+        log.info("--- MemberTaskException");
+        log.info("--- e.getClass().getName() : " + e.getClass().getName());
+        log.info("--- e.getMessage() : " + e.getMessage());
+
+        Map<String, String> errMap = Map.of("error", e.getMessage());
+
+
+        return ResponseEntity.status(e.getStatusCode()).body(errMap);
+    }
+
     //파일 업로드 예외처리
     @ExceptionHandler(MaxUploadSizeExceededException.class)
     public ResponseEntity<String> handleMaxSizeException(MaxUploadSizeExceededException exc) {
@@ -72,6 +85,8 @@ public class APIControllerAdvice {
         return ResponseEntity.status(e.getCode()).body(map);
     }
 
+
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<String> handleIllegalArgumentException(IllegalArgumentException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -87,16 +102,6 @@ public class APIControllerAdvice {
     @ExceptionHandler(HeartNewsAlreadyExistsException.class)
     public ResponseEntity<String> handleHeartNewsAlreadyExistsException(HeartNewsAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
-    }
-
-    // ReviewTaskException 예외처리 추가
-    @ExceptionHandler(ReviewTaskException.class)
-    public ResponseEntity<Map<String, String>> handleReviewException(ReviewTaskException e) {
-        log.error("ReviewTaskException : ", e);
-
-        Map<String, String> errMap = Map.of("error", e.getMessage());
-
-        return ResponseEntity.status(e.getCode()).body(errMap);
     }
 
 }
