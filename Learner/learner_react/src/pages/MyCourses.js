@@ -9,16 +9,9 @@ const MyCourses = () => {
         const memberId = localStorage.getItem('memberId');
 
         if (memberId) {
-            fetch(`http://localhost:8080/course/${memberId}/list`, {
-                method: 'GET', // GET 요청으로 명시
-                credentials: 'include', // withCredentials: true와 유사
-            })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error('Network response was not ok');
-                    }
-                    return response.json();
-                })
+            fetch(`http://localhost:8080/course/${memberId}/list` , { credentials: 'include' })
+                .then(response => response.json())
+
                 .then(data => setCourses(data))
                 .catch(error => console.error('Error fetching courses:', error));
         } else {

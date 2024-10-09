@@ -33,7 +33,7 @@ public class MemberCourseService {
 
     @Transactional
     public MemberCourse purchaseCourse(Long memberId, Long courseId) {
-        Course course = courseRepository.findById(courseId).orElseThrow(CourseException.COURSE_NOT_FOUND::get);
+        Course course = courseRepository.findById(courseId).get();
         Member member = memberRepository.findById(memberId).orElseThrow(MemberException.MEMBER_NOT_FOUND::getMemberTaskException);
         MemberCourse memberCourse = MemberCourse.builder()
                 .member(member) // 위에서 가져온 member

@@ -44,7 +44,6 @@ function App() {
             {isModalOpen && <LoginModal closeModal={closeModal} />}
             <Routes>
                 <Route path="/" element={<Navigate to="/courses" />} />
-                <Route path="/courses" element={<Courses />} />
                 <Route path="/signup" element={<SignUp />} />
                 <Route path="/courses" element={<Courses />} /> {/* 수정된 경로 */}
                 <Route path="/courses/:courseId/post" element={<PostCourseInquiry />} />
