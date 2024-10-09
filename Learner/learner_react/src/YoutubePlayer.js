@@ -172,6 +172,7 @@ const YoutubePlayer = () => {
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                credentials: 'include',
                 body: JSON.stringify({
                     videoId: videoEntityId,
                     currentTime: time
@@ -193,6 +194,7 @@ const YoutubePlayer = () => {
             headers: {
                 'Content-Type': 'application/json',
             },
+            credentials: 'include',
             body: JSON.stringify({
                 videoId: videoEntityId,
                 totalDuration: duration
@@ -216,7 +218,7 @@ const YoutubePlayer = () => {
         try {
             const memberId = localStorage.getItem('memberId');
             const response = await axios.get(
-                `http://localhost:8080/course/${courseId}/purchase?memberId=${memberId}`
+                `http://localhost:8080/course/${courseId}/purchase?memberId=${memberId}`,{withCredentials:true}
             );
 
             if (response.data) {
@@ -245,7 +247,7 @@ const YoutubePlayer = () => {
         try {
             const memberId = localStorage.getItem('memberId');
             const response = await axios.get(
-                `http://localhost:8080/course/${courseId}/purchase?memberId=${memberId}`
+                `http://localhost:8080/course/${courseId}/purchase?memberId=${memberId}`,{withCredentials:true}
             );
 
             if (response.data) {
