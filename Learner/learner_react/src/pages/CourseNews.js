@@ -101,6 +101,13 @@ export default function CourseNews() {
 
     const likeNews = async () => {
         const memberId = localStorage.getItem('memberId');
+
+        // memberId가 없으면 알림 표시하고 함수 종료
+        if (!memberId) {
+            alert('로그인 후 시도해주세요.');
+            return;
+        }
+
         const requestData = {
             memberId: parseInt(memberId),
             newsId: parseInt(newsId)
@@ -134,6 +141,7 @@ export default function CourseNews() {
             alert('좋아요 처리 중 오류가 발생했습니다.');
         }
     };
+
 
     const deleteNews = () => {
         if (!window.confirm('정말로 이 새소식을 삭제하시겠습니까?')) {

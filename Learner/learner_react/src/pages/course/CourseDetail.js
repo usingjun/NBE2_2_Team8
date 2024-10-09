@@ -7,31 +7,52 @@ import CourseReview from "../course-review/CourseReview";
 import VideoList from "../video/VideoList"; // VideoList 컴포넌트 임포트
 import CourseInquiryList from "../CourseInquiryList";
 
+
 // 기본 이미지 경로
 const defaultImage = "/images/course_default_img.png";
 
 const CourseDetail = () => {
-    const { courseId } = useParams(); // URL에서 courseId 가져오기
-    const navigate = useNavigate(); //useNavigate 추가
+    const { courseId } = useParams();
     const [course, setCourse] = useState(null);
     const [activeTab, setActiveTab] = useState("curriculum");
-
+    const role = localStorage.getItem("role"); // localStorage에서 role 가져오기
+    const navigate = useNavigate();
 
     useEffect(() => {
-        // courseId를 이용해서 해당 강의 정보를 가져옴
-        axios.get(`http://localhost:8080/course/${courseId}`)
+        axios
+            .get(`http://localhost:8080/course/${courseId}`)
             .then((response) => {
-                setCourse(response.data); // 강의 데이터 설정
+                setCourse(response.data);
             })
             .catch((error) => {
                 console.error("Error fetching the course data:", error);
             });
     }, [courseId]);
 
-
     const handleTabChange = (tab) => {
         setActiveTab(tab);
     };
+
+
+    // 강의 삭제 요청
+    const handleDeleteCourse = async () => {
+        if (window.confirm("정말로 이 강의를 삭제하시겠습니까?")) {
+            try {
+                await axios.delete(`http://localhost:8080/course/${courseId}`);
+                alert("강의가 성공적으로 삭제되었습니다.");
+                navigate("/courses"); // 삭제 후 강의 목록 페이지로 이동
+            } catch (error) {
+                console.error("강의 삭제 실패:", error);
+                alert("강의 삭제 중 문제가 발생했습니다.");
+            }
+        }
+    };
+
+    // 강의 업데이트 페이지로 이동
+    const handleUpdateCourse = () => {
+        navigate(`/put-course/${courseId}`);
+    };
+
 
     return (
         <DetailPage>
@@ -51,6 +72,15 @@ const CourseDetail = () => {
                 </CourseInfo>
             )}
 
+            {/* role이 admin일 때만 '강의 업데이트'와 '강의 삭제' 버튼을 표시 */}
+            {(role === "admin" || role === "INSTRUCTOR") && (
+                <AdminControls>
+                    <UpdateButton onClick={handleUpdateCourse}>강의 업데이트</UpdateButton>
+                    <DeleteButton onClick={handleDeleteCourse}>강의 삭제</DeleteButton>
+                </AdminControls>
+            )}
+
+            <Separator />
             {/* 구분선 */}
             <Separator/>
 
@@ -169,6 +199,45 @@ const Separator = styled.div`
     height: 1px;
     background-color: #ddd;
     margin: 0; /* 구분선 간격 조정 */
+`;
+
+
+const AdminControls = styled.div`
+    margin-bottom: 10px;
+    display: flex;
+    justify-content: flex-start;
+    gap: 1rem;
+    padding: 20px;  /* 내부 여백 추가 */
+    background-color: #f9f9f9;  /* 배경색 설정 */
+    border-radius: 10px;  /* 모서리 둥글게 */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);  /* 그림자 추가 */
+    max-width: 800px;  /* 최대 너비 설정 */
+    width: 100%;  /* 너비를 100%로 설정 */
+    box-sizing: border-box;  /* 패딩 포함한 너비 계산 */
+`;
+
+const UpdateButton = styled.button`
+    padding: 0.75rem 1.5rem;
+    background-color: #3cb371;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    &:hover {
+        background-color: #2a9d63;
+    }
+`;
+
+const DeleteButton = styled.button`
+    padding: 0.75rem 1.5rem;
+    background-color: #e74c3c;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    &:hover {
+        background-color: #c0392b;
+    }
 `;
 
 const StyledButton = styled.button`
