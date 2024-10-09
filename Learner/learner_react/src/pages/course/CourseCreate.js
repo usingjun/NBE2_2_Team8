@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
 import { jwtDecode } from "jwt-decode";
+import app from "../../App";
 
 const Course_Url = "http://localhost:8080/course";
 
@@ -38,7 +39,6 @@ const CourseCreate = () => {
                 courseLevel,
                 memberNickname,
             };
-
             await axios.post(Course_Url, payload,{ withCredentials: true } );
             navigate("/course/list");
         } catch (err) {
