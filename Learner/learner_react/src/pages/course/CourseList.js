@@ -64,9 +64,8 @@ const CourseList = () => {
     };
 
     const handleVideoEditClick = (courseId) => {
-        navigate(`/video/Instructor/${courseId}`); // 비디오 수정 페이지로 이동
+        navigate(`/video/Instructor/${courseId}`);
     };
-
 
     if (loading) return <LoadingMessage>로딩 중...</LoadingMessage>;
     if (error) return <ErrorMessage>{error}</ErrorMessage>;
@@ -91,9 +90,9 @@ const CourseList = () => {
                         </CourseDetails>
                         <ButtonContainer>
                             <StyledButton onClick={() => handleUpdateClick(course.courseId)} secondary>수정</StyledButton>
-                            <StyledButton onClick={() => handleDeleteClick(course.courseId)} secondary>삭제</StyledButton>
+                            <StyledButton onClick={() => handleDeleteClick(course.courseId)} delete>삭제</StyledButton>
                             <StyledButton onClick={() => handleCourseDetailClick(course.courseId)}>상세정보</StyledButton>
-                            <StyledButton onClick={() => handleVideoEditClick(course.courseId)} secondary>비디오 수정</StyledButton> {/* 비디오 수정 버튼 추가 */}
+                            <StyledButton onClick={() => handleVideoEditClick(course.courseId)} secondary>비디오 수정</StyledButton>
                         </ButtonContainer>
                     </CourseItem>
                 ))
@@ -154,7 +153,11 @@ const ButtonContainer = styled.div`
 
 const StyledButton = styled.button`
     padding: 0.5rem 1rem;
-    background-color: ${props => (props.primary ? "#007bff" : props.secondary ? "#dc3545" : "#007bff")};
+    background-color: ${props =>
+            props.primary ? "#007bff" :
+                    props.secondary ? "#6c757d" :
+                            props.delete ? "#dc3545" : "#28a745"
+    };
     color: white;
     border: none;
     border-radius: 4px;
@@ -162,7 +165,11 @@ const StyledButton = styled.button`
     transition: background-color 0.3s;
 
     &:hover {
-        background-color: ${props => (props.primary ? "#0056b3" : props.secondary ? "#c82333" : "#0056b3")};
+        background-color: ${props =>
+                props.primary ? "#0056b3" :
+                        props.secondary ? "#5a6268" :
+                                props.delete ? "#c82333" : "#218838"
+        };
     }
 `;
 
