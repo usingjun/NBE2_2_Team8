@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { useParams, Link, useNavigate } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
-import { handlePlayClick } from "./HandlePlayClick";
+import { jwtDecode } from "jwt-decode"; // named import
+import Cookies from "js-cookie"; // 쿠키 관리 라이브러리 추가
+import { handlePlayClick } from "./HandlePlayClick"; // HandlePlayClick 함수 가져오기
 
-const Video_Url = "http://localhost:8080/video";
 const Course_Url = "http://localhost:8080/course";
 
 const VideoList = () => {
@@ -13,15 +14,35 @@ const VideoList = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
+    const [role, setRole] = useState(null); // 사용자 역할 상태 추가
+    const [memberNickname, setMemberNickName] = useState(null); // 사용자 ID 상태 추가
 
     useEffect(() => {
+        // JWT 디코딩 함수
+        const decodeJwt = (token) => {
+            try {
+                return jwtDecode(token); // named import로 변경
+            } catch (error) {
+                console.error("JWT 디코딩 오류:", error);
+                return null;
+            }
+        };
+
+        // 사용자 역할과 ID 가져오기
+        const token = Cookies.get("Authorization"); // 쿠키에서 토큰 가져오기
+        if (token) {
+            const decodedToken = decodeJwt(token);
+            setRole(decodedToken?.role); // 사용자 역할 설정
+            setMemberNickName(decodedToken?.mid); // 사용자 ID 설정
+        }
+
         const fetchVideos = async () => {
             setLoading(true);
             try {
                 const response = await axios.get(`${Course_Url}/video/${courseId}`);
                 setVideos(response.data);
             } catch (error) {
-                console.error("비디오 목록 가져오는 중 오류 발생:", error);
+                console.error("비디오 목록 가져오는 중 오류 발생:", error.response ? error.response.data : error.message);
                 setError("비디오 목록을 가져오는 데 실패했습니다.");
             } finally {
                 setLoading(false);
@@ -31,121 +52,75 @@ const VideoList = () => {
         fetchVideos();
     }, [courseId]);
 
-    const extractVideoId = (url) => {
-        const regex = /[?&]v=([^&#]*)/;
-        const match = url.match(regex);
-        return match ? match[1] : null; // 유튜브 비디오 ID 반환
-    };
-
-    const handleDeleteClick = async (videoId) => {
-        if (window.confirm("정말로 이 비디오를 삭제하시겠습니까?")) {
-            try {
-                await axios.delete(`${Video_Url}/${videoId}`);
-                setVideos(videos.filter(video => video.video_Id !== videoId));
-            } catch (error) {
-                console.error("비디오 삭제 중 오류 발생:", error);
-                setError("비디오를 삭제하는 데 실패했습니다.");
-            }
-        }
-    };
-
-    if (loading) return <LoadingMessage>로딩 중...</LoadingMessage>;
-    if (error) return <ErrorMessage>{error}</ErrorMessage>;
+    if (loading) return <Message>로딩 중...</Message>;
+    if (error) return <Message $error>{error}</Message>;
 
     return (
-        <VideoListContainer>
+        <Container>
             <Header>비디오 목록</Header>
-            <Link to={`/video/create/${courseId}`}>
-                <StyledButton primary>비디오 추가</StyledButton>
-            </Link>
             {videos.length > 0 ? (
-                videos.map(video => {
-                    const youtubeId = extractVideoId(video.url); // URL에서 유튜브 ID 추출
-                    return (
-                        <VideoItem key={video.video_Id}>
-                            <VideoDetails>
-                                <p>비디오 ID: <strong>{video.video_Id}</strong></p>
-                                <p>비디오 제목: <strong>{video.title}</strong></p>
-                            </VideoDetails>
-                            <ButtonContainer>
-                                <Link to={`/video/update/${video.video_Id}`}>
-                                    <StyledButton secondary>수정</StyledButton>
-                                </Link>
-                                <StyledButton onClick={() => handlePlayClick(courseId, video, navigate, setError)} secondary>
-                                    재생
-                                </StyledButton>
-                                <StyledButton onClick={() => handleDeleteClick(video.video_Id)} secondary>삭제</StyledButton>
-                            </ButtonContainer>
-                        </VideoItem>
-                    );
-                })
+                videos.map((video, index) => (
+                    <VideoItem
+                        key={video.video_Id}
+                        onClick={() => handlePlayClick(courseId, video, navigate, setError, role, memberNickname)} // 전체 항목 클릭 시 재생
+                    >
+                        <VideoInfo>
+                            <Title>{index + 1}. {video.description}</Title>
+                        </VideoInfo>
+                    </VideoItem>
+                ))
             ) : (
-                <p>비디오가 없습니다.</p>
+                <Message>비디오가 없습니다.</Message>
             )}
-        </VideoListContainer>
+        </Container>
     );
 };
 
-// 스타일 컴포넌트들
-const VideoListContainer = styled.div`
-    max-width: 800px;
+// 스타일 컴포넌트
+const Container = styled.div`
+    max-width: 700px;
     margin: 0 auto;
     padding: 2rem;
-    background: #f9f9f9;
+    background: #fff;
     border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 `;
 
 const Header = styled.h2`
     text-align: center;
-    color: #333;
-    margin-bottom: 1.5rem;
-`;
-
-const LoadingMessage = styled.p`
-    text-align: center;
-    color: #007bff;
-`;
-
-const ErrorMessage = styled.p`
-    text-align: center;
-    color: red;
+    color: #222;
+    margin-bottom: 2rem;
+    font-size: 1.8rem;
     font-weight: bold;
+`;
+
+const Message = styled.p`
+    text-align: center;
+    color: ${(props) => (props.$error ? "#e74c3c" : "#007bff")};
+    font-size: 1.2rem;
 `;
 
 const VideoItem = styled.div`
     padding: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+    border: 1px solid #eee;
+    border-radius: 6px;
     margin-bottom: 1rem;
-    background-color: #fff;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-`;
-
-const VideoDetails = styled.div`
+    background-color: #f7f7f7;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
     display: flex;
     justify-content: space-between;
     align-items: center;
+    cursor: pointer; // 커서를 포인터로 변경하여 클릭 가능함을 나타냄
 `;
 
-const ButtonContainer = styled.div`
-    display: flex;
-    justify-content: space-between;
-    margin-top: 1rem;
+const VideoInfo = styled.div`
+    flex: 1;
 `;
 
-const StyledButton = styled.button`
-    padding: 0.5rem 1rem;
-    background-color: ${props => (props.primary ? "#007bff" : props.secondary ? "#dc3545" : "#007bff")};
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-
-    &:hover {
-        background-color: ${props => (props.primary ? "#0056b3" : props.secondary ? "#c82333" : "#0056b3")};
-    }
+const Title = styled.h3`
+    font-size: 1.2rem;
+    color: #333;
+    margin: 0; // 마진 제거
 `;
 
 export default VideoList;

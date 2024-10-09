@@ -7,7 +7,15 @@ import edu.example.learner.courseabout.course.entity.CourseAttribute;
 import edu.example.learner.courseabout.course.entity.MemberCourse;
 import edu.example.learner.courseabout.course.repository.CourseRepository;
 import edu.example.learner.courseabout.course.repository.MemberCourseRepository;
+import edu.example.learner.courseabout.courseqna.repository.CourseInquiryRepository;
+import edu.example.learner.courseabout.courseqna.service.CourseInquiryService;
+import edu.example.learner.courseabout.coursereview.repository.ReviewRepository;
 import edu.example.learner.courseabout.exception.CourseException;
+import edu.example.learner.courseabout.exception.CourseInquiryException;
+import edu.example.learner.courseabout.exception.ReviewException;
+import edu.example.learner.member.entity.Member;
+import edu.example.learner.member.exception.MemberException;
+import edu.example.learner.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -25,15 +33,40 @@ import java.util.Optional;
 public class CourseServiceImpl implements CourseService {
     private final CourseRepository courseRepository;
     private final MemberCourseRepository memberCourseRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public CourseDTO addCourse(CourseDTO courseDTO) {
-        Course course = courseRepository.save(courseDTO.toEntity());
-        if (course != null) {
-            return courseDTO;
-        }else {
-            return null;
+        log.info("add course");
+        try {
+            Optional<Member> findMember = memberRepository.getMemberByNickName(courseDTO.getMemberNickname());
+            if(findMember.isPresent()) {
+                Member member = findMember.get  ();
+
+                log.info("member: {}", member);
+
+                Course course = Course.builder()
+                        .courseName(courseDTO.getCourseName())
+                        .courseDescription(courseDTO.getCourseDescription())
+                        .coursePrice(courseDTO.getCoursePrice())
+                        .courseLevel(courseDTO.getCourseLevel())
+                        .member(member)
+                        .courseAttribute(CourseAttribute.ETC)
+                        .sale(false)
+                        .build();
+
+
+                courseRepository.save(course);
+            } else {
+                 throw MemberException.MEMBER_NOT_FOUND.getMemberTaskException();
+            }
+        }catch (Exception e){
+            throw CourseException.COURSE_ADD_FAILED.getMemberTaskException();
         }
+
+        log.info("successfully added course ");
+
+       return courseDTO;
     }
 
     @Override
@@ -57,21 +90,39 @@ public class CourseServiceImpl implements CourseService {
 
     @Override
     public CourseDTO updateCourse(CourseDTO courseDTO) {
-        Optional<Course> courseRepositoryById = courseRepository.findById(courseDTO.getCourseId());
-        courseRepositoryById.ifPresent(course -> {
-            course.changeCourseLevel(courseDTO.getCourseLevel());
-            course.changeCourseName(courseDTO.getCourseName());
-            course.changeCourseDescription(courseDTO.getCourseDescription());
-            course.changeCourseLevel(courseDTO.getCourseLevel());
-            course.changeCourseStatus(CourseAttribute.valueOf(courseDTO.getCourseAttribute()));
-            course.changeSale(courseDTO.isSale());
-        });
+        Optional<Course> findCourse = courseRepository.findById(courseDTO.getCourseId());
+
+        if (findCourse.isPresent()) {
+            Course course = findCourse.get();
+            try {
+                course.changeCourseLevel(courseDTO.getCourseLevel());
+                course.changeCourseName(courseDTO.getCourseName());
+                course.changeCourseDescription(courseDTO.getCourseDescription());
+                course.changePrice(courseDTO.getCoursePrice());  // 가격 수정 추가
+                if(courseDTO.getCourseAttribute() != null){
+                    course.changeCourseStatus(CourseAttribute.valueOf(courseDTO.getCourseAttribute()));
+                }
+                log.info("저장된 데이터 확인 : " + courseRepository.findById(courseDTO.getCourseId()).get().getCoursePrice());
+            } catch (Exception e) {
+                log.error("Error updating course: ", e);
+                throw CourseException.COURSE_NOT_MODIFIED.getMemberTaskException();
+            }
+        } else {
+            throw CourseException.MEMBER_COURSE_NOT_FOUND.getMemberTaskException();
+        }
         return courseDTO;
     }
 
+
+
     @Override
     public void deleteCourse(Long courseId) {
-        courseRepository.deleteById(courseId);
+        try {
+            courseRepository.deleteById(courseId);
+        }
+        catch (Exception e){
+            throw CourseException.COURSE_NOT_DELETED.getMemberTaskException();
+        }
     }
 
     @Override
@@ -105,7 +156,7 @@ public class CourseServiceImpl implements CourseService {
         List<MemberCourse> memberCourseList = memberCourseRepository.getMemberCourse(memberId);
 
         if (memberCourseList == null && memberCourseList.isEmpty()) {
-            throw CourseException.MEMBER_COURSE_NOT_FOUND.get();
+            throw CourseException.MEMBER_COURSE_NOT_FOUND.getMemberTaskException();
         }
 
         List<MemberCourseDTO> memberCourseDTOList = new ArrayList<>();
@@ -122,7 +173,7 @@ public class CourseServiceImpl implements CourseService {
         List<MemberCourse> memberCourses = memberCourseRepository.findByMember_MemberId(memberId);
 
         if (memberCourses == null || memberCourses.isEmpty()) {
-            throw CourseException.MEMBER_COURSE_NOT_FOUND.get();
+            throw CourseException.MEMBER_COURSE_NOT_FOUND.getMemberTaskException();
         }
 
         List<CourseDTO> courseDTOList = new ArrayList<>();

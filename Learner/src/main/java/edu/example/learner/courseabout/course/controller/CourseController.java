@@ -65,6 +65,7 @@ public class CourseController {
         return ResponseEntity.ok(courseService.readAll());
     }
 
+
     @GetMapping("/video/{courseId}")
     @Operation(summary = "강의의 비디오 목록 조회", description = "강의 ID로 해당 강의에 포함된 비디오 목록을 조회합니다.")
     @ApiResponses(value = {
@@ -76,13 +77,16 @@ public class CourseController {
         return ResponseEntity.ok(videos);
     }
 
-    @PutMapping("")
+    @PutMapping("{courseId}")
     @Operation(summary = "강의 수정", description = "기존 강의를 수정합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "강의가 성공적으로 수정되었습니다."),
             @ApiResponse(responseCode = "404", description = "강의를 찾을 수 없습니다.")
     })
-    public ResponseEntity<CourseDTO> updateCourse(@RequestBody CourseDTO courseDTO) {
+    public ResponseEntity<CourseDTO> updateCourse(@PathVariable Long courseId ,
+                                                  @RequestBody CourseDTO courseDTO) {
+        courseDTO.setCourseId(courseId);
+
         log.info("Updating course {}", courseDTO);
         return ResponseEntity.ok(courseService.updateCourse(courseDTO));
     }
@@ -99,7 +103,7 @@ public class CourseController {
         return ResponseEntity.ok(Map.of("delete", "success"));
     }
 
-    @GetMapping("{memberId}/list")
+    @GetMapping("/{memberId}/list")
     @Operation(summary = "내 수강 정보 조회", description = "회원 ID로 해당 회원의 수강 정보를 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "수강 정보가 성공적으로 조회되었습니다."),
@@ -120,5 +124,13 @@ public class CourseController {
         } else {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("해당 코스 또는 닉네임을 찾을 수 없습니다.");
         }
+    }
+
+    @GetMapping("/instruct/list/{nickname}")
+    @Operation(summary = "강사의 본인 강의 조회", description = "강사가 본인의 강의를 조회")
+    public ResponseEntity<List<CourseDTO>> readInstructList(@PathVariable String nickname) {
+        log.info("Reading course instruct list {}", nickname);
+
+        return ResponseEntity.ok(courseService.getCoursesByNickname(nickname));
     }
 }

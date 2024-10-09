@@ -36,7 +36,6 @@ public class CourseRepositoryTests {
                 .courseLevel(1)
                 .coursePrice(3000L)
                 .sale(false)
-                .instructorName("John Doe")
                 .build());
 
         courseRepository.save(Course.builder()
@@ -46,7 +45,6 @@ public class CourseRepositoryTests {
                 .courseLevel(1)
                 .coursePrice(4000L)
                 .sale(false)
-                .instructorName("Jane Doe")
                 .build());
     }
 
@@ -59,7 +57,6 @@ public class CourseRepositoryTests {
                 .courseLevel(2)
                 .coursePrice(5000L)
                 .sale(false)
-                .instructorName("test강사3")
                 .build());
         assertThat(course).isNotNull();
     }
@@ -90,7 +87,6 @@ public class CourseRepositoryTests {
             course.changeCourseLevel(courseDTO.getCourseLevel());
             course.changeCourseDescription(courseDTO.getCourseDescription());
             course.changeCourseStatus(CourseAttribute.valueOf(courseDTO.getCourseAttribute()));
-            course.changeInstructorName(courseDTO.getInstructorName());
             course.changeSale(courseDTO.isSale());
         });
         Course updatedCourse = courseRepository.findById(courseDTO.getCourseId()).orElseThrow(CourseException.COURSE_NOT_FOUND::get);

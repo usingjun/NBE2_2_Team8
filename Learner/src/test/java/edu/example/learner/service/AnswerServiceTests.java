@@ -34,7 +34,7 @@ public class AnswerServiceTests {
     void testRegister() {
         IntStream.rangeClosed(1, 10).forEach(i -> {
             //GIVEN
-            inquiryRepository.save(Inquiry.builder().inquiryId((long) i).inquiryStatus(InquiryStatus.ANSWERED.name()).member(Member.builder().memberId(1L).build()).build());
+            inquiryRepository.save(Inquiry.builder().inquiryId((long) i).member(Member.builder().memberId(1L).build()).build());
             AnswerDTO answerDTO = AnswerDTO.builder()
                     .answerContent("content" + i)
                     .inquiryId((long) i)

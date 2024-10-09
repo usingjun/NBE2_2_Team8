@@ -24,7 +24,7 @@ public class QCourseInquiry extends EntityPathBase<CourseInquiry> {
 
     public final ListPath<CourseAnswer, QCourseAnswer> answers = this.<CourseAnswer, QCourseAnswer>createList("answers", CourseAnswer.class, QCourseAnswer.class, PathInits.DIRECT2);
 
-    public final NumberPath<Long> courseId = createNumber("courseId", Long.class);
+    public final edu.example.learner.courseabout.course.entity.QCourse course;
 
     public final DateTimePath<java.time.LocalDateTime> createdDate = createDateTime("createdDate", java.time.LocalDateTime.class);
 
@@ -60,6 +60,7 @@ public class QCourseInquiry extends EntityPathBase<CourseInquiry> {
 
     public QCourseInquiry(Class<? extends CourseInquiry> type, PathMetadata metadata, PathInits inits) {
         super(type, metadata, inits);
+        this.course = inits.isInitialized("course") ? new edu.example.learner.courseabout.course.entity.QCourse(forProperty("course"), inits.get("course")) : null;
         this.member = inits.isInitialized("member") ? new edu.example.learner.member.entity.QMember(forProperty("member")) : null;
     }
 

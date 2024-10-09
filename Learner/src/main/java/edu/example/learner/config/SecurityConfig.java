@@ -66,7 +66,7 @@ public class SecurityConfig{
                         //로그인 권한 설정
                         .requestMatchers("/login").permitAll()
                         .requestMatchers("/join/*").permitAll()                                                                 //로그인 및 회원가입 모두 허용
-                        .requestMatchers("/members/find/*").permitAll()                                                         //비밀번호 찾기 및 아이디 찾기 모두 허용
+                        .requestMatchers("/members/find/**").permitAll()                                                         //비밀번호 찾기 및 아이디 찾기 모두 허용
                         //강의 문의 권한 설정
                         .requestMatchers(HttpMethod.GET, "/course/{courseId}/course-inquiry/**").permitAll()                                                       // GET 요청 course 모두 허용
                         .requestMatchers(HttpMethod.POST, "/course/{courseId}/course-inquiry").hasAnyRole("USER","INSTRUCTOR","ADMIN")                      // POST 요청 course 권한 설정
@@ -114,9 +114,9 @@ public class SecurityConfig{
                         .requestMatchers(HttpMethod.GET, "/members/instructor/**").permitAll()   // 강사 관련 프로필 GET 요청 허용
 
                         //강의 권한 설정
-                        .requestMatchers(HttpMethod.GET, "/course/**").permitAll()                                              // GET 요청 course 모두 허용
+                        .requestMatchers(HttpMethod.GET, "/course/**").permitAll()                                             // GET 요청 course 모두 허용
                         .requestMatchers(HttpMethod.GET, "/course/list").permitAll()                                           // GET 요청 course 모두 허용
-                        .requestMatchers(HttpMethod.POST, "/course/**").hasAnyRole("INSTRUCTOR","ADMIN")                 // POST 요청 course 권한 설정
+                        .requestMatchers(HttpMethod.POST, "/course").hasAnyRole("INSTRUCTOR","ADMIN")                    // POST 요청 course 권한 설정
                         .requestMatchers(HttpMethod.DELETE, "/course/**").hasAnyRole("INSTRUCTOR","ADMIN")               // DELETE 요청 course 권한 설정
                         .requestMatchers(HttpMethod.PUT, "/course/**").hasAnyRole("INSTRUCTOR","ADMIN")                  // PUT 요청 course 권한 설정
                         .requestMatchers(HttpMethod.GET, "/course/{id}/list").hasAnyRole("USER", "INSTRUCTOR", "ADMIN")  // 본인 수강강의 조회
