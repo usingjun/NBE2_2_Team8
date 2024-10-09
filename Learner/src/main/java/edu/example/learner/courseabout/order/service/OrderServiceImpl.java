@@ -150,8 +150,10 @@ public class OrderServiceImpl implements OrderService {
                 orderItemRepository.save(existingItem); // 변경사항 저장
             } else {
                 // 새 아이템 추가
-                Course course = courseRepository.findById(dto.getCourseId())
-                        .orElseThrow(CourseException.COURSE_NOT_FOUND::get);
+                Course course = courseRepository.findById(dto.getCourseId()).get();
+                if(course == null){
+                   throw CourseException.COURSE_NOT_FOUND.getMemberTaskException();
+                }
                 dto.setCourseAttribute(String.valueOf(course.getCourseAttribute()));
                 OrderItem newItem = dto.toEntity(dto, foundOrder); // 새로운 OrderItem 생성
                 orderItemRepository.save(newItem); // 새로운 아이템 저장

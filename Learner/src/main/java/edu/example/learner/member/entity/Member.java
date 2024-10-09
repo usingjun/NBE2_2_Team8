@@ -1,7 +1,13 @@
 package edu.example.learner.member.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import edu.example.learner.courseabout.course.entity.Course;
+import edu.example.learner.courseabout.course.entity.MemberCourse;
+import edu.example.learner.courseabout.courseqna.entity.CourseAnswer;
+import edu.example.learner.courseabout.courseqna.entity.CourseInquiry;
+import edu.example.learner.courseabout.coursereview.entity.Review;
 import edu.example.learner.courseabout.news.entity.HeartNews;
+import edu.example.learner.qna.inquiry.entity.Inquiry;
 import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
@@ -54,9 +60,26 @@ public class Member{
     @CreatedDate
     private LocalDateTime createDate;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<HeartNews> heartNewsList = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<MemberCourse> memberCourses = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<Course> courses = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<Inquiry> inquiries = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<CourseInquiry> courseInquiries = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<CourseAnswer> courseAnswers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<Review> reviews = new ArrayList<>();
 
     public void changeEmail(String email) {
         this.email = email;

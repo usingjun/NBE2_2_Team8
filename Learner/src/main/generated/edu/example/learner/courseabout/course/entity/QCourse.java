@@ -30,6 +30,8 @@ public class QCourse extends EntityPathBase<Course> {
 
     public final NumberPath<Long> courseId = createNumber("courseId", Long.class);
 
+    public final ListPath<edu.example.learner.courseabout.courseqna.entity.CourseInquiry, edu.example.learner.courseabout.courseqna.entity.QCourseInquiry> courseInquiries = this.<edu.example.learner.courseabout.courseqna.entity.CourseInquiry, edu.example.learner.courseabout.courseqna.entity.QCourseInquiry>createList("courseInquiries", edu.example.learner.courseabout.courseqna.entity.CourseInquiry.class, edu.example.learner.courseabout.courseqna.entity.QCourseInquiry.class, PathInits.DIRECT2);
+
     public final NumberPath<Integer> courseLevel = createNumber("courseLevel", Integer.class);
 
     public final DateTimePath<java.time.LocalDateTime> courseModifiedDate = createDateTime("courseModifiedDate", java.time.LocalDateTime.class);
@@ -40,7 +42,11 @@ public class QCourse extends EntityPathBase<Course> {
 
     public final edu.example.learner.member.entity.QMember member;
 
+    public final ListPath<MemberCourse, QMemberCourse> memberCourses = this.<MemberCourse, QMemberCourse>createList("memberCourses", MemberCourse.class, QMemberCourse.class, PathInits.DIRECT2);
+
     public final ListPath<edu.example.learner.courseabout.news.entity.NewsEntity, edu.example.learner.courseabout.news.entity.QNewsEntity> newsEntities = this.<edu.example.learner.courseabout.news.entity.NewsEntity, edu.example.learner.courseabout.news.entity.QNewsEntity>createList("newsEntities", edu.example.learner.courseabout.news.entity.NewsEntity.class, edu.example.learner.courseabout.news.entity.QNewsEntity.class, PathInits.DIRECT2);
+
+    public final ListPath<edu.example.learner.courseabout.coursereview.entity.Review, edu.example.learner.courseabout.coursereview.entity.QReview> reviews = this.<edu.example.learner.courseabout.coursereview.entity.Review, edu.example.learner.courseabout.coursereview.entity.QReview>createList("reviews", edu.example.learner.courseabout.coursereview.entity.Review.class, edu.example.learner.courseabout.coursereview.entity.QReview.class, PathInits.DIRECT2);
 
     public final BooleanPath sale = createBoolean("sale");
 
