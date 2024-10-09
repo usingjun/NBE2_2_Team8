@@ -14,7 +14,7 @@ const OrderCreate = () => {
     useEffect(() => {
         const fetchCourses = async () => {
             try {
-                const response = await axios.get("http://localhost:8080/course/list");
+                const response = await axios.get("http://localhost:8080/course/list",{ withCredentials: true});
                 setCourses(response.data);
             } catch (error) {
                 console.error("Error fetching courses:", error);
