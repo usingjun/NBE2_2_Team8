@@ -1,6 +1,7 @@
 package edu.example.learner.courseabout.courseqna.entity;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import edu.example.learner.courseabout.course.entity.Course;
 import edu.example.learner.member.entity.Member;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,7 +26,9 @@ public class CourseInquiry{
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long inquiryId;         //문의 Id
 
-    private Long courseId;          //문의 강의 Id
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "course_id")
+    private Course course;          //문의 강의 Id
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")

@@ -6,6 +6,15 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class ReviewTaskException extends RuntimeException {
-    private String message;
-    private int code;
+
+    private final int statusCode;
+
+    public ReviewTaskException(String message, int statusCode) {
+        super(message);
+        this.statusCode = statusCode;
+    }
+
+    public int getStatusCode() {
+        return statusCode;
+    }
 }

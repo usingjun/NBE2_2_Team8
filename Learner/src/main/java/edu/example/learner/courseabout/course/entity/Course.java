@@ -1,6 +1,9 @@
 package edu.example.learner.courseabout.course.entity;
 
 
+import edu.example.learner.courseabout.courseqna.entity.CourseAnswer;
+import edu.example.learner.courseabout.courseqna.entity.CourseInquiry;
+import edu.example.learner.courseabout.coursereview.entity.Review;
 import edu.example.learner.courseabout.news.entity.NewsEntity;
 import edu.example.learner.courseabout.video.entity.Video;
 import edu.example.learner.member.entity.Member;
@@ -55,6 +58,23 @@ public class Course {
     @Min(1)
     private Integer courseLevel;
 
+    @OneToMany(mappedBy = "course", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<MemberCourse> memberCourses = new ArrayList<>();
+
+    @OneToMany(mappedBy = "courseNews", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<NewsEntity> newsEntities = new ArrayList<>();
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<Video> videos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "course", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "course",cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<CourseInquiry> courseInquiries = new ArrayList<>();
+
+
+
     private boolean sale;
 
     public void changeCourseStatus(CourseAttribute courseStatus) {
@@ -94,14 +114,4 @@ public class Course {
 
     @LastModifiedDate
     private LocalDateTime courseModifiedDate;
-
-    @OneToMany(mappedBy = "courseNews", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<NewsEntity> newsEntities = new ArrayList<>();
-
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @Builder.Default
-    private List<Video> videos = new ArrayList<>();
-
-
 }

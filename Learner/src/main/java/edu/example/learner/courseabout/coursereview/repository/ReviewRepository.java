@@ -2,6 +2,7 @@ package edu.example.learner.courseabout.coursereview.repository;
 
 import edu.example.learner.courseabout.coursereview.entity.Review;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 

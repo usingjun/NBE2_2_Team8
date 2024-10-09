@@ -2,19 +2,44 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { jwtDecode } from "jwt-decode";
 
 const Course_Url = "http://localhost:8080/course";
 
 const CourseCreate = () => {
     const [courseName, setCourseName] = useState("");
+    const [courseDescription, setCourseDescription] = useState("");
+    const [coursePrice, setCoursePrice] = useState(0);
+    const [courseLevel, setCourseLevel] = useState(1);
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const memberId = localStorage.getItem("memberId");
-            await axios.post(Course_Url, { courseName, memberId });
+            // 쿠키에서 Authorization 토큰을 가져오는 로직
+            const token = document.cookie
+                .split("; ")
+                .find(row => row.startsWith("Authorization="))
+                ?.split("=")[1];
+
+            if (!token) {
+                throw new Error("Authorization 토큰이 없습니다.");
+            }
+
+            // JWT 디코딩하여 mid 추출
+            const decodedToken = jwtDecode(token);
+            const memberNickname = decodedToken.mid;
+
+            const payload = {
+                courseName,
+                courseDescription,
+                coursePrice,
+                courseLevel,
+                memberNickname,
+            };
+
+            await axios.post(Course_Url, payload, { withCredentials: true });
             navigate("/course/list");
         } catch (err) {
             setError("강좌 생성에 실패했습니다.");
@@ -28,8 +53,46 @@ const CourseCreate = () => {
             <form onSubmit={handleSubmit}>
                 <Label>
                     강좌 이름:
-                    <Input type="text" value={courseName} onChange={(e) => setCourseName(e.target.value)} required />
+                    <Input
+                        type="text"
+                        value={courseName}
+                        onChange={(e) => setCourseName(e.target.value)}
+                        required
+                    />
                 </Label>
+
+                <Label>
+                    강좌 설명:
+                    <Input
+                        type="text"
+                        value={courseDescription}
+                        onChange={(e) => setCourseDescription(e.target.value)}
+                        required
+                    />
+                </Label>
+
+                <Label>
+                    강좌 가격:
+                    <Input
+                        type="number"
+                        value={coursePrice}
+                        onChange={(e) => setCoursePrice(Number(e.target.value))}
+                        required
+                    />
+                </Label>
+
+                <Label>
+                    강좌 레벨:
+                    <Input
+                        type="number"
+                        value={courseLevel}
+                        onChange={(e) => setCourseLevel(Number(e.target.value))}
+                        min="1"
+                        max="5"
+                        required
+                    />
+                </Label>
+
                 <Button type="submit">생성</Button>
             </form>
         </Container>
