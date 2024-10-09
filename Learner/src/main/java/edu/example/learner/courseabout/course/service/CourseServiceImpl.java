@@ -14,6 +14,7 @@ import edu.example.learner.courseabout.exception.CourseException;
 import edu.example.learner.courseabout.exception.CourseInquiryException;
 import edu.example.learner.courseabout.exception.ReviewException;
 import edu.example.learner.member.entity.Member;
+import edu.example.learner.member.exception.MemberException;
 import edu.example.learner.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -54,8 +55,6 @@ public class CourseServiceImpl implements CourseService {
                         .courseAttribute(CourseAttribute.ETC)
                         .sale(false)
                         .build();
-
-
                 courseRepository.save(course);
             } else {
                  throw MemberException.MEMBER_NOT_FOUND.getMemberTaskException();
