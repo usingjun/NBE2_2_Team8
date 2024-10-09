@@ -83,7 +83,7 @@ const CourseList = () => {
                         <CourseDetails>
                             <p>강좌 ID: <strong>{course.courseId}</strong></p>
                             <p>강좌 이름: <strong>{course.courseName}</strong></p>
-                            <p>등록 날짜: <strong>{new Date(course.createdDate).toLocaleDateString()}</strong></p>
+                            <p>등록 날짜: <strong>{new Date(course.createdAt).toLocaleDateString()}</strong></p>
                         </CourseDetails>
                         <ButtonContainer>
                             <StyledButton onClick={() => handleUpdateClick(course.courseId)} secondary>수정</StyledButton>
