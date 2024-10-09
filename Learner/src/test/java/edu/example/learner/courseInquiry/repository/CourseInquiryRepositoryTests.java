@@ -113,7 +113,6 @@ public class CourseInquiryRepositoryTests {
     public void testDelete() {
         CourseInquiry courseInquiry = CourseInquiry.builder()
                 .courseId(2L)
-                .memberId(2L)
                 .inquiryTitle("Delete Test")
                 .inquiryContent("This will be deleted.")
                 .inquiryStatus(InquiryStatus.PENDING)
