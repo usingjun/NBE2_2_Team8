@@ -14,6 +14,7 @@ import edu.example.learner.courseabout.exception.CourseException;
 import edu.example.learner.courseabout.exception.CourseInquiryException;
 import edu.example.learner.courseabout.exception.ReviewException;
 import edu.example.learner.member.entity.Member;
+import edu.example.learner.member.exception.MemberException;
 import edu.example.learner.member.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -23,7 +24,6 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 
 
 @Service
@@ -39,24 +39,32 @@ public class CourseServiceImpl implements CourseService {
     public CourseDTO addCourse(CourseDTO courseDTO) {
         log.info("add course");
         try {
-            Course course = Course.builder()
-                    .courseName(courseDTO.getCourseName())
-                    .courseDescription(courseDTO.getCourseDescription())
-                    .coursePrice(courseDTO.getCoursePrice())
-                    .courseLevel(courseDTO.getCourseLevel())
-                    .member(memberRepository.getMemberByNickName(courseDTO.getMemberNickname()).get())
-                    .courseAttribute(CourseAttribute.ETC)
-                    .sale(false)
-                    .build();
+            Optional<Member> findMember = memberRepository.getMemberByNickName(courseDTO.getMemberNickname());
+            if(findMember.isPresent()) {
+                Member member = findMember.get  ();
 
-            log.info(course.toString());
+                log.info("member: {}", member);
 
-            courseRepository.save(course);
+                Course course = Course.builder()
+                        .courseName(courseDTO.getCourseName())
+                        .courseDescription(courseDTO.getCourseDescription())
+                        .coursePrice(courseDTO.getCoursePrice())
+                        .courseLevel(courseDTO.getCourseLevel())
+                        .member(member)
+                        .courseAttribute(CourseAttribute.ETC)
+                        .sale(false)
+                        .build();
+
+
+                courseRepository.save(course);
+            } else {
+                 throw MemberException.MEMBER_NOT_FOUND.getMemberTaskException();
+            }
         }catch (Exception e){
             throw CourseException.COURSE_ADD_FAILED.getMemberTaskException();
         }
 
-        log.info("successfully added course " + courseDTO);
+        log.info("successfully added course ");
 
        return courseDTO;
     }

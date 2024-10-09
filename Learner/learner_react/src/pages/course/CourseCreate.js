@@ -10,7 +10,7 @@ const CourseCreate = () => {
     const [courseName, setCourseName] = useState("");
     const [courseDescription, setCourseDescription] = useState("");
     const [coursePrice, setCoursePrice] = useState(0);
-    const [courseLevel, setCourseLevel] = useState(1);
+    const [courseLevel, setCourseLevel] = useState(1); // 기본값 1
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
@@ -40,7 +40,10 @@ const CourseCreate = () => {
             };
 
             await axios.post(Course_Url, payload, { withCredentials: true });
-            navigate("/course/list");
+
+            // 성공 메시지와 페이지 리디렉션
+            alert("강의 생성에 성공하였습니다."); // alert 추가
+            navigate("/courses/list"); // 상대 경로로 수정
         } catch (err) {
             setError("강좌 생성에 실패했습니다.");
         }
@@ -83,14 +86,17 @@ const CourseCreate = () => {
 
                 <Label>
                     강좌 레벨:
-                    <Input
-                        type="number"
+                    <Select
                         value={courseLevel}
                         onChange={(e) => setCourseLevel(Number(e.target.value))}
-                        min="1"
-                        max="5"
                         required
-                    />
+                    >
+                        <option value={1}>1</option>
+                        <option value={2}>2</option>
+                        <option value={3}>3</option>
+                        <option value={4}>4</option>
+                        <option value={5}>5</option>
+                    </Select>
                 </Label>
 
                 <Button type="submit">생성</Button>
@@ -115,6 +121,12 @@ const Label = styled.label`
 `;
 
 const Input = styled.input`
+    width: 100%;
+    padding: 0.5rem;
+    margin-top: 0.5rem;
+`;
+
+const Select = styled.select`
     width: 100%;
     padding: 0.5rem;
     margin-top: 0.5rem;
