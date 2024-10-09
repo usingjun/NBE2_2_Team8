@@ -39,7 +39,7 @@ const CourseCreate = () => {
                 memberNickname,
             };
 
-            await axios.post(Course_Url, payload, { withCredentials: true });
+            await axios.post(Course_Url, payload,{ withCredentials: true } );
             navigate("/course/list");
         } catch (err) {
             setError("강좌 생성에 실패했습니다.");
