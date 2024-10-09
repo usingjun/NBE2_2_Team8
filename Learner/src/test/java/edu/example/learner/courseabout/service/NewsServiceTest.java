@@ -42,7 +42,6 @@ public class NewsServiceTest {
         Course course = new Course();
         course.changeCourseName("초기 강의");
         course.changeCourseDescription("초기 강의 설명");
-        course.changeInstructorName("초기 강사");
         course.changePrice(30000L);
         course.changeCourseLevel(1);
         course.changeSale(false);
@@ -64,7 +63,6 @@ public class NewsServiceTest {
         Course course = new Course();
         course.changeCourseName("새 강의");
         course.changeCourseDescription("새 강의 설명");
-        course.changeInstructorName("새 강사");
         course.changePrice(20000L);
         course.changeCourseLevel(2);
         course.changeSale(true);
@@ -130,7 +128,6 @@ public class NewsServiceTest {
         Course course = new Course();
         course.changeCourseName("테스트 강의");
         course.changeCourseDescription("테스트 강의 설명");
-        course.changeInstructorName("테스트 강사");
         course.changePrice(10000L);
         course.changeCourseLevel(1);
         course.changeSale(true);

@@ -3,13 +3,13 @@ import { useNavigate } from 'react-router-dom';
 
 const MyCourses = () => {
     const [courses, setCourses] = useState([]);
-    const navigate = useNavigate(); // Initialize useNavigate hook
+    const navigate = useNavigate();
 
     useEffect(() => {
         const memberId = localStorage.getItem('memberId');
 
         if (memberId) {
-            fetch(`http://localhost:8080/course/${memberId}/list`)
+            fetch(`http://localhost:8080/course/${memberId}/list`, { credentials: 'include' })
                 .then(response => response.json())
                 .then(data => setCourses(data))
                 .catch(error => console.error('Error fetching courses:', error));
@@ -19,7 +19,7 @@ const MyCourses = () => {
     }, []);
 
     const handleCourseClick = (courseId) => {
-        navigate(`/courses/${courseId}`); // Navigate to the course detail page
+        navigate(`/courses/${courseId}`);
     };
 
     return (
@@ -32,8 +32,8 @@ const MyCourses = () => {
                             <div onClick={() => handleCourseClick(course.courseId)} style={styles.courseLink}>
                                 <div>
                                     <span style={styles.courseName}>{course.courseName}</span>
-                                    <p style={styles.instructor}>강사: {course.instructor}</p>
-                                    <p style={styles.purchaseDate}>구매일: {new Date(course.purchaseDate).toLocaleDateString()}</p>
+                                    <p style={styles.instructor}>강사: <span style={styles.instructorName}>{course.instructor}</span></p>
+                                    <p style={styles.purchaseDate}>구매일: <span style={styles.purchaseDateText}>{new Date(course.purchaseDate).toLocaleDateString()}</span></p>
                                 </div>
                                 <span style={styles.courseArrow}>→</span>
                             </div>
@@ -83,17 +83,24 @@ const styles = {
         textDecoration: 'none',
         boxShadow: '0 2px 8px rgba(0, 0, 0, 0.05)',
         transition: 'box-shadow 0.3s ease, transform 0.3s ease',
-        cursor: 'pointer', // Change cursor to pointer
+        cursor: 'pointer',
     },
     instructor: {
         margin: '5px 0',
         fontSize: '16px',
         color: '#555',
     },
+    instructorName: {
+        color: '#007bff', // 강사 이름 색상
+    },
     purchaseDate: {
         margin: '5px 0',
         fontSize: '14px',
         color: '#777',
+        paddingLeft: '5px', // 여백 추가
+    },
+    purchaseDateText: {
+        fontWeight: 'normal',
     },
     courseName: {
         fontWeight: 'bold',
@@ -103,6 +110,9 @@ const styles = {
         fontSize: '20px',
         color: '#007bff',
         transition: 'transform 0.3s ease',
+    },
+    courseItemHover: {
+        backgroundColor: '#e0e0e0', // hover 시 배경색
     },
 };
 

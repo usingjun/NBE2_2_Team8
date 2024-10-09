@@ -48,22 +48,14 @@ const CourseNewsList = ({ courseId }) => {
             if (token) {
                 const decodedToken = jwtDecode(token);
                 setUserRole(decodedToken.role);
-                const email = decodedToken.mid;
-
-                const response = await fetch(`http://localhost:8080/member/nickname?email=${email}`, {
-                    credentials: 'include',
-                });
-                if (!response.ok) {
-                    throw new Error("닉네임을 가져오는 데 실패했습니다.");
-                }
-                const nickname = await response.text();
-                // console.log("User Nickname:", nickname);
-                setUserName(nickname);
+                const nickname = decodedToken.mid; // 토큰에서 nickname 추출
+                setUserName(nickname); // userName 설정
             }
         } catch (error) {
             console.error("토큰 확인 중 오류 발생:", error);
         }
     };
+
 
     const canCreateNews = () => {
         // console.log("Current state:", {

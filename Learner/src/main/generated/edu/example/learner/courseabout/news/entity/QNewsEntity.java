@@ -24,6 +24,8 @@ public class QNewsEntity extends EntityPathBase<NewsEntity> {
 
     public final edu.example.learner.courseabout.course.entity.QCourse courseNews;
 
+    public final ListPath<HeartNews, QHeartNews> heartNewsList = this.<HeartNews, QHeartNews>createList("heartNewsList", HeartNews.class, QHeartNews.class, PathInits.DIRECT2);
+
     public final DateTimePath<java.time.LocalDateTime> lastModifiedDate = createDateTime("lastModifiedDate", java.time.LocalDateTime.class);
 
     public final NumberPath<Integer> likeCount = createNumber("likeCount", Integer.class);

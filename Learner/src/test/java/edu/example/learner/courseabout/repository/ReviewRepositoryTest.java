@@ -72,7 +72,6 @@ class ReviewRepositoryTest {
                 .courseLevel(3)
                 .coursePrice(10000L)
                 .courseName("test")
-                .instructorName("instructor")
                 .sale(true)
                 .build();
         courseRepository.save(course);

@@ -63,7 +63,6 @@ class HeartNewsServiceTest {
         Course course = new Course();
         course.changeCourseName("초기 강의");
         course.changeCourseDescription("초기 강의 설명");
-        course.changeInstructorName("초기 강사");
         course.changePrice(30000L);
         course.changeCourseLevel(1);
         course.changeSale(false);

@@ -1,5 +1,6 @@
 package edu.example.learner.courseabout.courseqna.dto;
 
+import edu.example.learner.courseabout.course.entity.Course;
 import edu.example.learner.courseabout.courseqna.entity.CourseInquiry;
 import edu.example.learner.courseabout.courseqna.entity.InquiryStatus;
 import edu.example.learner.member.entity.Member;
@@ -33,7 +34,7 @@ public class CourseInquiryDTO {
 
     public CourseInquiry toEntity(){
         CourseInquiry courseInquiry = CourseInquiry.builder()
-                .courseId(courseId)
+                .course(Course.builder().courseId(courseId).build())
                 .member(Member.builder().memberId(memberId).build())
                 .inquiryTitle(inquiryTitle)
                 .inquiryContent(inquiryContent)
@@ -45,7 +46,7 @@ public class CourseInquiryDTO {
 
     public CourseInquiryDTO(CourseInquiry ci){
         this.inquiryId = ci.getInquiryId();
-        this.courseId = ci.getCourseId();
+        this.courseId = ci.getCourse().getCourseId();
         this.memberId = ci.getMember().getMemberId();
         this.memberNickname = ci.getMember().getNickname();
         this.profileImage = ci.getMember().getProfileImage();

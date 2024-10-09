@@ -20,7 +20,7 @@ const CourseDetail = () => {
 
     useEffect(() => {
         axios
-            .get(`http://localhost:8080/course/${courseId}`)
+            .get(`http://localhost:8080/course/${courseId}`,{ withCredentials: true })
             .then((response) => {
                 setCourse(response.data);
             })
@@ -38,7 +38,7 @@ const CourseDetail = () => {
     const handleDeleteCourse = async () => {
         if (window.confirm("정말로 이 강의를 삭제하시겠습니까?")) {
             try {
-                await axios.delete(`http://localhost:8080/course/${courseId}`);
+                await axios.delete(`http://localhost:8080/course/${courseId}`,{ withCredentials: true });
                 alert("강의가 성공적으로 삭제되었습니다.");
                 navigate("/courses"); // 삭제 후 강의 목록 페이지로 이동
             } catch (error) {
@@ -50,7 +50,7 @@ const CourseDetail = () => {
 
     // 강의 업데이트 페이지로 이동
     const handleUpdateCourse = () => {
-        navigate(`/put-course/${courseId}`);
+        navigate(`/put-course/${courseId}`,{ withCredentials: true });
     };
 
 

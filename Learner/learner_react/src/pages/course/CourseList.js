@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import styled from "styled-components";
+import { jwtDecode } from "jwt-decode";
 
 const Course_Url = "http://localhost:8080/course";
 
@@ -9,21 +10,28 @@ const CourseList = () => {
     const [courses, setCourses] = useState([]);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
-    const [role, setRole] = useState("null"); // 하드코딩으로 강사 역할 설정
+    const [role, setRole] = useState(null);
     const navigate = useNavigate();
-    const memberId = localStorage.getItem("memberId");
 
     useEffect(() => {
         const fetchCourses = async () => {
             setLoading(true);
-            if (!memberId) {
-                setError("로그인이 필요합니다.");
-                setLoading(false);
-                return;
-            }
             try {
-                const response = await axios.get(`${Course_Url}/list/${memberId}`);
-                setCourses(response.data);
+                const token = document.cookie
+                    .split('; ')
+                    .find(row => row.startsWith('Authorization='))
+                    ?.split('=')[1];
+
+                if (token) {
+                    const decodedToken = jwtDecode(token);
+                    const nickname = decodedToken.mid;
+                    const userRole = decodedToken.role;
+                    setRole(userRole);
+                    const response = await axios.get(`${Course_Url}/instruct/list/${nickname}`, { withCredentials: true });
+                    setCourses(response.data);
+                } else {
+                    setError("로그인이 필요합니다.");
+                }
             } catch (error) {
                 console.error("강좌 목록 가져오는 중 오류 발생:", error);
                 setError("강좌 목록을 가져오는 데 실패했습니다.");
@@ -33,7 +41,7 @@ const CourseList = () => {
         };
 
         fetchCourses();
-    }, [memberId]);
+    }, []);
 
     const handleUpdateClick = (courseId) => {
         navigate(`/courses/update/${courseId}`);
@@ -42,13 +50,21 @@ const CourseList = () => {
     const handleDeleteClick = async (courseId) => {
         if (window.confirm("정말로 이 강좌를 삭제하시겠습니까?")) {
             try {
-                await axios.delete(`${Course_Url}/${courseId}`);
+                await axios.delete(`${Course_Url}/${courseId}`, { withCredentials: true });
                 setCourses(courses.filter(course => course.courseId !== courseId));
             } catch (error) {
                 console.error("강좌 삭제 중 오류 발생:", error);
                 setError("강좌를 삭제하는 데 실패했습니다.");
             }
         }
+    };
+
+    const handleCourseDetailClick = (courseId) => {
+        navigate(`/courses/${courseId}`);
+    };
+
+    const handleVideoEditClick = (courseId) => {
+        navigate(`/video/Instructor/${courseId}`);
     };
 
     if (loading) return <LoadingMessage>로딩 중...</LoadingMessage>;
@@ -70,17 +86,13 @@ const CourseList = () => {
                         <CourseDetails>
                             <p>강좌 ID: <strong>{course.courseId}</strong></p>
                             <p>강좌 이름: <strong>{course.courseName}</strong></p>
-                            <p>등록 날짜: <strong>{new Date(course.createdDate).toLocaleDateString()}</strong></p>
+                            <p>등록 날짜: <strong>{new Date(course.createdAt).toLocaleDateString()}</strong></p>
                         </CourseDetails>
                         <ButtonContainer>
                             <StyledButton onClick={() => handleUpdateClick(course.courseId)} secondary>수정</StyledButton>
-                            <StyledButton onClick={() => handleDeleteClick(course.courseId)} secondary>삭제</StyledButton>
-                            <Link to={`/video/${course.courseId}`} onClick={() => console.log(`Navigating to video/${course.courseId}`)}>
-                                <StyledButton>비디오 확인</StyledButton>
-                            </Link>
-                            <Link to={`/course/${course.courseId}`}>
-                                <StyledButton>상세정보</StyledButton>
-                            </Link>
+                            <StyledButton onClick={() => handleDeleteClick(course.courseId)} delete>삭제</StyledButton>
+                            <StyledButton onClick={() => handleCourseDetailClick(course.courseId)}>상세정보</StyledButton>
+                            <StyledButton onClick={() => handleVideoEditClick(course.courseId)} secondary>비디오 수정</StyledButton>
                         </ButtonContainer>
                     </CourseItem>
                 ))
@@ -141,7 +153,11 @@ const ButtonContainer = styled.div`
 
 const StyledButton = styled.button`
     padding: 0.5rem 1rem;
-    background-color: ${props => (props.primary ? "#007bff" : props.secondary ? "#dc3545" : "#007bff")};
+    background-color: ${props =>
+            props.primary ? "#007bff" :
+                    props.secondary ? "#6c757d" :
+                            props.delete ? "#dc3545" : "#28a745"
+    };
     color: white;
     border: none;
     border-radius: 4px;
@@ -149,7 +165,11 @@ const StyledButton = styled.button`
     transition: background-color 0.3s;
 
     &:hover {
-        background-color: ${props => (props.primary ? "#0056b3" : props.secondary ? "#c82333" : "#0056b3")};
+        background-color: ${props =>
+                props.primary ? "#0056b3" :
+                        props.secondary ? "#5a6268" :
+                                props.delete ? "#c82333" : "#218838"
+        };
     }
 `;
 

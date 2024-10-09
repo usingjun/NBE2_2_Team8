@@ -15,7 +15,7 @@ const UpdateVideo = () => {
         const fetchVideo = async () => {
             setLoading(true);
             try {
-                const response = await axios.get(`${Video_Url}/${videoId}`);
+                const response = await axios.get(`${Video_Url}/${videoId}`, { withCredentials: true });
                 setVideo(response.data);
             } catch (error) {
                 console.error("비디오 정보 가져오는 중 오류 발생:", error);
@@ -30,8 +30,8 @@ const UpdateVideo = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await axios.put(`${Video_Url}/${videoId}`, video);
-            navigate(`/videos/${video.course_Id}`); // 비디오 목록으로 이동
+            await axios.put(`${Video_Url}/${videoId}`, video,{ withCredentials: true });
+            navigate(`/video/Instructor/${video.course_Id}`); // 비디오 목록으로 이동
         } catch (error) {
             console.error("비디오 수정 중 오류 발생:", error);
         }

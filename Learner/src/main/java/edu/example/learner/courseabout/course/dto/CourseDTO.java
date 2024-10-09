@@ -7,6 +7,8 @@ import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Getter
 @Setter
 @Builder
@@ -27,16 +29,18 @@ public class CourseDTO {
     private String courseAttribute;
     private boolean sale;
     private Long memberId;
+    private LocalDateTime createdAt;
 
     public Course toEntity() {
-        return Course.builder().courseId(courseId)
+        return Course.builder()
                 .member(Member.builder().nickname(memberNickname).build())
                 .courseDescription(courseDescription)
                 .courseName(courseName)
                 .coursePrice(coursePrice)
                 .courseLevel(courseLevel)
-                .courseAttribute(CourseAttribute.valueOf(courseAttribute))
-                .sale(sale)
+                .courseAttribute(CourseAttribute.JAVA)
+                .courseCreatedDate(createdAt)
+                .sale(false)
                 .build();
     }
 
@@ -50,5 +54,6 @@ public class CourseDTO {
         this.courseAttribute = course.getCourseAttribute().name();
         this.sale = course.isSale();
         this.memberId = course.getMember().getMemberId();
+        this.createdAt = course.getCourseCreatedDate();
     }
 }
