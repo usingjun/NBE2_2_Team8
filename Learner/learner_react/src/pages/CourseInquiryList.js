@@ -69,7 +69,9 @@ const CourseInquiryList = ({ courseId }) => {
                 return axios.get(`http://localhost:8080/course/${courseId}/course-answer/${inquiryId}`, { withCredentials: true });
             })
             .then((response) => {
-                setAnswers(response.data);
+                const fetchedAnswers = response.data;
+                setAnswers(fetchedAnswers);
+                // 답변이 없을 경우 상태 업데이트
                 setLoadingDetail(false);
             })
             .catch((error) => {
@@ -249,17 +251,17 @@ const CourseInquiryList = ({ courseId }) => {
                                     <p>
                                         <span style={{ whiteSpace: "pre-line" }}>{selectedInquiry.inquiryContent}</span>
                                     </p>
-                                    <p style={{fontSize: "0.9rem", color: "#555", marginTop: "3rem"}}>
+                                    <p style={{ fontSize: "0.9rem", color: "#555", marginTop: "3rem" }}>
                                         <ProfileImage
                                             src={profileImageSrc}
                                             alt="작성자 프로필"
                                         />
                                         <span
-                                            style={{cursor: "pointer", textDecoration: "underline", color: "blue"}}
+                                            style={{ cursor: "pointer", textDecoration: "underline", color: "blue" }}
                                             onClick={() => handleMemberClick(selectedInquiry.memberId)}
                                         >
-                                            작성자: {selectedInquiry.memberNickname || '알 수 없음'}
-                                        </span>
+                                        작성자: {selectedInquiry.memberNickname || '알 수 없음'}
+                                    </span>
                                         &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 작성일:{" "}
                                         {new Date(selectedInquiry.createdDate).toLocaleDateString()}
                                     </p>
@@ -286,11 +288,11 @@ const CourseInquiryList = ({ courseId }) => {
                                                     {editAnswerId === answer.answerId ? (
                                                         // 수정 폼
                                                         <>
-                                                            <textarea
-                                                                style={{ width: "100%", height: "100px", fontSize: "1rem" }}
-                                                                value={updatedAnswer}
-                                                                onChange={(e) => setUpdatedAnswer(e.target.value)} // 수정된 내용 반영
-                                                            />
+                                                        <textarea
+                                                            style={{ width: "100%", height: "100px", fontSize: "1rem" }}
+                                                            value={updatedAnswer}
+                                                            onChange={(e) => setUpdatedAnswer(e.target.value)} // 수정된 내용 반영
+                                                        />
                                                             <UpdateSubmitButton onClick={() => handleEditAnswerSubmit(answer.answerId)}>
                                                                 수정 제출
                                                             </UpdateSubmitButton>
@@ -302,7 +304,7 @@ const CourseInquiryList = ({ courseId }) => {
                                                         // 수정 중이 아닐 때 기존 답변 표시
                                                         <>
                                                             <p>{answer.answerContent}</p>
-                                                            <p style={{fontSize: "0.9rem", color: "#555", marginTop: "3rem"}}>
+                                                            <p style={{ fontSize: "0.9rem", color: "#555", marginTop: "3rem" }}>
                                                                 <ProfileImage
                                                                     src={answerProfileImageSrc}
                                                                     alt="작성자 프로필"
@@ -311,8 +313,8 @@ const CourseInquiryList = ({ courseId }) => {
                                                                     style={{ cursor: "pointer", textDecoration: "underline", color: "blue" }}
                                                                     onClick={() => handleMemberClick(answer.memberId)}
                                                                 >
-                                                                    작성자: {answer.memberNickname || '알 수 없음'}
-                                                                </span>
+                                                                작성자: {answer.memberNickname || '알 수 없음'}
+                                                            </span>
                                                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 작성일: {new Date(answer.answerCreateDate).toLocaleDateString()}
                                                             </p>
                                                             {(userRole === "admin" || userRole === "instructor") && (
@@ -334,21 +336,21 @@ const CourseInquiryList = ({ courseId }) => {
                                             );
                                         })
                                     ) : (
-                                        <p>답변이 없습니다.</p>
+                                        <p>답변이 없습니다.</p> // 답변이 없을 경우 메시지
                                     )}
                                 </AnswerList>
 
                                 <AnswerForm>
-                                    <textarea
-                                        style={{
-                                            width: "100%",
-                                            height: "150px",
-                                            fontSize: "1rem",
-                                        }}
-                                        value={newAnswer}
-                                        onChange={(e) => setNewAnswer(e.target.value)}
-                                        placeholder="답변 내용을 입력하세요"
-                                    />
+                                <textarea
+                                    style={{
+                                        width: "100%",
+                                        height: "150px",
+                                        fontSize: "1rem",
+                                    }}
+                                    value={newAnswer}
+                                    onChange={(e) => setNewAnswer(e.target.value)}
+                                    placeholder="답변 내용을 입력하세요"
+                                />
                                     <SubmitButton onClick={handleAnswerSubmit}>답변 달기</SubmitButton>
                                 </AnswerForm>
                             </>
@@ -376,8 +378,8 @@ const CourseInquiryList = ({ courseId }) => {
                                                     style={{ cursor: "pointer", textDecoration: "underline", color: "blue" }}
                                                     onClick={() => handleMemberClick(inquiry.memberId)}
                                                 >
-                                                    작성자: {inquiry.memberNickname || '알 수 없음'}
-                                                </span>
+                                                작성자: {inquiry.memberNickname || '알 수 없음'}
+                                            </span>
                                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 작성일: {new Date(inquiry.createdDate).toLocaleDateString()}
                                             </p>
                                         </InquiryItem>
@@ -392,9 +394,10 @@ const CourseInquiryList = ({ courseId }) => {
             )}
         </>
     );
-};
+    }
 
-export default CourseInquiryList;
+
+    export default CourseInquiryList;
 
 // 스타일 컴포넌트들...
 

@@ -21,7 +21,7 @@ import java.util.List;
 @Table(name = "member", indexes = @Index(columnList = "email"))
 @Setter
 @Getter
-@ToString
+@ToString(exclude = {"heartNewsList", "memberCourses", "courses", "inquiries", "courseInquiries", "courseAnswers", "reviews"})
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder

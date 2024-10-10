@@ -1,9 +1,6 @@
 package edu.example.learner.advice;
 
-import edu.example.learner.courseabout.exception.HeartNewsAlreadyExistsException;
-import edu.example.learner.courseabout.exception.NotFoundException;
-import edu.example.learner.courseabout.exception.ReviewException;
-import edu.example.learner.courseabout.exception.ReviewTaskException;
+import edu.example.learner.courseabout.exception.*;
 import edu.example.learner.courseabout.order.exception.OrderTaskException;
 import edu.example.learner.member.exception.LoginException;
 import edu.example.learner.member.exception.LoginTaskException;
@@ -103,5 +100,11 @@ public class APIControllerAdvice {
     public ResponseEntity<String> handleHeartNewsAlreadyExistsException(HeartNewsAlreadyExistsException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
+
+    @ExceptionHandler(CourseAnswerTaskException.class)
+    public ResponseEntity<String> handleCourseAnswerException(CourseAnswerTaskException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
+    }
+
 
 }
