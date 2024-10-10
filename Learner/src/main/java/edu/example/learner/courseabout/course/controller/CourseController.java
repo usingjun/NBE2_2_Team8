@@ -4,6 +4,8 @@ import edu.example.learner.courseabout.course.dto.CourseDTO;
 import edu.example.learner.courseabout.course.dto.MemberCourseDTO;
 import edu.example.learner.courseabout.course.service.CourseService;
 import edu.example.learner.courseabout.course.service.CourseServiceImpl;
+import edu.example.learner.courseabout.order.dto.OrderDTO;
+import edu.example.learner.courseabout.order.service.OrderService;
 import edu.example.learner.member.dto.MemberDTO;
 import edu.example.learner.member.service.MemberService;
 import edu.example.learner.courseabout.video.dto.VideoDTO;
@@ -30,6 +32,7 @@ import java.util.Map;
 public class CourseController {
     private final CourseService courseService;
     private final CourseServiceImpl courseServiceImpl;
+    private final OrderService orderService;
     private final VideoService videoService;
 
     @PostMapping()
@@ -98,9 +101,19 @@ public class CourseController {
             @ApiResponse(responseCode = "404", description = "강의를 찾을 수 없습니다.")
     })
     public ResponseEntity<?> deleteCourse(@PathVariable Long courseId) {
-        log.info("Deleting course {}", courseId);
+        // 강좌 삭제
         courseService.deleteCourse(courseId);
-        return ResponseEntity.ok(Map.of("delete", "success"));
+
+        // 모든 주문 조회
+        List<OrderDTO> orders = orderService.readAll();
+
+        // 주문이 비어있으면 삭제
+        for (OrderDTO order : orders) {
+            if (order.getOrderItemDTOList().isEmpty()) {
+                orderService.delete(order.getOrderId());
+            }
+        }
+        return ResponseEntity.ok(Map.of("success", "강좌가 삭제되었습니다."));
     }
 
     @GetMapping("/{memberId}/list")
