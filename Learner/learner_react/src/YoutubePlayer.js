@@ -14,6 +14,7 @@ const YoutubePlayer = () => {
     const [currentVideoIndex, setCurrentVideoIndex] = useState(-1);
     const [isLoading, setIsLoading] = useState(true);
     const [memberId] = useState(localStorage.getItem('memberId'));
+    const hasPosted = useRef(false);
 
     const videoEntityId = location.state?.videoEntityId;
     const youtubeId = location.state?.youtubeId;
@@ -23,6 +24,8 @@ const YoutubePlayer = () => {
 
     useEffect(() => {
         const createStudyTable = async () => {
+            if (hasPosted.current) return;
+            hasPosted.current = true;
             try {
                 await axios.post('http://localhost:8080/study-tables', {
                     memberId: memberId,

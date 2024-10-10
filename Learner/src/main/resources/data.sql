@@ -135,3 +135,27 @@ VALUES (1, CONCAT('잠깐! 지금 로그인하신 계정으로 구매하신 것�
 INSERT IGNORE INTO answer(answer_id, answer_content, answer_create_date, inquiry_id)
 VALUES (2, CONCAT('로그인 화면에서 ''비밀번호 찾기''를 클릭해주세요.', ' 사용 중인 계정을 입력하면 이메일을 통해 비밀번호 변경 링크를 보내드려요.'), NOW(),
         3);
+
+-- 초기 학습테이블 데이터
+INSERT IGNORE INTO study_table(study_table_id, completed, study_date, study_time, member_id)
+VALUES (1, 3, '2024-10-06', 55, 2);
+INSERT IGNORE INTO study_table(study_table_id, completed, study_date, study_time, member_id)
+VALUES (2, 2, '2024-10-08', 30, 2);
+INSERT IGNORE INTO study_table(study_table_id, completed, study_date, study_time, member_id)
+VALUES (3, 1, '2024-10-09', 25, 2);
+INSERT IGNORE INTO study_table(study_table_id, completed, study_date, study_time, member_id)
+VALUES (4, 5, '2024-10-03', 70, 2);
+INSERT IGNORE INTO study_table(study_table_id, completed, study_date, study_time, member_id)
+VALUES (5, 1, '2024-10-04', 15, 2);
+INSERT IGNORE INTO study_table(study_table_id, completed, study_date, study_time, member_id)
+VALUES (6, 3, '2023-01-06', 55, 2);
+INSERT IGNORE INTO study_table(study_table_id, completed, study_date, study_time, member_id)
+VALUES (7, 1, '2023-01-25', 15, 2);
+INSERT IGNORE INTO study_table(study_table_id, completed, study_date, study_time, member_id)
+VALUES (8, 6, '2023-02-17', 100, 2);
+INSERT IGNORE INTO study_table(study_table_id, completed, study_date, study_time, member_id)
+VALUES (9, 3, '2023-11-06', 55, 2);
+INSERT IGNORE INTO study_table(study_table_id, completed, study_date, study_time, member_id)
+VALUES (10, 21, '2023-11-15', 120, 2);
+INSERT IGNORE INTO study_table(study_table_id, completed, study_date, study_time, member_id)
+VALUES (11, 8, '2023-12-06', 100, 2);
