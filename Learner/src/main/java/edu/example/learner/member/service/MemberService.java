@@ -179,7 +179,7 @@ public class MemberService {
     //로그인
     public LoginDTO login(String email, String password) {
         Member member = memberRepository.getMemberByEmail(email).orElseThrow(LoginException.NOT_FOUND_EMAIL::getMemberTaskException);
-
+        log.info("member : " + member);
         if (!passwordEncoder.matches(password, member.getPassword())) {
             throw LoginException.PASSWORD_DISAGREEMENT.getMemberTaskException();
         }
