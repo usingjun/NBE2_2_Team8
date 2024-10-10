@@ -35,7 +35,9 @@ public class ReviewServiceImpl implements ReviewService {
 
             log.info("Creating review for course {}", course);
 
-            if (reviewDTO.getWriterId().equals(course.getMember().getMemberId())) {
+            if (reviewDTO.getWriterId() == null) {
+                throw ReviewException.NOT_LOGIN.get();
+            }else if (reviewDTO.getWriterId().equals(course.getMember().getMemberId())) {
                 throw ReviewException.INSTRUCTOR_NOT_REGISTERD.get();
             }
 
