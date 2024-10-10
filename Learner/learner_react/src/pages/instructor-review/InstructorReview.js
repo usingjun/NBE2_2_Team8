@@ -159,7 +159,7 @@ const InstructorReview = () => {
                             <div className="review-content">
                                 <h3 className="review-title">{review.reviewName}</h3>
                                 <p className="review-detail">{review.reviewDetail}</p>
-                                <p className="review-detail"> 강의 제목 : {review.courseName}</p>
+                                <p className="course-name"> 강의 제목 : {review.courseName}</p>
                                 <span className="review-rating">평점: {review.rating} / 5</span>
                                 <div>
                                     <span
@@ -266,6 +266,14 @@ const InstructorReview = () => {
 
                     .review-detail {
                         margin: 0 0 10px;
+                    }
+
+                    .course-name {
+                        font-size: 1rem; /* 글꼴 크기 조정 (필요시 변경) */
+                        color: #333; /* 글자 색상 */
+                        white-space: nowrap; /* 줄바꿈 방지 */
+                        overflow: hidden; /* 넘치는 내용 숨기기 */
+                        text-overflow: ellipsis; /* 넘치는 내용에 ... 표시 */
                     }
 
                     .review-rating {

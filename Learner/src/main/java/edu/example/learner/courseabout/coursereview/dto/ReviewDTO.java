@@ -24,6 +24,7 @@ public class ReviewDTO {
     private ReviewType reviewType;
     private Long writerId;
     private String writerName;
+    private String courseName;
     private String nickname;
     private Long courseId;
 
@@ -36,6 +37,7 @@ public class ReviewDTO {
         this.reviewType = review.getReviewType();
         this.writerId = review.getMember().getMemberId();
         this.writerName = review.getMember().getNickname();
+        this.courseName = review.getCourse().getCourseName();
         this.nickname = review.getCourse().getMember().getNickname();
         this.courseId = review.getCourse().getCourseId();
     }

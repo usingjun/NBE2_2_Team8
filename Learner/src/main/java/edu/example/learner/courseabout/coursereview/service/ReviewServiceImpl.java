@@ -156,6 +156,7 @@ public class ReviewServiceImpl implements ReviewService {
                             .reviewType(review.getReviewType())
                             .reviewUpdatedDate(review.getReviewUpdatedDate())
                             .writerId(review.getMember().getMemberId())
+                            .courseName(review.getCourse().getCourseName())
                             .courseId(courseId)
                             .nickname(nickname)
                             .writerName(review.getMember().getNickname())
