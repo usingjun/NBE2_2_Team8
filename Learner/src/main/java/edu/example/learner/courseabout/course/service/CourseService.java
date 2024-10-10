@@ -10,6 +10,7 @@ public interface CourseService {
     CourseDTO addCourse(CourseDTO courseDTO);
     CourseDTO read(Long courseId);
     List<CourseDTO>readByAttribute(CourseAttribute courseAttribute);
+    CourseDTO readReview(Long courseId);
     CourseDTO updateCourse(CourseDTO courseDTO);
     void deleteCourse(Long courseId);
     List<CourseDTO> readAll();

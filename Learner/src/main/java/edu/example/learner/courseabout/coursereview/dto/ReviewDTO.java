@@ -40,8 +40,12 @@ public class ReviewDTO {
         this.courseId = review.getCourse().getCourseId();
     }
 
-    public Review toEntity(Course course) {
-        Member member = Member.builder().memberId(writerId).build();
+    public Review toEntity() {
+        Member member = Member.builder()
+                .memberId(writerId).build();
+        Course course = Course.builder().courseId(courseId)
+                .member(Member.builder().nickname(nickname).build())
+                .build();
 
         return Review.builder()
                 .reviewId(reviewId)
