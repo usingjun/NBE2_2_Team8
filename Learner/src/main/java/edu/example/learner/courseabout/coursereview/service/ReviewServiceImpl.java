@@ -202,9 +202,9 @@ public class ReviewServiceImpl implements ReviewService {
             return new ReviewDTO();
         }
 
-        // 리뷰 타입이 INSTRUCTOR이고, reviewId가 일치하는 리뷰 필터링
-        return reviewList.stream()
-                .filter(review -> review.getReviewType() == ReviewType.INSTRUCTOR && review.getReviewId().equals(reviewId))
+        // 리뷰 타입이 COURSE이고, reviewId가 일치하는 리뷰 필터링
+        ReviewDTO reviewDTO = reviewList.stream()
+                .filter(review -> review.getReviewType() == ReviewType.COURSE && review.getReviewId().equals(reviewId))
                 .findFirst() // 첫 번째 일치하는 리뷰 찾기
                 .map(review -> ReviewDTO.builder()
                         .reviewId(review.getReviewId())
@@ -219,7 +219,9 @@ public class ReviewServiceImpl implements ReviewService {
                         .nickname(review.getCourse().getMember().getNickname())
                         .writerName(review.getMember().getNickname())
                         .build())
-                .orElse(null); // 조건에 맞는 리뷰가 없을 경우 null 반환
+                .orElse(null);// 조건에 맞는 리뷰가 없을 경우 null 반환
+        System.out.println(reviewDTO);
+        return reviewDTO;
     }
 
 
