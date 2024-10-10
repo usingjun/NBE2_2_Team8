@@ -78,6 +78,7 @@ public class OrderController {
     }
 
     @PostMapping("/purchase/{orderId}")
+    @Operation(summary = "주문 결제" ,description = "주문 ID에 있는 아이템들을 결제합니다")
     public ResponseEntity<OrderDTO> purchaseOrderItems(@PathVariable Long orderId, @RequestBody PurchaseRequest purchaseRequest) {
         Long memberId = purchaseRequest.getMemberId();
         OrderDTO orderDTO = orderService.purchaseOrderItems(orderId, memberId);

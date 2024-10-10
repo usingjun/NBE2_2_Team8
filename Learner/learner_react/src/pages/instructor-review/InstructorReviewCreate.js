@@ -52,7 +52,7 @@ const InstructorReviewCreate = () => {
             courseId: selectedCourseId, // 선택한 강의 ID 추가
         };
 
-        const token = localStorage.getItem("token"); // 토큰 가져오기
+        const token = localStorage.getItem("Authorization"); // 토큰 가져오기
 
         const endpoint = `http://localhost:8080/members/instructor/${nickname}/reviews/create`;
 
@@ -71,9 +71,9 @@ const InstructorReviewCreate = () => {
                     navigate(`/members/instructor/${nickname}`);
                 } else {
                     res.json().then((data) => {
-                        alert(data.message || "리뷰 등록 실패");
+                        alert(data.message || "로그인한 사용자만 리뷰 등록 가능합니다");
                     });
-                    throw new Error("리뷰 등록 실패");
+                    throw new Error("로그인한 사용자만 리뷰 등록 가능합니다");
                 }
             })
             .catch((err) => {

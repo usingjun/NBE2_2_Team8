@@ -46,6 +46,8 @@ public class QCourse extends EntityPathBase<Course> {
 
     public final ListPath<edu.example.learner.courseabout.news.entity.NewsEntity, edu.example.learner.courseabout.news.entity.QNewsEntity> newsEntities = this.<edu.example.learner.courseabout.news.entity.NewsEntity, edu.example.learner.courseabout.news.entity.QNewsEntity>createList("newsEntities", edu.example.learner.courseabout.news.entity.NewsEntity.class, edu.example.learner.courseabout.news.entity.QNewsEntity.class, PathInits.DIRECT2);
 
+    public final ListPath<edu.example.learner.courseabout.order.entity.OrderItem, edu.example.learner.courseabout.order.entity.QOrderItem> orderItems = this.<edu.example.learner.courseabout.order.entity.OrderItem, edu.example.learner.courseabout.order.entity.QOrderItem>createList("orderItems", edu.example.learner.courseabout.order.entity.OrderItem.class, edu.example.learner.courseabout.order.entity.QOrderItem.class, PathInits.DIRECT2);
+
     public final ListPath<edu.example.learner.courseabout.coursereview.entity.Review, edu.example.learner.courseabout.coursereview.entity.QReview> reviews = this.<edu.example.learner.courseabout.coursereview.entity.Review, edu.example.learner.courseabout.coursereview.entity.QReview>createList("reviews", edu.example.learner.courseabout.coursereview.entity.Review.class, edu.example.learner.courseabout.coursereview.entity.QReview.class, PathInits.DIRECT2);
 
     public final BooleanPath sale = createBoolean("sale");

@@ -10,6 +10,7 @@ const PostCourseInquiry = () => {
     const { courseId } = useParams(); // courseId를 URL에서 가져오기
     const navigate = useNavigate(); // 성공적으로 문의 등록 후 다시 목록으로 이동
 
+
     const handleTitleChange = (e) => {
         setTitle(e.target.value);
     };

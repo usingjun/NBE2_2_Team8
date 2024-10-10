@@ -62,6 +62,7 @@ public class JoinRestController {
     })
     public ResponseEntity<Map<String, Long>> login(@RequestBody @Validated LoginDTO loginDTO, HttpServletResponse response) throws IOException {
         log.info("--- login()");
+        log.info("loginDTO: {}", loginDTO);
 
         LoginDTO readInfo = memberService.login(loginDTO.getEmail(), loginDTO.getPassword());
 

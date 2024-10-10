@@ -27,6 +27,7 @@ const CourseReviewCreate = () => {
             reviewDetail,
             rating,
             writerId, // 로그인된 사용자의 memberId
+
             courseId,
         };
 
@@ -50,9 +51,9 @@ const CourseReviewCreate = () => {
                     navigate(`/courses/${courseId}`);
                 } else {
                     res.json().then((data) => {
-                        alert(data.message || "리뷰 등록 실패");
+                        alert(data.message || "로그인한 사용자만 리뷰 등록 가능합니다");
                     });
-                    throw new Error("리뷰 등록 실패");
+                    throw new Error("로그인한 사용자만 리뷰 등록 가능합니다");
                 }
             })
             .catch((err) => {

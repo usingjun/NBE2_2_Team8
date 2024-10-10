@@ -85,7 +85,7 @@ public class ReviewServiceTest {
             ReviewDTO reviewDTO = reviewService.getReviewById(1L);
 
             //WHEN
-            List<ReviewDTO> reviewDTOList = reviewService.getCourseReviewList(1L,reviewDTO);
+            List<ReviewDTO> reviewDTOList = reviewService.getCourseReviewList(1L);
 
             //THEN
             assertNotNull(reviewDTOList);

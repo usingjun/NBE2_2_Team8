@@ -9,6 +9,10 @@ public interface StudyTableService {
 
     StudyTableDTO read(Long studyTableId);
 
+    boolean readByDate(Long memberId);
+
+    StudyTableDTO readDTOByDate(Long memberId);
+
     StudyTableDTO register(StudyTableDTO studyTableDTO);
 
     StudyTableDTO update(StudyTableDTO studyTableDTO);

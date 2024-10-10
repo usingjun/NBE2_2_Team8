@@ -11,7 +11,7 @@ const MemberDetail = () => {
     }
 
     const profileImageSrc = memberData.profileImage
-        ? `data:image/jpeg;base64,${btoa(String.fromCharCode(...new Uint8Array(memberData.profileImage)))}`
+        ? `data:image/jpeg;base64,${memberData.profileImage}`
         : "http://localhost:8080/images/default_profile.jpg";
 
     return (

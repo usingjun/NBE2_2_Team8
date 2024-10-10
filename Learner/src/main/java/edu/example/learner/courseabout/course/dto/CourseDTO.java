@@ -39,6 +39,7 @@ public class CourseDTO {
                 .coursePrice(coursePrice)
                 .courseLevel(courseLevel)
                 .courseAttribute(CourseAttribute.JAVA)
+                .courseCreatedDate(createdAt)
                 .sale(false)
                 .build();
     }
@@ -53,6 +54,6 @@ public class CourseDTO {
         this.courseAttribute = course.getCourseAttribute().name();
         this.sale = course.isSale();
         this.memberId = course.getMember().getMemberId();
-        this.createdAt = LocalDateTime.now();
+        this.createdAt = course.getCourseCreatedDate();
     }
 }
