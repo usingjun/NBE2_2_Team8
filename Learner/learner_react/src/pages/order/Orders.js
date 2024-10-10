@@ -56,7 +56,9 @@ const Orders = () => {
             const response = await axios.post(`${Order_Url}/purchase/${orderId}`, { orderId, memberId }, { withCredentials: true });
             alert("결제가 완료되었습니다. 주문 ID: " + response.data.orderId);
             // 성공적으로 결제 후 해당 주문 제거
-            setOrders(orders.filter(order => order.orderId !== orderId));
+            await axios.delete(`${Order_Url}/${orderId}`, { withCredentials: true });
+            window.location.reload();
+
         } catch (error) {
             console.error("결제 중 오류 발생:", error);
             alert("결제에 실패했습니다.");
