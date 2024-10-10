@@ -10,7 +10,8 @@ public enum ReviewException {
     NOT_FETCHED("Review NOT Fetched",400),
     NOT_MATCHED("Review NOT Matched", 400),
     NOT_MATCHED_REVIEWER("Reviewer NOT Matched", 400),
-    INSTRUCTOR_NOT_REGISTERD("INSTRUCTOR CAN NOT REGISTER REVIEW OF ONE'S COURSE", 400);
+    INSTRUCTOR_NOT_REGISTERD("INSTRUCTOR CAN NOT REGISTER REVIEW OF ONE'S COURSE", 400),
+    NOT_LOGIN("NOT LOGIN", 401);
 
 
     private ReviewTaskException reviewTaskException;
