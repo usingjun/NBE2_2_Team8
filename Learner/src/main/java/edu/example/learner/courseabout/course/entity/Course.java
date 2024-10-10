@@ -5,6 +5,8 @@ import edu.example.learner.courseabout.courseqna.entity.CourseAnswer;
 import edu.example.learner.courseabout.courseqna.entity.CourseInquiry;
 import edu.example.learner.courseabout.coursereview.entity.Review;
 import edu.example.learner.courseabout.news.entity.NewsEntity;
+import edu.example.learner.courseabout.order.entity.Order;
+import edu.example.learner.courseabout.order.entity.OrderItem;
 import edu.example.learner.courseabout.video.entity.Video;
 import edu.example.learner.member.entity.Member;
 import jakarta.persistence.*;
@@ -72,6 +74,9 @@ public class Course {
 
     @OneToMany(mappedBy = "course",cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
     private List<CourseInquiry> courseInquiries = new ArrayList<>();
+
+    @OneToMany(mappedBy = "course",cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    private List<OrderItem> orderItems= new ArrayList<>();
 
 
 

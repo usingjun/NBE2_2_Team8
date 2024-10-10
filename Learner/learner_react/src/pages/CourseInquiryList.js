@@ -309,9 +309,9 @@ const CourseInquiryList = ({ courseId }) => {
                                                                 />
                                                                 <span
                                                                     style={{ cursor: "pointer", textDecoration: "underline", color: "blue" }}
-                                                                    onClick={() => handleMemberClick(answer.member.memberId)}
+                                                                    onClick={() => handleMemberClick(answer.memberId)}
                                                                 >
-                                                                    작성자: {answer.member.nickname || '알 수 없음'}
+                                                                    작성자: {answer.memberNickname || '알 수 없음'}
                                                                 </span>
                                                                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 작성일: {new Date(answer.answerCreateDate).toLocaleDateString()}
                                                             </p>
@@ -321,7 +321,7 @@ const CourseInquiryList = ({ courseId }) => {
                                                                         수정
                                                                     </AnswerButton>
                                                                     <AnswerButton
-                                                                        onClick={() => handleDeleteAnswer(answer.answerId, answer.member.memberId)}
+                                                                        onClick={() => handleDeleteAnswer(answer.answerId, answer.memberId)}
                                                                         style={{ marginLeft: "10px" }}
                                                                     >
                                                                         삭제

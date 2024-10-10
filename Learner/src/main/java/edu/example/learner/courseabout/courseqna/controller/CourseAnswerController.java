@@ -30,7 +30,7 @@ public class CourseAnswerController {
     //강의 문의 답변 전체 보기
     @GetMapping("/{inquiryId}")
     @Operation(summary = "강의 문의 답변 리스트 조회", description = "해당 강의 문의에 대한 답변 리스트를 조회합니다.")
-    public ResponseEntity<List<CourseAnswer>> getList( @PathVariable("inquiryId") Long inquiryId){
+    public ResponseEntity<List<CourseAnswerDTO>> getList( @PathVariable("inquiryId") Long inquiryId){
         return ResponseEntity.ok(courseAnswerService.readAll(inquiryId));
     }
 

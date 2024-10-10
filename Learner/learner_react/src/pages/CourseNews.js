@@ -51,15 +51,7 @@ export default function CourseNews() {
             if (token) {
                 const decodedToken = jwtDecode(token);
                 setUserRole(decodedToken.role);
-                const email = decodedToken.mid;
-
-                const response = await fetch(`http://localhost:8080/member/nickname?email=${email}`, {
-                    credentials: 'include',
-                });
-                if (!response.ok) {
-                    throw new Error("닉네임을 가져오는 데 실패했습니다.");
-                }
-                const nickname = await response.text(); // JSON이 아닌 문자열 반환
+                const nickname = decodedToken.mid;
                 setUserName(nickname); // 닉네임을 상태에 설정
             }
         } catch (error) {

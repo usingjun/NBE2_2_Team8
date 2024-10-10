@@ -30,6 +30,8 @@ public class ReviewServiceImpl implements ReviewService {
         try {
             Course course = courseService.read(reviewDTO.getCourseId()).toEntity();
 
+            log.info("Creating review for course {}", course);
+
             if (reviewDTO.getWriterId().equals(course.getMember().getMemberId())) {
                 throw ReviewException.INSTRUCTOR_NOT_REGISTERD.get();
             }
