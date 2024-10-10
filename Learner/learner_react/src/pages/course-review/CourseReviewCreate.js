@@ -27,6 +27,7 @@ const CourseReviewCreate = () => {
             reviewDetail,
             rating,
             writerId, // 로그인된 사용자의 memberId
+
             courseId,
         };
 

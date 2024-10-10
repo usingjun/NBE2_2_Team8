@@ -54,6 +54,6 @@ public class InstructorReviewController {
     @Operation(summary = "Instructor Review list 조회")
     public ResponseEntity<List<ReviewDTO>> reviewList(@PathVariable("nickname") String nickname, ReviewDTO reviewDTO) {
         Long courseId = reviewDTO.getCourseId();
-        return ResponseEntity.ok(reviewService.getInstructorReviewList(courseId, nickname, reviewDTO));
+        return ResponseEntity.ok(reviewService.getInstructorReviewList(courseId, nickname));
     }
 }

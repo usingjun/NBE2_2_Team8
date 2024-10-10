@@ -13,7 +13,7 @@ public interface ReviewService {
     ReviewDTO updateReview(Long reviewId, ReviewDTO reviewDTO);
     void deleteReview(Long reviewId, ReviewDTO reviewDTO);
 
-    List<ReviewDTO> getCourseReviewList(Long courseId, ReviewDTO reviewDTO);
-    List<ReviewDTO> getInstructorReviewList(Long courseId, String nickname, ReviewDTO reviewDTO);
+    List<ReviewDTO> getCourseReviewList(Long courseId);
+    List<ReviewDTO> getInstructorReviewList(Long courseId, String nickname);
 }
 

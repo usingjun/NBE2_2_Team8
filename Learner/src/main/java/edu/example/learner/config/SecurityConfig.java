@@ -72,11 +72,6 @@ public class SecurityConfig{
                         .requestMatchers(HttpMethod.POST, "/course-inquiry/**").hasAnyRole("USER", "INSTRUCTOR","ADMIN")          // POST 요청 course 권한 설정
                         .requestMatchers(HttpMethod.POST, "/course/{courseId}/course-inquiry").hasAnyRole("USER","INSTRUCTOR","ADMIN")          // POST 요청 course 권한 설정
                         .requestMatchers(HttpMethod.DELETE, "/course-inquiry/**").hasAnyRole("INSTRUCTOR","ADMIN")        // DELETE 요청 course 권한 설정
-                        //리뷰 권한 설정
-                        .requestMatchers(HttpMethod.GET,"/course/*/reviews/list").permitAll()                                                  // GET 요청 course 모두 허용
-                        .requestMatchers(HttpMethod.DELETE, "/course/*/reviews/*").hasAnyRole("USER","INSTRUCTOR","ADMIN")              // DELETE 요청 reviews 권한 설정
-                        .requestMatchers(HttpMethod.PUT, "/course/*/reviews/*").hasAnyRole("USER","INSTRUCTOR","ADMIN")                 // PUT 요청 reviews 권한 설정
-                        .requestMatchers(HttpMethod.POST, "/course/*/reviews/create").hasAnyRole("USER","INSTRUCTOR","ADMIN")           // POST 요청 reviews 권한 설정
                         //주문 권한 설정
                         .requestMatchers("/order/**").hasAnyRole("USER","INSTRUCTOR","ADMIN")                             //주문 관련 모두 허용
                         .requestMatchers(HttpMethod.GET,"order/list/admin").hasRole("ADMIN")                                    //주문 목록 조회 권한 설정
@@ -121,6 +116,12 @@ public class SecurityConfig{
                         .requestMatchers(HttpMethod.DELETE, "/course/**").hasAnyRole("INSTRUCTOR","ADMIN")               // DELETE 요청 course 권한 설정
                         .requestMatchers(HttpMethod.PUT, "/course/**").hasAnyRole("INSTRUCTOR","ADMIN")                  // PUT 요청 course 권한 설정
                         .requestMatchers(HttpMethod.GET, "/course/{id}/list").hasAnyRole("USER", "INSTRUCTOR", "ADMIN")  // 본인 수강강의 조회
+
+                        //리뷰 권한 설정
+                        .requestMatchers(HttpMethod.GET,"/course/{courseId}/reviews/{reviewId}").permitAll()                                                  // GET 요청 course 모두 허용
+                        .requestMatchers(HttpMethod.DELETE, "/course/{courseId}/reviews/{reviewId}").hasAnyRole("USER","INSTRUCTOR","ADMIN")              // DELETE 요청 reviews 권한 설정
+                        .requestMatchers(HttpMethod.PUT, "/course/{courseId}/reviews/{reviewId}").hasAnyRole("USER","INSTRUCTOR","ADMIN")                 // PUT 요청 reviews 권한 설정
+                        .requestMatchers(HttpMethod.POST, "/course/*/reviews/create").hasAnyRole("USER","INSTRUCTOR","ADMIN")           // POST 요청 reviews 권한 설정
                         //정적 리소스 허용
                         .requestMatchers("/images/**").permitAll()                                                              // images 폴더에 있는 리소스 허용
                         .requestMatchers("/css/**").permitAll()                                                                 // css 폴더에 있는 리소스 허용

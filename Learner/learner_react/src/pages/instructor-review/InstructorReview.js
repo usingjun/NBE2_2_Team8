@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 
 const InstructorReview = () => {
     const { nickname } = useParams(); // URL에서 nickname 가져오기
@@ -114,6 +115,22 @@ const InstructorReview = () => {
         return date.toLocaleString('ko-KR', options).replace(',', ''); // 한국 형식으로 반환
     };
 
+    //작성자 프로필 이동
+    const handleMemberClick = (memberId) => {
+        console.log('memberId:', memberId);
+
+        axios
+            .get(`http://localhost:8080/members/${memberId}`, { withCredentials: true })
+            .then((response) => {
+                const memberData = response.data;
+                console.log("Member data:", memberData);
+                navigate(`/members/${memberId}`, { state: { memberData } });  // 사용자 정보 페이지로 이동
+            })
+            .catch((error) => {
+                console.error("Error fetching member details:", error);
+            });
+    };
+
     return (
         <div>
             <div className="course-list">
@@ -142,15 +159,21 @@ const InstructorReview = () => {
                             <div className="review-content">
                                 <h3 className="review-title">{review.reviewName}</h3>
                                 <p className="review-detail">{review.reviewDetail}</p>
-                                <p className="review-detail"> 강의 제목 : {review.courseName}</p>
+                                <p className="course-name"> 강의 제목 : {review.courseName}</p>
                                 <span className="review-rating">평점: {review.rating} / 5</span>
-                                <p className="review-author">
-                                    {/* userId와 review.writerId가 같으면 MyPage로, 다르면 OtherUserPage로 이동 */}
-                                    <Link
-                                        to={userId === review.writerId ? `/내정보` : `/members/other/${review.writerName}`}>
-                                        작성자: {review.writerName}
-                                    </Link>
-                                </p>
+                                <div>
+                                    <span
+                                        style={{
+                                            cursor: "pointer",
+                                            textDecoration: "underline",
+                                            color: "blue",
+                                            marginRight: "10px" // 간격 조정
+                                        }}
+                                        onClick={() => handleMemberClick(review.writerId)}
+                                    >
+                                                작성자: {review.writerName || '알 수 없음'}
+                                            </span>
+                                </div>
                                 <p className="review-updatedDate"> 수정일 : {formatDate(review.reviewUpdatedDate)}</p>
                             </div>
                             <div className="button-group">
@@ -243,6 +266,14 @@ const InstructorReview = () => {
 
                     .review-detail {
                         margin: 0 0 10px;
+                    }
+
+                    .course-name {
+                        font-size: 1rem; /* 글꼴 크기 조정 (필요시 변경) */
+                        color: #333; /* 글자 색상 */
+                        white-space: nowrap; /* 줄바꿈 방지 */
+                        overflow: hidden; /* 넘치는 내용 숨기기 */
+                        text-overflow: ellipsis; /* 넘치는 내용에 ... 표시 */
                     }
 
                     .review-rating {

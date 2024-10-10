@@ -12,6 +12,7 @@ import edu.example.learner.courseabout.courseqna.service.CourseInquiryService;
 import edu.example.learner.courseabout.coursereview.repository.ReviewRepository;
 import edu.example.learner.courseabout.exception.CourseException;
 import edu.example.learner.courseabout.exception.CourseInquiryException;
+import edu.example.learner.courseabout.exception.CourseTaskException;
 import edu.example.learner.courseabout.exception.ReviewException;
 import edu.example.learner.member.entity.Member;
 import edu.example.learner.member.exception.MemberException;
@@ -85,6 +86,14 @@ public class CourseServiceImpl implements CourseService {
             courseDTOList.add(new CourseDTO(course));
         }
         return courseDTOList;
+    }
+
+    @Override
+    @Transactional
+    public CourseDTO readReview(Long courseId) {
+        Course course = courseRepository.findByIdWithMember(courseId)
+                .orElseThrow(() -> new RuntimeException("Course not found"));
+        return new CourseDTO(course);
     }
 
     @Override

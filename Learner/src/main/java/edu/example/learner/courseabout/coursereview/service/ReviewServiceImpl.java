@@ -9,6 +9,7 @@ import edu.example.learner.courseabout.exception.ReviewException;
 import edu.example.learner.courseabout.coursereview.repository.ReviewRepository;
 import edu.example.learner.courseabout.exception.ReviewTaskException;
 import edu.example.learner.member.service.MemberService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
@@ -26,9 +27,11 @@ public class ReviewServiceImpl implements ReviewService {
     private final MemberService memberService;
 
     @Override
+    @Transactional
     public ReviewDTO createReview(ReviewDTO reviewDTO, ReviewType reviewType) {
         try {
-            Course course = courseService.read(reviewDTO.getCourseId()).toEntity();
+            Course course = courseService.readReview(reviewDTO.getCourseId()).toEntity();
+            System.out.println(course);
 
             log.info("Creating review for course {}", course);
 
@@ -36,10 +39,9 @@ public class ReviewServiceImpl implements ReviewService {
                 throw ReviewException.INSTRUCTOR_NOT_REGISTERD.get();
             }
 
-            reviewDTO.setWriterName(memberService.getMemberInfo(reviewDTO.getWriterId()).getNickname());
             reviewDTO.setReviewType(reviewType);
 
-            Review review = reviewDTO.toEntity(course);
+            Review review = reviewDTO.toEntity();
             System.out.println(review);
             reviewRepository.save(review);
             return new ReviewDTO(review);
@@ -59,6 +61,7 @@ public class ReviewServiceImpl implements ReviewService {
     @Override
     public ReviewDTO updateReview(Long reviewId, ReviewDTO reviewDTO) {
         Course course = courseService.read(reviewDTO.getCourseId()).toEntity();
+        System.out.println(course);
 
         Review review = reviewRepository.findById(reviewId).orElseThrow(ReviewException.NOT_FOUND::get);
         if (review.getMember().getMemberId() != reviewDTO.getWriterId()) {
@@ -68,7 +71,7 @@ public class ReviewServiceImpl implements ReviewService {
             reviewDTO.setRating(1);
         }
 
-        Review newReview = reviewDTO.toEntity(course);
+        Review newReview = reviewDTO.toEntity();
 
         try {
             review.changeReviewName(newReview.getReviewName());
@@ -100,7 +103,7 @@ public class ReviewServiceImpl implements ReviewService {
     }
 
     @Override
-    public List<ReviewDTO> getCourseReviewList(Long courseId, ReviewDTO reviewDTO) {
+    public List<ReviewDTO> getCourseReviewList(Long courseId) {
 
         // COURSE인 리뷰만 가져오기 위해 필터링
         List<Review> reviewList = reviewRepository.getCourseReview(courseId).orElse(null);
@@ -133,8 +136,8 @@ public class ReviewServiceImpl implements ReviewService {
 
 
     @Override
-    public List<ReviewDTO> getInstructorReviewList(Long courseId, String nickname, ReviewDTO reviewDTO) {
-        List<Review> reviewList = reviewRepository.getInstructorReview(reviewDTO.getNickname()).orElse(null);
+    public List<ReviewDTO> getInstructorReviewList(Long courseId, String nickname) {
+        List<Review> reviewList = reviewRepository.getInstructorReview(nickname).orElse(null);
 
         List<ReviewDTO> reviewDTOList = new ArrayList<>();
         if (reviewList == null || reviewList.isEmpty()) {
@@ -153,6 +156,7 @@ public class ReviewServiceImpl implements ReviewService {
                             .reviewType(review.getReviewType())
                             .reviewUpdatedDate(review.getReviewUpdatedDate())
                             .writerId(review.getMember().getMemberId())
+                            .courseName(review.getCourse().getCourseName())
                             .courseId(courseId)
                             .nickname(nickname)
                             .writerName(review.getMember().getNickname())
