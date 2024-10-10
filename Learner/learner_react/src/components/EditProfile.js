@@ -98,7 +98,7 @@ const EditProfile = () => {
                 },
                 body: JSON.stringify({
                     nickname: userInfo.nickname,
-                    email: isOAuthUser ? userInfo.email : userInfo.email,  // OAuth 사용자도 이메일 수정 가능하게
+                    email: userInfo.email,  // 이메일 값을 그대로 넘김
                     introduction: userInfo.introduction,
                     password: isPasswordVerified ? userInfo.password : undefined, // 비밀번호 인증 후에만 새로운 비밀번호 전송
                 }),
@@ -124,7 +124,6 @@ const EditProfile = () => {
         }
     };
 
-
     return (
         <Container>
             <Title>회원정보 수정</Title>
@@ -139,8 +138,7 @@ const EditProfile = () => {
                         type="email"
                         name="email"
                         value={userInfo.email}
-                        onChange={handleChange}  // OAuth 사용자가 아니면 이메일 수정 가능
-                        readOnly={isOAuthUser}  // OAuth 사용자면 이메일 수정 불가능
+                        readOnly={true}  // 이메일은 수정 불가
                     />
                 </Label>
                 <Label>
@@ -179,6 +177,7 @@ const EditProfile = () => {
 };
 
 export default EditProfile;
+
 
 
 // 스타일 컴포넌트들

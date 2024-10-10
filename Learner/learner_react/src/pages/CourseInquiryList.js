@@ -17,17 +17,17 @@ const CourseInquiryList = ({ courseId }) => {
     const [inquiryStatus, setInquiryStatus] = useState("PENDING");
 
     const [userRole, setUserRole] = useState(null); // 사용자 역할 저장
-    const [nicknames, setNicknames] = useState({}); // 각 사용자 ID별 닉네임을 저장
     const [userId, setUserId] = useState(null); // 사용자 ID 저장
 
     // 문의 목록 불러오기
     useEffect(() => {
         setLoading(true);
         axios
-            .get(`http://localhost:8080/course/${courseId}/course-inquiry`,{ withCredentials: true })
+            .get(`http://localhost:8080/course/${courseId}/course-inquiry`, { withCredentials: true })
             .then((response) => {
                 setInquiries(response.data);
                 setLoading(false);
+                console.log(response.data)
             })
             .catch((error) => {
                 console.error("Error fetching the course inquiries:", error);
@@ -46,23 +46,18 @@ const CourseInquiryList = ({ courseId }) => {
 
         if (token) {
             const decodedToken = jwtDecode(token); // 토큰 디코딩
-            //console.log("Decoded Token:", decodedToken); // 디버깅용 콘솔 로그
-
-            // 역할을 소문자로 변환해서 저장 (e.g., 'Role_USER' -> 'role_user')
             const normalizedRole = decodedToken.role.toLowerCase();
             setUserRole(normalizedRole);
             setUserId(decodedToken.mid);
-
-            //console.log("User role:", normalizedRole); // 정상적으로 저장된 역할 확인
+            console.log("Role : ", normalizedRole)
         }
     };
-
 
     // 문의 클릭 시 상세 정보 불러오기
     const handleInquiryClick = (inquiryId) => {
         setLoadingDetail(true);
         axios
-            .get(`http://localhost:8080/course/${courseId}/course-inquiry`,{ withCredentials: true })
+            .get(`http://localhost:8080/course/${courseId}/course-inquiry`, { withCredentials: true })
             .then((response) => {
                 const inquiry = response.data.find((item) => item.inquiryId === inquiryId);
                 if (inquiry) {
@@ -71,12 +66,11 @@ const CourseInquiryList = ({ courseId }) => {
                 } else {
                     console.error("해당 inquiryId의 문의를 찾을 수 없습니다.");
                 }
-                return axios.get(`http://localhost:8080/course/${courseId}/course-answer/${inquiryId}`,{ withCredentials: true });
+                return axios.get(`http://localhost:8080/course/${courseId}/course-answer/${inquiryId}`, { withCredentials: true });
             })
             .then((response) => {
                 setAnswers(response.data);
                 setLoadingDetail(false);
-                //console.log("console log: ", response.data);
             })
             .catch((error) => {
                 console.error("Error fetching inquiry details or answers:", error);
@@ -102,12 +96,12 @@ const CourseInquiryList = ({ courseId }) => {
             .post(`http://localhost:8080/course/${courseId}/course-answer`, {
                 inquiryId: selectedInquiry.inquiryId,
                 answerContent: newAnswer,
-                memberId:memberId,
-            },{ withCredentials: true })
+                memberId: memberId,
+            }, { withCredentials: true })
             .then(() => {
                 return axios.get(
-                    `http://localhost:8080/course/${courseId}/course-answer/${selectedInquiry.inquiryId}`
-                    ,{ withCredentials: true }
+                    `http://localhost:8080/course/${courseId}/course-answer/${selectedInquiry.inquiryId}`,
+                    { withCredentials: true }
                 );
             })
             .then((response) => {
@@ -124,7 +118,7 @@ const CourseInquiryList = ({ courseId }) => {
         axios
             .put(`http://localhost:8080/course/${courseId}/course-inquiry/${selectedInquiry.inquiryId}/status`, {
                 inquiryStatus: status,
-            },{ withCredentials: true })
+            }, { withCredentials: true })
             .then(() => {
                 alert("문의 상태가 변경되었습니다.");
                 setInquiryStatus(status);
@@ -160,14 +154,14 @@ const CourseInquiryList = ({ courseId }) => {
         axios
             .put(`http://localhost:8080/course/${courseId}/course-answer/${answerId}`, {
                 answerContent: updatedAnswer,
-            },{ withCredentials: true })
+            }, { withCredentials: true })
             .then(() => {
                 alert("답변이 성공적으로 수정되었습니다.");
                 setEditAnswerId(null);
                 setUpdatedAnswer("");
                 return axios.get(
-                    `http://localhost:8080/course/${courseId}/course-answer/${selectedInquiry.inquiryId}`
-                    ,{ withCredentials: true }
+                    `http://localhost:8080/course/${courseId}/course-answer/${selectedInquiry.inquiryId}`,
+                    { withCredentials: true }
                 );
             })
             .then((response) => {
@@ -180,7 +174,8 @@ const CourseInquiryList = ({ courseId }) => {
 
     // 답변 삭제
     const handleDeleteAnswer = (answerId, answerMemberId) => {
-        if (answerMemberId !== userId) {
+        // answerMemberId와 userId가 일치하는지 확인
+        if (answerMemberId !== userId && userRole !== "admin" && userRole !== "instructor") {
             alert("작성자만 답변을 삭제할 수 있습니다.");
             return;
         }
@@ -198,21 +193,19 @@ const CourseInquiryList = ({ courseId }) => {
         }
     };
 
-    // 수정 취소
+
+    // 답변 수정 취소 함수 추가
     const handleCancelEdit = () => {
-        setEditAnswerId(null);
-        setUpdatedAnswer("");
+        setEditAnswerId(null);  // 수정 상태 해제
+        setUpdatedAnswer("");   // 입력란 초기화
     };
 
-    //작성자 프로필 이동
+    // 작성자 프로필 이동
     const handleMemberClick = (memberId) => {
-        console.log('memberId:', memberId);
-
         axios
             .get(`http://localhost:8080/members/${memberId}`, { withCredentials: true })
             .then((response) => {
                 const memberData = response.data;
-                console.log("Member data:", memberData);
                 navigate(`/members/${memberId}`, { state: { memberData } });  // 사용자 정보 페이지로 이동
             })
             .catch((error) => {
@@ -220,6 +213,10 @@ const CourseInquiryList = ({ courseId }) => {
             });
     };
 
+    //프로필 이미지 처리 방식
+    const profileImageSrc = selectedInquiry && selectedInquiry.profileImage
+        ? `data:image/jpeg;base64,${selectedInquiry.profileImage}`
+        : "http://localhost:8080/images/default_profile.jpg";
 
     return (
         <>
@@ -231,7 +228,7 @@ const CourseInquiryList = ({ courseId }) => {
                         {selectedInquiry ? (
                             <>
                                 <BeforeButton onClick={() => setSelectedInquiry(null)}>이전 목록으로</BeforeButton>
-                                {(userRole === "role_admin" || userRole === "role_instructor") && (
+                                {(userRole === "admin" || userRole === "instructor") && (
                                     <DeleteInquiryButton onClick={() => handleDeleteInquiry(selectedInquiry.inquiryId)}>
                                         문의 삭제
                                     </DeleteInquiryButton>
@@ -253,17 +250,10 @@ const CourseInquiryList = ({ courseId }) => {
                                         <span style={{ whiteSpace: "pre-line" }}>{selectedInquiry.inquiryContent}</span>
                                     </p>
                                     <p style={{fontSize: "0.9rem", color: "#555", marginTop: "3rem"}}>
-                                        {selectedInquiry.profileImage ? (
-                                            <ProfileImage
-                                                src={`data:image/jpeg;base64,${btoa(String.fromCharCode(...new Uint8Array(selectedInquiry.profileImage)))}`}
-                                                alt="작성자 프로필"
-                                            />
-                                        ) : (
-                                            <ProfileImage
-                                                src="/images/default_user_img.png"
-                                                alt="기본 프로필"
-                                            />
-                                        )}
+                                        <ProfileImage
+                                            src={profileImageSrc}
+                                            alt="작성자 프로필"
+                                        />
                                         <span
                                             style={{cursor: "pointer", textDecoration: "underline", color: "blue"}}
                                             onClick={() => handleMemberClick(selectedInquiry.memberId)}
@@ -275,8 +265,7 @@ const CourseInquiryList = ({ courseId }) => {
                                     </p>
                                 </InquiryDetail>
 
-
-                                {(userRole === "role_admin" || userRole === "role_instructor") && (
+                                {(userRole === "admin" || userRole === "instructor") && (
                                     <StatusSelect value={inquiryStatus} onChange={(e) => handleStatusChange(e.target.value)}>
                                         <option value="PENDING">PENDING</option>
                                         <option value="ANSWERED">ANSWERED</option>
@@ -287,54 +276,67 @@ const CourseInquiryList = ({ courseId }) => {
                                 <AnswerList>
                                     <h4>답변 목록</h4>
                                     {answers.length > 0 ? (
-                                        answers.map((answer) => (
-                                            <AnswerItem key={answer.answerId}>
-                                                <p>{answer.answerContent}</p>
-                                                <p style={{fontSize: "0.9rem", color: "#555", marginTop: "3rem"}}>
-                                                    {answer.member.profileImage ? (
-                                                        <ProfileImage
-                                                            src={`data:image/jpeg;base64,${btoa(String.fromCharCode(...new Uint8Array(answer.profileImage)))}`}
-                                                            alt="작성자 프로필"
-                                                        />
+                                        answers.map((answer) => {
+                                            const answerProfileImageSrc = answer && answer.member && answer.member.profileImage
+                                                ? `data:image/jpeg;base64,${answer.member.profileImage}`
+                                                : "http://localhost:8080/images/default_profile.jpg";
+
+                                            return (
+                                                <AnswerItem key={answer.answerId}>
+                                                    {editAnswerId === answer.answerId ? (
+                                                        // 수정 폼
+                                                        <>
+                                                            <textarea
+                                                                style={{ width: "100%", height: "100px", fontSize: "1rem" }}
+                                                                value={updatedAnswer}
+                                                                onChange={(e) => setUpdatedAnswer(e.target.value)} // 수정된 내용 반영
+                                                            />
+                                                            <UpdateSubmitButton onClick={() => handleEditAnswerSubmit(answer.answerId)}>
+                                                                수정 제출
+                                                            </UpdateSubmitButton>
+                                                            <CancelButton onClick={handleCancelEdit}>
+                                                                취소
+                                                            </CancelButton>
+                                                        </>
                                                     ) : (
-                                                        <ProfileImage
-                                                            src="/images/default_user_img.png"
-                                                            alt="기본 프로필"
-                                                        />
+                                                        // 수정 중이 아닐 때 기존 답변 표시
+                                                        <>
+                                                            <p>{answer.answerContent}</p>
+                                                            <p style={{fontSize: "0.9rem", color: "#555", marginTop: "3rem"}}>
+                                                                <ProfileImage
+                                                                    src={answerProfileImageSrc}
+                                                                    alt="작성자 프로필"
+                                                                />
+                                                                <span
+                                                                    style={{ cursor: "pointer", textDecoration: "underline", color: "blue" }}
+                                                                    onClick={() => handleMemberClick(answer.memberId)}
+                                                                >
+                                                                    작성자: {answer.memberNickname || '알 수 없음'}
+                                                                </span>
+                                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 작성일: {new Date(answer.answerCreateDate).toLocaleDateString()}
+                                                            </p>
+                                                            {(userRole === "admin" || userRole === "instructor") && (
+                                                                <>
+                                                                    <AnswerButton onClick={() => handleEditAnswerClick(answer)}>
+                                                                        수정
+                                                                    </AnswerButton>
+                                                                    <AnswerButton
+                                                                        onClick={() => handleDeleteAnswer(answer.answerId, answer.memberId)}
+                                                                        style={{ marginLeft: "10px" }}
+                                                                    >
+                                                                        삭제
+                                                                    </AnswerButton>
+                                                                </>
+                                                            )}
+                                                        </>
                                                     )}
-                                                    <span
-                                                        style={{
-                                                            cursor: "pointer",
-                                                            textDecoration : "underline",
-                                                            color: "blue"
-                                                        }}
-                                                        onClick={() => handleMemberClick(answer.member.memberId)}
-                                                    >
-                                                        작성자: {answer.member.nickname || '알 수 없음'}
-                                                    </span>
-                                                    &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 작성일:{" "}
-                                                    {new Date(answer.answerCreateDate).toLocaleDateString()}
-                                                </p>
-                                                {(userRole === "role_admin" || userRole === "role_instructor" || String(selectedInquiry.memberId) === localStorage.getItem('memberId')) && (
-                                                    <>
-                                                        <AnswerButton onClick={() => handleEditAnswerClick(answer)}>
-                                                            수정
-                                                        </AnswerButton>
-                                                        <AnswerButton
-                                                            onClick={() => handleDeleteAnswer(answer.answerId)}
-                                                            style={{ marginLeft: "10px" }}
-                                                        >
-                                                            삭제
-                                                        </AnswerButton>
-                                                    </>
-                                                )}
-                                            </AnswerItem>
-                                        ))
+                                                </AnswerItem>
+                                            );
+                                        })
                                     ) : (
                                         <p>답변이 없습니다.</p>
                                     )}
                                 </AnswerList>
-
 
                                 <AnswerForm>
                                     <textarea
@@ -354,37 +356,34 @@ const CourseInquiryList = ({ courseId }) => {
                     ) : (
                         inquiries.length > 0 ? (
                             <InquiryList>
-                                {inquiries.map((inquiry) => (
-                                    <InquiryItem key={inquiry.inquiryId}
-                                                 onClick={() => handleInquiryClick(inquiry.inquiryId)}>
-                                        <p>
-                                            <strong>{inquiry.inquiryTitle}</strong>
-                                        </p>
-                                        <p style={{fontSize: "0.9rem", color: "#555"}}>
-                                            {inquiry.profileImage ? (
+                                {inquiries.map((inquiry) => {
+                                    // inquiry 별로 개별적으로 inquiryProfileImageSrc 생성
+                                    const inquiryProfileImageSrc = inquiry && inquiry.profileImage
+                                        ? `data:image/jpeg;base64,${inquiry.profileImage}`
+                                        : "http://localhost:8080/images/default_profile.jpg"; // 기본 이미지 경로
+
+                                    return (
+                                        <InquiryItem key={inquiry.inquiryId} onClick={() => handleInquiryClick(inquiry.inquiryId)}>
+                                            <p>
+                                                <strong>{inquiry.inquiryTitle}</strong>
+                                            </p>
+                                            <p style={{ fontSize: "0.9rem", color: "#555" }}>
                                                 <ProfileImage
-                                                    src={`data:image/jpeg;base64,${inquiry.member.profileImage}`}
+                                                    src={inquiryProfileImageSrc}  // 문의마다 다른 이미지 소스 사용
                                                     alt="작성자 프로필"
                                                 />
-                                            ) : (
-                                                <ProfileImage
-                                                    src="/images/default_user_img.png"
-                                                    alt="기본 프로필"
-                                                />
-                                            )}
-                                            <span
-                                                style={{cursor: "pointer", textDecoration: "underline", color: "blue"}}
-                                                onClick={() => handleMemberClick(inquiry.memberId)}
-                                            >
-                                                작성자: {inquiry.memberNickname || '알 수 없음'}
-                                            </span>
-                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 작성일
-                                            : {new Date(inquiry.createdDate).toLocaleDateString()}
-                                        </p>
-                                    </InquiryItem>
-                                ))}
+                                                <span
+                                                    style={{ cursor: "pointer", textDecoration: "underline", color: "blue" }}
+                                                    onClick={() => handleMemberClick(inquiry.memberId)}
+                                                >
+                                                    작성자: {inquiry.memberNickname || '알 수 없음'}
+                                                </span>
+                                                &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 작성일: {new Date(inquiry.createdDate).toLocaleDateString()}
+                                            </p>
+                                        </InquiryItem>
+                                    );
+                                })}
                             </InquiryList>
-
                         ) : (
                             <p>문의가 없습니다.</p>
                         )
