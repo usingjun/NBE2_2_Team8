@@ -12,6 +12,7 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -42,9 +43,20 @@ public class CourseAnswerService {
 
 
     //특정 강의 문의의 전체 답변 보기
-    public List<CourseAnswer> readAll(Long inquiryId){
+    public List<CourseAnswerDTO> readAll(Long inquiryId){
         try{
-            return courseAnswerRepository.getCourseAnswers(inquiryId).orElseThrow(CourseAnswerException.NOT_FOUND::get);
+            List<CourseAnswer> courseAnswer = courseAnswerRepository.getCourseAnswers(inquiryId).get();
+            List<CourseAnswerDTO> courseAnswerDTOList = new ArrayList<>();
+
+            if(courseAnswer == null || courseAnswer.size() == 0){
+                throw  CourseAnswerException.NOT_FOUND.get();
+            }
+
+            for(CourseAnswer courseAnswerDTO : courseAnswer){
+                courseAnswerDTOList.add(new CourseAnswerDTO(courseAnswerDTO));
+            }
+            log.info("CourseAnswerDTOList: " + courseAnswerDTOList);
+            return courseAnswerDTOList;
         }catch (Exception e){
             log.error("--- "+ e.getMessage());
             throw CourseAnswerException.NOT_REGISTERED.get();

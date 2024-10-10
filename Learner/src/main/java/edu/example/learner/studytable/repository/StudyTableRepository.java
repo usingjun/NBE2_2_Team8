@@ -7,6 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface StudyTableRepository extends JpaRepository<StudyTable, Long> {
 
@@ -38,4 +39,6 @@ public interface StudyTableRepository extends JpaRepository<StudyTable, Long> {
     @Query("select month(st.studyDate), floor((day(st.studyDate) + 6) / 7) as weekNumber, sum(st.completed) from StudyTable st where st.member.memberId = :memberId and year(st.studyDate) = :year group by month(st.studyDate), floor((day(st.studyDate) + 6) / 7) order by month(st.studyDate), floor((day(st.studyDate) + 6) / 7)")
     List<Object[]> getYearlySummary(@Param("memberId") Long memberId, @Param("year") int year);
 
+    @Query("select st from StudyTable st where st.studyDate = :date and st.member.memberId = :memberId")
+    Optional<StudyTable> findByDate(@Param("date") LocalDate date, @Param("memberId") Long memberId);
 }

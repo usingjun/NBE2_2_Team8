@@ -27,6 +27,16 @@ public class StudyTableServiceImpl implements StudyTableService {
     }
 
     @Override
+    public boolean readByDate(Long memberId) {
+        return studyTableRepository.findByDate(LocalDate.now(), memberId).isPresent();
+    }
+
+    @Override
+    public StudyTableDTO readDTOByDate(Long memberId) {
+        return new StudyTableDTO(studyTableRepository.findByDate(LocalDate.now(), memberId).orElseThrow(LearnerException.NOT_FOUND_EXCEPTION::getTaskException));
+    }
+
+    @Override
     public StudyTableDTO register(StudyTableDTO studyTableDTO) {
         try {
             StudyTable studyTable = studyTableRepository.save(studyTableDTO.toEntity());
@@ -41,8 +51,8 @@ public class StudyTableServiceImpl implements StudyTableService {
     public StudyTableDTO update(StudyTableDTO studyTableDTO) {
         StudyTable studyTable = studyTableRepository.findById(studyTableDTO.getStudyTableId()).orElseThrow(LearnerException.NOT_FOUND_EXCEPTION::getTaskException);
         try {
-            studyTable.changeCompleted(studyTableDTO.getCompleted());
-            studyTable.changeStudyTime(studyTableDTO.getStudyTime());
+            studyTable.changeCompleted(studyTable.getCompleted() + studyTableDTO.getCompleted());
+            studyTable.changeStudyTime(studyTable.getStudyTime() + studyTableDTO.getStudyTime());
             return new StudyTableDTO(studyTable);
         } catch (Exception e) {
             log.error(e);
