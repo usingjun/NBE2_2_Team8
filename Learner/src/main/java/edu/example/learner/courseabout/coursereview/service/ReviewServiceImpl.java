@@ -72,6 +72,7 @@ public class ReviewServiceImpl implements ReviewService {
         if (reviewDTO.getRating() == 0) {
             reviewDTO.setRating(1);
         }
+        reviewDTO.setReviewDetail(review.getReviewDetail());
 
         Review newReview = reviewDTO.toEntity();
 

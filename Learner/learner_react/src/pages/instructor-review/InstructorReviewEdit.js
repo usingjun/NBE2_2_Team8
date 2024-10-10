@@ -21,18 +21,6 @@ const InstructorReviewEdit = () => {
             setWriterId(storedWriterId); // writerId 상태 설정
         }
 
-        // 리뷰 데이터 가져오기 (reviewId, nickname으로 리뷰 조회)
-        fetch(`http://localhost:8080/members/instructor/${nickname}/reviews/${reviewId}`, {
-            credentials: 'include',
-        })
-            .then(res => res.json())
-            .then(data => {
-                setReviewName(data.reviewName);
-                setReviewDetail(data.reviewDetail);
-                setRating(data.rating);
-                setSelectedCourseId(data.courseId); // 강의 ID 세팅
-            })
-            .catch(err => console.error("리뷰 가져오기 실패:", err));
 
         // 강의 목록 가져오기
         fetch("http://localhost:8080/course/list") // 강의 목록 API 엔드포인트
@@ -113,11 +101,13 @@ const InstructorReviewEdit = () => {
                     <Label>강의 선택:</Label>
                     <Select value={selectedCourseId} onChange={(e) => setSelectedCourseId(e.target.value)} required>
                         <option value="">강의를 선택하세요</option>
-                        {courses.map((course) => (
-                            <option key={course.courseId} value={course.courseId}>
-                                {course.courseName} {/* courseName을 사용하여 강의 이름 표시 */}
-                            </option>
-                        ))}
+                        {courses
+                            .filter(course => course.nickname === nickname) // nickname과 일치하는 강의만 필터링
+                            .map((course) => (
+                                <option key={course.courseId} value={course.courseId}>
+                                    {course.courseName} {/* courseName을 사용하여 강의 이름 표시 */}
+                                </option>
+                            ))}
                     </Select>
                 </InputContainer>
                 <ButtonContainer>
