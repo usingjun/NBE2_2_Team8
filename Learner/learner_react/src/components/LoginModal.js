@@ -52,7 +52,6 @@ const LoginModal = ({ closeModal }) => {
     };
 
     const handleSignupClick = () => {
-        // 회원가입 버튼 클릭 시 페이지 이동
         window.location.href = "http://localhost:3000/signup";
     };
 
@@ -67,7 +66,7 @@ const LoginModal = ({ closeModal }) => {
                             type="email"
                             placeholder="이메일"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={(e) => setEmail(e.target.value.toLowerCase())}  // 입력값을 소문자로 변환
                         />
                         <Input
                             type="password"
@@ -84,7 +83,7 @@ const LoginModal = ({ closeModal }) => {
                         <ButtonLink onClick={() => setShowResetPassword(true)}>
                             비밀번호 찾기
                         </ButtonLink> |
-                        <ButtonLink onClick={handleSignupClick}>회원가입</ButtonLink> {/* 수정된 부분 */}
+                        <ButtonLink onClick={handleSignupClick}>회원가입</ButtonLink>
                     </PasswordOptions>
 
                     <SocialLoginContainer>
@@ -111,111 +110,112 @@ const LoginModal = ({ closeModal }) => {
 
 export default LoginModal;
 
+
 // 스타일 코드
-const ModalBackground = styled.div`
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.5);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-`;
+    const ModalBackground = styled.div`
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    `;
 
-const ModalContainer = styled.div`
-    background-color: white;
-    padding: 2rem;
-    border-radius: 10px;
-    width: 400px;
-    text-align: center;
-    position: relative;
-`;
+    const ModalContainer = styled.div`
+        background-color: white;
+        padding: 2rem;
+        border-radius: 10px;
+        width: 400px;
+        text-align: center;
+        position: relative;
+    `;
 
-const CloseButton = styled.button`
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: rgba(0, 0, 0, 0.1);
-    border: none;
-    border-radius: 5px;
-    font-size: 1.5rem;
-    cursor: pointer;
-    padding: 5px;
-    transition: background-color 0.3s;
+    const CloseButton = styled.button`
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.1);
+        border: none;
+        border-radius: 5px;
+        font-size: 1.5rem;
+        cursor: pointer;
+        padding: 5px;
+        transition: background-color 0.3s;
+    
+        &:hover {
+            background-color: rgba(0, 0, 0, 0.2);
+        }
+    `;
 
-    &:hover {
-        background-color: rgba(0, 0, 0, 0.2);
-    }
-`;
+    const Logo = styled.h1`
+        font-size: 1.8rem;
+        margin-bottom: 1rem;
+    `;
 
-const Logo = styled.h1`
-    font-size: 1.8rem;
-    margin-bottom: 1rem;
-`;
+    const Form = styled.form`
+        display: flex;
+        flex-direction: column;
+    `;
 
-const Form = styled.form`
-    display: flex;
-    flex-direction: column;
-`;
+    const Input = styled.input`
+        padding: 0.75rem;
+        margin-bottom: 1rem;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        font-size: 1rem;
+    `;
 
-const Input = styled.input`
-    padding: 0.75rem;
-    margin-bottom: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-    font-size: 1rem;
-`;
+    const LoginButton = styled.button`
+        padding: 0.75rem;
+        background-color: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        font-size: 1.1rem;
+        cursor: pointer;
+    
+        &:hover {
+            background-color: #218838;
+        }
+    `;
 
-const LoginButton = styled.button`
-    padding: 0.75rem;
-    background-color: #28a745;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    font-size: 1.1rem;
-    cursor: pointer;
+    const PasswordOptions = styled.div`
+        margin-top: 1rem;
+        font-size: 0.875rem;
+    `;
 
-    &:hover {
-        background-color: #218838;
-    }
-`;
+    const ButtonLink = styled.button`
+        background: none;
+        border: none;
+        color: #555;
+        font-size: 0.875rem;
+        text-decoration: underline;
+        cursor: pointer;
+    
+        &:hover {
+            color: #28a745;
+        }
+    `;
 
-const PasswordOptions = styled.div`
-    margin-top: 1rem;
-    font-size: 0.875rem;
-`;
+    const SocialLoginContainer = styled.div`
+        margin-top: 1rem;
+        display: flex;
+        justify-content: space-around;
+    `;
 
-const ButtonLink = styled.button`
-    background: none;
-    border: none;
-    color: #555;
-    font-size: 0.875rem;
-    text-decoration: underline;
-    cursor: pointer;
+    const SocialLoginButton = styled.div`
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        border: none;
+    `;
 
-    &:hover {
-        color: #28a745;
-    }
-`;
-
-const SocialLoginContainer = styled.div`
-    margin-top: 1rem;
-    display: flex;
-    justify-content: space-around;
-`;
-
-const SocialLoginButton = styled.div`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
-    border: none;
-`;
-
-const Icon = styled.img`
-    width: 120px;
-    height: 40px;
-    object-fit: contain;
-`;
+    const Icon = styled.img`
+        width: 120px;
+        height: 40px;
+        object-fit: contain;
+    `;
