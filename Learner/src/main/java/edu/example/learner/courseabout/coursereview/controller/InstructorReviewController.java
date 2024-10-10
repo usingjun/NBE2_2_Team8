@@ -31,10 +31,15 @@ public class InstructorReviewController {
         return ResponseEntity.ok(reviewService.createReview(reviewDTO, ReviewType.INSTRUCTOR));
     }
 
+    @GetMapping("/{reviewId}")
+    @Operation(summary = "Instructor Review 가져오기")
+    public ResponseEntity<ReviewDTO> read(@PathVariable String nickname, @PathVariable("reviewId") Long reviewId) {
+        return ResponseEntity.ok(reviewService.readReview(nickname, reviewId));
+    }
+
     @PutMapping("/{reviewId}")
     @Operation(summary = "Instructor Review 수정")
     public ResponseEntity<ReviewDTO> update(@PathVariable("reviewId") Long reviewId, @RequestBody ReviewDTO reviewDTO) {
-        log.info(reviewDTO.getWriterId());
 
         log.info("update Review: " + reviewDTO);
         return ResponseEntity.ok(reviewService.updateReview(reviewId, reviewDTO));
