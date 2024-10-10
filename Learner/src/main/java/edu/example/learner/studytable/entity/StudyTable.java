@@ -22,7 +22,6 @@ public class StudyTable {
     private Long studyTableId;
 
     @CreatedDate
-    @Column(unique = true)
     private LocalDate studyDate;
 
     private int studyTime;
