@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 const OrderCreate = () => {
     const [orderItems, setOrderItems] = useState([{ courseId: "", price: "" }]);
     const [courses, setCourses] = useState([]);
+    const [purchasedCourses, setPurchasedCourses] = useState({});
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
@@ -23,7 +24,26 @@ const OrderCreate = () => {
         };
 
         fetchCourses();
-    }, []);
+    }, [memberId]);
+
+    useEffect(() => {
+        const checkPurchasedCourses = async () => {
+            const purchasedStatus = {};
+            for (const course of courses) {
+                try {
+                    const response = await axios.get(`http://localhost:8080/course/${course.courseId}/purchase?memberId=${memberId}`, { withCredentials: true });
+                    purchasedStatus[course.courseId] = response.data; // boolean 값 저장
+                } catch (error) {
+                    console.error(`Error checking purchase for course ${course.courseId}:`, error);
+                }
+            }
+            setPurchasedCourses(purchasedStatus);
+        };
+
+        if (courses.length > 0) {
+            checkPurchasedCourses();
+        }
+    }, [courses, memberId]);
 
     const handleChange = (index, event) => {
         const values = [...orderItems];
@@ -85,11 +105,13 @@ const OrderCreate = () => {
                             required
                         >
                             <option value="">강의 선택</option>
-                            {courses.map((course) => (
-                                <option key={course.courseId} value={course.courseId}>
-                                    {course.courseName} - {course.coursePrice} 원
-                                </option>
-                            ))}
+                            {courses
+                                .filter(course => !purchasedCourses[course.courseId]) // 구매한 강의 제외
+                                .map((course) => (
+                                    <option key={course.courseId} value={course.courseId}>
+                                        {course.courseName} - {course.coursePrice} 원
+                                    </option>
+                                ))}
                         </Select>
                         <PriceDisplay>{item.price} 원</PriceDisplay>
                         <RemoveButton type="button" onClick={() => handleRemoveItem(index)}>
@@ -107,6 +129,9 @@ const OrderCreate = () => {
 };
 
 export default OrderCreate;
+
+// ... (styled components remain the same)
+
 
 const OrderCreateContainer = styled.div`
     max-width: 600px;
