@@ -36,8 +36,6 @@ public class ReviewServiceImpl implements ReviewService {
 
             if (reviewDTO.getWriterId() == null) {
                 throw ReviewException.NOT_LOGIN.get();
-            }else if (reviewDTO.getNickname().equals(course.getMember().getNickname())) {
-                throw ReviewException.INSTRUCTOR_NOT_REGISTERD.get();
             }
 
             reviewDTO.setReviewType(reviewType);
@@ -192,6 +190,33 @@ public class ReviewServiceImpl implements ReviewService {
                         .courseName(review.getCourse().getCourseName())
                         .courseId(review.getCourse().getCourseId())
                         .nickname(nickname)
+                        .writerName(review.getMember().getNickname())
+                        .build())
+                .orElse(null); // 조건에 맞는 리뷰가 없을 경우 null 반환
+    }
+
+    public ReviewDTO readReview(Long courseId, Long reviewId) {
+        List<Review> reviewList = reviewRepository.getCourseReview(courseId).orElse(null);
+
+        if (reviewList == null || reviewList.isEmpty()) {
+            return new ReviewDTO();
+        }
+
+        // 리뷰 타입이 INSTRUCTOR이고, reviewId가 일치하는 리뷰 필터링
+        return reviewList.stream()
+                .filter(review -> review.getReviewType() == ReviewType.INSTRUCTOR && review.getReviewId().equals(reviewId))
+                .findFirst() // 첫 번째 일치하는 리뷰 찾기
+                .map(review -> ReviewDTO.builder()
+                        .reviewId(review.getReviewId())
+                        .reviewName(review.getReviewName())
+                        .reviewDetail(review.getReviewDetail())
+                        .rating(review.getRating())
+                        .reviewType(review.getReviewType())
+                        .reviewUpdatedDate(review.getReviewUpdatedDate())
+                        .writerId(review.getMember().getMemberId())
+                        .courseName(review.getCourse().getCourseName())
+                        .courseId(courseId)
+                        .nickname(review.getCourse().getMember().getNickname())
                         .writerName(review.getMember().getNickname())
                         .build())
                 .orElse(null); // 조건에 맞는 리뷰가 없을 경우 null 반환
