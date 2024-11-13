@@ -14,6 +14,8 @@ public enum CourseException {
     private String message;
     private HttpStatus status;
 
+    private CourseTaskException courseTaskException;
+
     CourseException(String message, HttpStatus status) {
         this.message = message;
         this.status = status;
@@ -23,4 +25,7 @@ public enum CourseException {
         return new MemberTaskException(this.message,this.status.value());
     }
 
+    public RuntimeException get() {
+        return courseTaskException;
+    }
 }

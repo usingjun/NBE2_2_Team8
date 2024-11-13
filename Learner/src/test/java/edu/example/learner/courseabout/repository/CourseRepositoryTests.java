@@ -68,30 +68,30 @@ public class CourseRepositoryTests {
         assertThat(courseList.size()).isEqualTo(1);
     }
 
-//    @Test
-//    @Transactional
-//    void updateCourse() {
-//        // 존재하는 Course ID를 사용
-//        CourseDTO courseDTO = CourseDTO.builder()
-//                .courseId(1L) // Assuming the first course saved has ID 1
-//                .courseDescription("변경")
-//                .courseName("modName")
-//                .courseAttribute(CourseAttribute.JAVA.name())
-//                .coursePrice(3000L)
-//                .sale(false)
-//                .courseLevel(3)
-//                .build();
-//
-//        Optional<Course> optionalCourse = courseRepository.findById(courseDTO.getCourseId());
-//        optionalCourse.ifPresent(course -> {
-//            course.changeCourseLevel(courseDTO.getCourseLevel());
-//            course.changeCourseDescription(courseDTO.getCourseDescription());
-//            course.changeCourseStatus(CourseAttribute.valueOf(courseDTO.getCourseAttribute()));
-//            course.changeSale(courseDTO.isSale());
-//        });
-//        Course updatedCourse = courseRepository.findById(courseDTO.getCourseId()).orElseThrow(CourseException.COURSE_NOT_FOUND::get);
-//        assertThat(updatedCourse.getCourseDescription()).isEqualTo("변경");
-//    }
+    @Test
+    @Transactional
+    void updateCourse() {
+        // 존재하는 Course ID를 사용
+        CourseDTO courseDTO = CourseDTO.builder()
+                .courseId(1L) // Assuming the first course saved has ID 1
+                .courseDescription("변경")
+                .courseName("modName")
+                .courseAttribute(CourseAttribute.JAVA.name())
+                .coursePrice(3000L)
+                .sale(false)
+                .courseLevel(3)
+                .build();
+
+        Optional<Course> optionalCourse = courseRepository.findById(courseDTO.getCourseId());
+        optionalCourse.ifPresent(course -> {
+            course.changeCourseLevel(courseDTO.getCourseLevel());
+            course.changeCourseDescription(courseDTO.getCourseDescription());
+            course.changeCourseStatus(CourseAttribute.valueOf(courseDTO.getCourseAttribute()));
+            course.changeSale(courseDTO.isSale());
+        });
+        Course updatedCourse = courseRepository.findById(courseDTO.getCourseId()).orElseThrow(CourseException.COURSE_NOT_FOUND::get);
+        assertThat(updatedCourse.getCourseDescription()).isEqualTo("변경");
+    }
 
     @Test
     void deleteCourse() {

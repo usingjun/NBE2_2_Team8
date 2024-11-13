@@ -1,10 +1,14 @@
 package edu.example.learner.courseInquiry.repository;
 
+import edu.example.learner.courseabout.course.entity.Course;
+import edu.example.learner.courseabout.course.repository.CourseRepository;
 import edu.example.learner.courseabout.courseqna.dto.CourseInquiryDTO;
 import edu.example.learner.courseabout.courseqna.entity.CourseInquiry;
 import edu.example.learner.courseabout.courseqna.entity.InquiryStatus;
 import edu.example.learner.courseabout.courseqna.repository.CourseInquiryRepository;
 import edu.example.learner.courseabout.courseqna.service.CourseInquiryService;
+import edu.example.learner.member.entity.Member;
+import edu.example.learner.member.repository.MemberRepository;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -25,6 +29,10 @@ public class CourseInquiryRepositoryTests {
     private CourseInquiryRepository courseInquiryRepository;
     @Autowired
     private CourseInquiryService courseInquiryService;
+    @Autowired
+    private MemberRepository memberRepository;
+    @Autowired
+    private CourseRepository courseRepository;
 
 
     @Test
@@ -108,23 +116,42 @@ public class CourseInquiryRepositoryTests {
     }
 
 
-//    @Test
-//    @DisplayName("강의 문의 삭제 테스트")
-//    public void testDelete() {
-//        CourseInquiry courseInquiry = CourseInquiry.builder()
-//                .courseId(2L)
-//                .inquiryTitle("Delete Test")
-//                .inquiryContent("This will be deleted.")
-//                .inquiryStatus(InquiryStatus.PENDING)
-//                .createdDate(LocalDateTime.now())
-//                .build();
-//
-//        CourseInquiry savedCourseInquiry = courseInquiryRepository.save(courseInquiry);
-//
-//        courseInquiryRepository.deleteById(savedCourseInquiry.getInquiryId());
-//
-//        Optional<CourseInquiry> deletedCourseInquiry = courseInquiryRepository.findById(savedCourseInquiry.getInquiryId());
-//        assertThat(deletedCourseInquiry).isEmpty();
-//    }
+    @Test
+    @DisplayName("강의 문의 삭제 테스트")
+    public void testDelete() {
+        // 먼저 Course와 Member 객체를 생성하여 CourseInquiry에 주입합니다.
+        Course course = Course.builder()
+                .courseId(2L) // Course에 courseId 설정
+                .courseName("테스트 강의")
+                .build();
+        courseRepository.save(course);
+
+        Member member = Member.builder()
+                .memberId(1L) // Member에 memberId 설정
+                .nickname("홍길동")
+                .build();
+        memberRepository.save(member);
+
+        // 이제 CourseInquiry 객체를 빌드하여 course와 member를 주입합니다.
+        CourseInquiry courseInquiry = CourseInquiry.builder()
+                .course(course) // Course 객체 주입
+                .member(member) // Member 객체 주입
+                .inquiryTitle("Delete Test")
+                .inquiryContent("This will be deleted.")
+                .inquiryStatus(InquiryStatus.PENDING)
+                .createdDate(LocalDateTime.now())
+                .build();
+
+        // CourseInquiry 저장
+        CourseInquiry savedCourseInquiry = courseInquiryRepository.save(courseInquiry);
+
+        // 삭제 테스트
+        courseInquiryRepository.deleteById(savedCourseInquiry.getInquiryId());
+
+        // 삭제 확인
+        Optional<CourseInquiry> deletedCourseInquiry = courseInquiryRepository.findById(savedCourseInquiry.getInquiryId());
+        assertThat(deletedCourseInquiry).isEmpty();
+    }
+
 
 }
