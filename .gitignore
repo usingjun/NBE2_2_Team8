@@ -8,3 +8,5 @@
 .idea/gradle.xml
 .idea/git_toolbox_blame.xml
 .idea/compiler.xml
+
+Learner/src/main/resources/application.properties
