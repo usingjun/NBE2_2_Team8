@@ -61,21 +61,27 @@ public class Course {
     private Integer courseLevel;
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Builder.Default
     private List<MemberCourse> memberCourses = new ArrayList<>();
 
     @OneToMany(mappedBy = "courseNews", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Builder.Default
     private List<NewsEntity> newsEntities = new ArrayList<>();
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Video> videos = new ArrayList<>();
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Review> reviews = new ArrayList<>();
 
     @OneToMany(mappedBy = "course",cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Builder.Default
     private List<CourseInquiry> courseInquiries = new ArrayList<>();
 
     @OneToMany(mappedBy = "course",cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Builder.Default
     private List<OrderItem> orderItems= new ArrayList<>();
 
 
