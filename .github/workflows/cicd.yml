@@ -26,10 +26,10 @@ jobs:
           path: ./Learner/src/main/resources/application.properties
 
       - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+        run: chmod +x ./Learner/gradlew
 
       - name: Build with Gradle
-        run: ./gradlew clean build
+        run: ./Learner/gradlew clean build
 
       # 현재 시간 가져오기
       - name: Get current time
