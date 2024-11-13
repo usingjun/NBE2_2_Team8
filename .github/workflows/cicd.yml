@@ -17,9 +17,11 @@ jobs:
           distribution: 'zulu'
           java-version: '17'
 
-      - run: touch ./Learner/src/main/resources/application.properties
+      - run: touch src/main/resources/application.properties
+        working-directory: ./Learner
 
-      - run: echo "${{secrets.APPLICATION}}" > ./Learner/src/main/resources/application.properties
+      - run: echo "${{secrets.APPLICATION}}" > src/main/resources/application.properties
+        working-directory: ./Learner
 
       - uses: actions/upload-artifact@v4
         with:
@@ -27,10 +29,12 @@ jobs:
           path: ./Learner/src/main/resources/application.properties
 
       - name: Grant execute permission for gradlew
-        run: chmod +x ./Learner/gradlew
+        run: chmod +x gradlew
+        working-directory: ./Learner
 
       - name: Build with Gradle
-        run: ./Learner/gradlew clean build
+        run: ./gradlew clean build
+        working-directory: ./Learner
 
       # 현재 시간 가져오기
       - name: Get current time
@@ -42,7 +46,8 @@ jobs:
 
       # 배포용 패키지 경로 저장
       - name: Set artifact
-        run: echo "artifact=$(ls ./Learner/build/libs)" >> $GITHUB_ENV
+        run: echo "artifact=$(ls build/libs)" >> $GITHUB_ENV
+        working-directory: ./Learner
 
       - name: Beanstalk Deploy
         uses: einaregilsson/beanstalk-deploy@v20
