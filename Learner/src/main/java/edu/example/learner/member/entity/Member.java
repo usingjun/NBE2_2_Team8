@@ -61,24 +61,31 @@ public class Member{
     private LocalDateTime createDate;
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Builder.Default
     private List<HeartNews> heartNewsList = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Builder.Default
     private List<MemberCourse> memberCourses = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Course> courses = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Inquiry> inquiries = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Builder.Default
     private List<CourseInquiry> courseInquiries = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Builder.Default
     private List<CourseAnswer> courseAnswers = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE, fetch = FetchType.LAZY)
+    @Builder.Default
     private List<Review> reviews = new ArrayList<>();
 
     public void changeEmail(String email) {

@@ -56,6 +56,7 @@ public class NewsEntity {
     private Course courseNews;
 
     @OneToMany(mappedBy = "newsEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
     private List<HeartNews> heartNewsList = new ArrayList<>();
 
 
