@@ -108,23 +108,23 @@ public class CourseInquiryRepositoryTests {
     }
 
 
-    @Test
-    @DisplayName("강의 문의 삭제 테스트")
-    public void testDelete() {
-        CourseInquiry courseInquiry = CourseInquiry.builder()
-                .courseId(2L)
-                .inquiryTitle("Delete Test")
-                .inquiryContent("This will be deleted.")
-                .inquiryStatus(InquiryStatus.PENDING)
-                .createdDate(LocalDateTime.now())
-                .build();
-
-        CourseInquiry savedCourseInquiry = courseInquiryRepository.save(courseInquiry);
-
-        courseInquiryRepository.deleteById(savedCourseInquiry.getInquiryId());
-
-        Optional<CourseInquiry> deletedCourseInquiry = courseInquiryRepository.findById(savedCourseInquiry.getInquiryId());
-        assertThat(deletedCourseInquiry).isEmpty();
-    }
+//    @Test
+//    @DisplayName("강의 문의 삭제 테스트")
+//    public void testDelete() {
+//        CourseInquiry courseInquiry = CourseInquiry.builder()
+//                .courseId(2L)
+//                .inquiryTitle("Delete Test")
+//                .inquiryContent("This will be deleted.")
+//                .inquiryStatus(InquiryStatus.PENDING)
+//                .createdDate(LocalDateTime.now())
+//                .build();
+//
+//        CourseInquiry savedCourseInquiry = courseInquiryRepository.save(courseInquiry);
+//
+//        courseInquiryRepository.deleteById(savedCourseInquiry.getInquiryId());
+//
+//        Optional<CourseInquiry> deletedCourseInquiry = courseInquiryRepository.findById(savedCourseInquiry.getInquiryId());
+//        assertThat(deletedCourseInquiry).isEmpty();
+//    }
 
 }

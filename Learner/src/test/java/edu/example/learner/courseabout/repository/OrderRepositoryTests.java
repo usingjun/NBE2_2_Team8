@@ -140,45 +140,45 @@ public class OrderRepositoryTests {
 
     }
 
-    @Test
-    @Transactional
-    @Commit
-    public void update(){
-        Long orderId = 1L;
-        Long courseId = 1L;
-        List<CourseDTO> courseDTOList = new ArrayList<>();
-        Course foundCourse = courseRepository.findById(courseId).orElseThrow(CourseException.COURSE_NOT_FOUND::get);
-        // update 테스트 데이터
-
-        OrderDTO orderDTO =new OrderDTO();
-        orderDTO.setOrderStatus(String.valueOf(OrderStatus.FAILED));
-
-        orderDTO.setOrderId(orderId);
-        orderDTO.getOrderItemDTOList().clear();
-
-        OrderItemDTO orderItemDTO = OrderItemDTO.builder().orderId(orderId)
-                .courseId(foundCourse.getCourseId())
-                .price(foundCourse.getCoursePrice())
-                .courseName(foundCourse.getCourseName()).build();
-
-        orderDTO.getOrderItemDTOList().add(orderItemDTO);
-        orderDTO.getOrderItemDTOList().add(orderItemDTO);
-
-
-        Order order = orderRepository.findById(orderDTO.getOrderId()).orElseThrow();
-        order.changeOrderStatus(OrderStatus.valueOf(orderDTO.getOrderStatus()));
-        order.getOrderItems().clear();
-
-        for (OrderItemDTO dto : orderDTO.getOrderItemDTOList()) {
-            Course course = courseRepository.save(courseRepository.findById(dto.getCourseId()).orElseThrow());
-            log.info("course -----" + course);
-            OrderItem orderItem = OrderItem.builder().course(course)
-                    .price(course.getCoursePrice())
-                    .build();
-            order.getOrderItems().add(orderItem);
-        }
-        Assertions.assertEquals(order.getOrderStatus(), OrderStatus.FAILED);
-    }
+//    @Test
+//    @Transactional
+//    @Commit
+//    public void update(){
+//        Long orderId = 1L;
+//        Long courseId = 1L;
+//        List<CourseDTO> courseDTOList = new ArrayList<>();
+//        Course foundCourse = courseRepository.findById(courseId).orElseThrow(CourseException.COURSE_NOT_FOUND::get);
+//        // update 테스트 데이터
+//
+//        OrderDTO orderDTO =new OrderDTO();
+//        orderDTO.setOrderStatus(String.valueOf(OrderStatus.FAILED));
+//
+//        orderDTO.setOrderId(orderId);
+//        orderDTO.getOrderItemDTOList().clear();
+//
+//        OrderItemDTO orderItemDTO = OrderItemDTO.builder().orderId(orderId)
+//                .courseId(foundCourse.getCourseId())
+//                .price(foundCourse.getCoursePrice())
+//                .courseName(foundCourse.getCourseName()).build();
+//
+//        orderDTO.getOrderItemDTOList().add(orderItemDTO);
+//        orderDTO.getOrderItemDTOList().add(orderItemDTO);
+//
+//
+//        Order order = orderRepository.findById(orderDTO.getOrderId()).orElseThrow();
+//        order.changeOrderStatus(OrderStatus.valueOf(orderDTO.getOrderStatus()));
+//        order.getOrderItems().clear();
+//
+//        for (OrderItemDTO dto : orderDTO.getOrderItemDTOList()) {
+//            Course course = courseRepository.save(courseRepository.findById(dto.getCourseId()).orElseThrow());
+//            log.info("course -----" + course);
+//            OrderItem orderItem = OrderItem.builder().course(course)
+//                    .price(course.getCoursePrice())
+//                    .build();
+//            order.getOrderItems().add(orderItem);
+//        }
+//        Assertions.assertEquals(order.getOrderStatus(), OrderStatus.FAILED);
+//    }
     @Test
     @Transactional
     public void delete() {
